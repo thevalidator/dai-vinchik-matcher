@@ -7,6 +7,8 @@ package ru.thevalidator.dai.vinchik.matcher;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.account.responses.GetProfileInfoResponse;
 
@@ -24,8 +26,8 @@ public class DaiVinchikMatcher {
         
         try {
             GetProfileInfoResponse profileInfo = vk.account().getProfileInfo(actor).execute();
-            System.out.println(profileInfo.getFirstName());
-        } catch (Exception e) {
+            System.out.println(profileInfo.getFirstName());            
+        } catch (ApiException | ClientException e) {
         }
         
     }
