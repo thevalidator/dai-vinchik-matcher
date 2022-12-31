@@ -28,3 +28,4 @@ replay_pid*
 /target/
 nbactions.xml
 *.json
+match.dict
