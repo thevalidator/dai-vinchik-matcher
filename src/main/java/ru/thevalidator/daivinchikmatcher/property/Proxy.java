@@ -12,6 +12,14 @@ public class Proxy {
     private String adress;
     private Integer port;
 
+    public Proxy() {
+    }
+    
+    public Proxy(String adress, int port) {
+        this.adress = adress;
+        this.port = port;
+    }
+
     public String getAdress() {
         return adress;
     }
