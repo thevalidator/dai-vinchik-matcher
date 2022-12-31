@@ -3,8 +3,15 @@
  */
 package ru.thevalidator.daivinchikmatcher.gui;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Component;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
 import ru.thevalidator.daivinchikmatcher.property.Property;
 
 /**
@@ -12,7 +19,9 @@ import ru.thevalidator.daivinchikmatcher.property.Property;
  * @author thevalidator <the.validator@yandex.ru>
  */
 public class AppWindow extends javax.swing.JFrame {
-    
+
+    private static int MAX_LINES = 400;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private Property properties = null;
 
     /**
@@ -41,12 +50,14 @@ public class AppWindow extends javax.swing.JFrame {
         proxyLabel = new javax.swing.JLabel();
         proxyToggleButton = new CustomToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        logTextArea = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Daivinchik matcher");
         setMinimumSize(new java.awt.Dimension(600, 500));
         setResizable(false);
 
@@ -105,14 +116,24 @@ public class AppWindow extends javax.swing.JFrame {
         });
         jPanel1.add(proxyToggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 140, -1, -1));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        logTextArea.setBackground(new java.awt.Color(51, 51, 51));
+        logTextArea.setColumns(20);
+        logTextArea.setRows(5);
+        jScrollPane1.setViewportView(logTextArea);
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edit");
+        jMenu2.setText("Help");
+
+        jMenuItem1.setText("About");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -143,16 +164,71 @@ public class AppWindow extends javax.swing.JFrame {
     private void initProperties() {
         properties = Property.readFromJson(Property.PROP_FILE);
     }
-    
+
     private void proxyToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proxyToggleButtonActionPerformed
         if (proxyToggleButton.isSelected()) {
             proxyComboBox.setEnabled(false);
             proxyToggleButton.setText("ON");
+            appendToPane("PROXY IS ON");
         } else {
             proxyComboBox.setEnabled(true);
             proxyToggleButton.setText("OFF");
+            appendToPane("PROXY IS OFF");
         }
     }//GEN-LAST:event_proxyToggleButtonActionPerformed
+
+    //  LOG CONSOLE //
+    public void appendToPane(String msg) {
+        try {
+            String timestamp = LocalDateTime.now().format(formatter);
+            String line = "[" + timestamp + "] - " + msg + "\n";
+            cleanConsole();
+            logTextArea.append(line);
+            logTextArea.setCaretPosition(logTextArea.getDocument().getLength());
+        } catch (Exception e) {
+            //logger.error("APPEND METHOD: {}", e.getMessage());
+        }
+    }
+
+    private void cleanConsole() {
+        try {
+            javax.swing.text.Element root = logTextArea.getDocument().getDefaultRootElement();
+            if (root.getElementCount() > MAX_LINES) {
+                javax.swing.text.Element firstLine = root.getElement(0);
+                logTextArea.getDocument().remove(0, firstLine.getEndOffset());
+            }
+        } catch (BadLocationException e) {
+            //logger.error("CLEAN CONSOLE METHOD: {}", e.getMessage());
+        }
+    }
+    
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        Component component = new JLabel();
+        JScrollPane jScrollPane = new JScrollPane(component);
+        jScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        JTextArea jTextArea = new JTextArea(
+                """
+                
+                Likes profiles that matches your search
+                criteria in Daivinchik bot for VK.
+                
+                
+                v1.0.0.0-alpha-01
+                [thevalidator]
+                2023, January""");
+        jTextArea.setColumns(20);
+        jTextArea.setLineWrap(true);
+        jTextArea.setRows(9);
+        jTextArea.setEditable(false);
+        jScrollPane.setViewportView(jTextArea);
+        JLabel header = new JLabel();
+        header.setText("Daivinchik matcher");
+        header.setFont(new java.awt.Font("Segoe UI", 1, 14));
+        header.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        header.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jScrollPane.setColumnHeaderView(header);
+        JOptionPane.showMessageDialog(this, jScrollPane, "About", JOptionPane.PLAIN_MESSAGE);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> jComboBox1;
@@ -162,9 +238,10 @@ public class AppWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea logTextArea;
     private javax.swing.JComboBox<String> proxyComboBox;
     private javax.swing.JLabel proxyLabel;
     private javax.swing.JToggleButton proxyToggleButton;
