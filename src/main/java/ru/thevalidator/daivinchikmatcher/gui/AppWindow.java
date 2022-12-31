@@ -5,17 +5,21 @@ package ru.thevalidator.daivinchikmatcher.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import ru.thevalidator.daivinchikmatcher.property.Property;
 
 /**
  *
  * @author thevalidator <the.validator@yandex.ru>
  */
 public class AppWindow extends javax.swing.JFrame {
+    
+    private Property properties = null;
 
     /**
      * Creates new form AppWindow
      */
     public AppWindow() {
+        initProperties();
         initComponents();
     }
 
@@ -44,87 +48,60 @@ public class AppWindow extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(600, 500));
         setResizable(false);
 
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
         jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getAccountNames()));
         jComboBox1.setMinimumSize(new java.awt.Dimension(200, 26));
         jComboBox1.setPreferredSize(new java.awt.Dimension(200, 26));
+        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 40, 250, -1));
 
         jComboBox2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getUserAgentsNames()));
         jComboBox2.setMinimumSize(new java.awt.Dimension(200, 26));
         jComboBox2.setPreferredSize(new java.awt.Dimension(200, 26));
+        jPanel1.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 90, 250, -1));
 
         proxyComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        proxyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        proxyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getProxyAdresses()));
         proxyComboBox.setMinimumSize(new java.awt.Dimension(200, 26));
         proxyComboBox.setPreferredSize(new java.awt.Dimension(200, 26));
+        jPanel1.add(proxyComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 140, 250, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Account:");
         jLabel1.setMinimumSize(new java.awt.Dimension(200, 26));
         jLabel1.setPreferredSize(new java.awt.Dimension(200, 26));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 100, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("User agent:");
         jLabel2.setMinimumSize(new java.awt.Dimension(200, 26));
         jLabel2.setPreferredSize(new java.awt.Dimension(200, 26));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 90, 100, -1));
 
         proxyLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         proxyLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         proxyLabel.setText("Proxy:");
         proxyLabel.setMinimumSize(new java.awt.Dimension(200, 26));
         proxyLabel.setPreferredSize(new java.awt.Dimension(200, 26));
+        jPanel1.add(proxyLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, 100, -1));
 
         proxyToggleButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         proxyToggleButton.setText("OFF");
         proxyToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        proxyToggleButton.setMaximumSize(new java.awt.Dimension(60, 26));
+        proxyToggleButton.setMinimumSize(new java.awt.Dimension(60, 26));
         proxyToggleButton.setOpaque(true);
+        proxyToggleButton.setPreferredSize(new java.awt.Dimension(60, 26));
         proxyToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 proxyToggleButtonActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(44, 44, 44)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(proxyLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(proxyComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(proxyToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(121, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(proxyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(proxyLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(proxyToggleButton))
-                .addContainerGap(73, Short.MAX_VALUE))
-        );
+        jPanel1.add(proxyToggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 140, -1, -1));
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -143,14 +120,18 @@ public class AppWindow extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 277, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 263, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initProperties() {
+        properties = Property.readFromJson(Property.PROP_FILE);
+    }
+    
     private void proxyToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proxyToggleButtonActionPerformed
         if (proxyToggleButton.isSelected()) {
             proxyComboBox.setEnabled(false);
