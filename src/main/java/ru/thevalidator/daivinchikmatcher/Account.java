@@ -2,7 +2,7 @@
  * Copyright (C) 2022 thevalidator
  */
 
-package ru.thevalidator.dai.vinchik.matcher;
+package ru.thevalidator.daivinchikmatcher;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
