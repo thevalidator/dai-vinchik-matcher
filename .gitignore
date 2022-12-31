@@ -27,3 +27,4 @@ replay_pid*
 /tmp/
 /target/
 nbactions.xml
+*.json
