@@ -3,16 +3,12 @@
  */
 package ru.thevalidator.daivinchikmatcher;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.httpclient.HttpTransportClient;
-import java.io.IOException;
-import java.nio.file.Paths;
+import com.vk.api.sdk.httpclient.CustomHttpTransportClient;
+//import com.vk.api.sdk.httpclient.HttpTransportClient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +32,9 @@ public class DaiVinchikMatcher {
 
     public static void main(String[] args) {
         
-        startGuiApp();
+        //startGuiApp();
+        
+        startBot();
 
     }
 
@@ -76,19 +74,16 @@ public class DaiVinchikMatcher {
         p.setProxies(proxies);
         p.setDelay(delay);
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-            writer.writeValue(Paths.get(Property.PROP_FILE).toFile(), p);
-        } catch (IOException e) {
-        }
+        Property.saveToJson(p);
     }
 
     public static void startBot() {
         AnsiConsole.systemInstall();
         try {
-
-            TransportClient transportClient = new HttpTransportClient();
+            Proxy proxy = new Proxy("129.213.95.20", 80);
+            String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5000.120 Safari/537.36 OPR/83.0.2205.142";
+            
+            TransportClient transportClient = new CustomHttpTransportClient(null, null);
             VkApiClient vk = new VkApiClient(transportClient);
             UserActor actor = new UserActor(Account.getUserID(), Account.getToken());
 
@@ -98,6 +93,7 @@ public class DaiVinchikMatcher {
             System.out.println(ansi().eraseScreen().fg(RED).a("Hello").fg(GREEN).a(" World").reset());
             System.out.println("FINISH");
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         } finally {
             AnsiConsole.systemUninstall();
         }
