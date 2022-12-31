@@ -71,5 +71,33 @@ public class Property {
         }
         return p;
     }
+    
+    public String[] getAccountNames() {
+        String[] items = new String[accounts.size()];
+        for (int i = 0; i < accounts.size(); i++) {
+            items[i] = accounts.get(i).getName();
+        }
+        
+        return items;
+    }
+    
+    public String[] getProxyAdresses() {
+        String[] items = new String[proxies.size()];
+        for (int i = 0; i < proxies.size(); i++) {
+            items[i] = proxies.get(i).getAdress() + " : " + proxies.get(i).getPort();
+        }
+        
+        return items;
+    }
+    
+    public String[] getUserAgentsNames() {
+        String[] items = new String[userAgents.size()];
+        for (int i = 0; i < userAgents.size(); i++) {
+            items[i] = userAgents.get(i).getName();
+        }
+        
+        return items;
+    }
+    
 
 }
