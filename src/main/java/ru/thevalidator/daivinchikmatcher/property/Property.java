@@ -66,7 +66,7 @@ public class Property {
         Property p = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
-            p = mapper.readValue(Paths.get(PROP_FILE).toFile(), Property.class);
+            p = mapper.readValue(Paths.get(path).toFile(), Property.class);
         } catch (IOException e) {
         }
         return p;
@@ -84,7 +84,7 @@ public class Property {
     public String[] getProxyAdresses() {
         String[] items = new String[proxies.size()];
         for (int i = 0; i < proxies.size(); i++) {
-            items[i] = proxies.get(i).getAdress() + " : " + proxies.get(i).getPort();
+            items[i] = (i + 1) + " - " + "[" + proxies.get(i).getAdress() + " : " + proxies.get(i).getPort() + "]";
         }
         
         return items;
