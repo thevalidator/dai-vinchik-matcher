@@ -10,6 +10,7 @@ package ru.thevalidator.daivinchikmatcher.property;
 public class Account {
     
     private String name;
+    private Integer id;
     private String token;
 
     public String getName() {
@@ -26,6 +27,14 @@ public class Account {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
 }

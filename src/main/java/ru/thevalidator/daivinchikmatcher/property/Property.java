@@ -3,6 +3,7 @@
  */
 package ru.thevalidator.daivinchikmatcher.property;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -72,6 +73,7 @@ public class Property {
         return p;
     }
     
+    @JsonIgnore
     public String[] getAccountNames() {
         String[] items = new String[accounts.size()];
         for (int i = 0; i < accounts.size(); i++) {
@@ -81,6 +83,7 @@ public class Property {
         return items;
     }
     
+    @JsonIgnore
     public String[] getProxyAdresses() {
         String[] items = new String[proxies.size()];
         for (int i = 0; i < proxies.size(); i++) {
@@ -90,6 +93,7 @@ public class Property {
         return items;
     }
     
+    @JsonIgnore
     public String[] getUserAgentsNames() {
         String[] items = new String[userAgents.size()];
         for (int i = 0; i < userAgents.size(); i++) {
