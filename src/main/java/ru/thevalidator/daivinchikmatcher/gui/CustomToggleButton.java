@@ -18,12 +18,11 @@ public class CustomToggleButton extends JToggleButton {
     
     @Override
     protected void paintComponent(Graphics g) {
-        setFont(new java.awt.Font("Segoe UI", 1, 12));
         Color bg;
         if (isSelected()) {
-            bg = javax.swing.UIManager.getDefaults().getColor("Actions.Green");
+            bg = Color.lightGray;
         } else {
-            bg = javax.swing.UIManager.getDefaults().getColor("Button.Background");
+            bg = new Color(78, 78, 78);
         }
         setBackground(bg);
         super.paintComponent(g);

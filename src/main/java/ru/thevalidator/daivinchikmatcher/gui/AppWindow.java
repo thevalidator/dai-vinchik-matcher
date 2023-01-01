@@ -49,6 +49,7 @@ public class AppWindow extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         proxyLabel = new javax.swing.JLabel();
         proxyToggleButton = new CustomToggleButton();
+        jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -67,44 +68,47 @@ public class AppWindow extends javax.swing.JFrame {
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getAccountNames()));
         jComboBox1.setMinimumSize(new java.awt.Dimension(200, 26));
         jComboBox1.setPreferredSize(new java.awt.Dimension(200, 26));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 40, 250, -1));
+        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 250, -1));
 
         jComboBox2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getUserAgentsNames()));
         jComboBox2.setMinimumSize(new java.awt.Dimension(200, 26));
         jComboBox2.setPreferredSize(new java.awt.Dimension(200, 26));
-        jPanel1.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 90, 250, -1));
+        jPanel1.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 250, -1));
 
         proxyComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         proxyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getProxyAdresses()));
         proxyComboBox.setMinimumSize(new java.awt.Dimension(200, 26));
         proxyComboBox.setPreferredSize(new java.awt.Dimension(200, 26));
-        jPanel1.add(proxyComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 140, 250, -1));
+        jPanel1.add(proxyComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 140, 250, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Account:");
         jLabel1.setMinimumSize(new java.awt.Dimension(200, 26));
         jLabel1.setPreferredSize(new java.awt.Dimension(200, 26));
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 100, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 100, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("User agent:");
         jLabel2.setMinimumSize(new java.awt.Dimension(200, 26));
         jLabel2.setPreferredSize(new java.awt.Dimension(200, 26));
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 90, 100, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, 100, -1));
 
         proxyLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         proxyLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         proxyLabel.setText("Proxy:");
         proxyLabel.setMinimumSize(new java.awt.Dimension(200, 26));
         proxyLabel.setPreferredSize(new java.awt.Dimension(200, 26));
-        jPanel1.add(proxyLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, 100, -1));
+        jPanel1.add(proxyLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 140, 90, -1));
 
         proxyToggleButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         proxyToggleButton.setText("OFF");
+        proxyToggleButton.setAlignmentY(0.0F);
+        proxyToggleButton.setBorderPainted(false);
         proxyToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        proxyToggleButton.setMargin(new java.awt.Insets(2, 10, 2, 10));
         proxyToggleButton.setMaximumSize(new java.awt.Dimension(60, 26));
         proxyToggleButton.setMinimumSize(new java.awt.Dimension(60, 26));
         proxyToggleButton.setOpaque(true);
@@ -114,7 +118,19 @@ public class AppWindow extends javax.swing.JFrame {
                 proxyToggleButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(proxyToggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 140, -1, -1));
+        jPanel1.add(proxyToggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 140, -1, -1));
+
+        jButton1.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(0, 0, 0));
+        jButton1.setText("START");
+        jButton1.setBorderPainted(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setMargin(new java.awt.Insets(2, 14, 2, 14));
+        jButton1.setMaximumSize(new java.awt.Dimension(70, 70));
+        jButton1.setMinimumSize(new java.awt.Dimension(70, 70));
+        jButton1.setPreferredSize(new java.awt.Dimension(70, 70));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 60, -1, -1));
 
         logTextArea.setBackground(new java.awt.Color(51, 51, 51));
         logTextArea.setColumns(20);
@@ -231,6 +247,7 @@ public class AppWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
