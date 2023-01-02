@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
+import static ru.thevalidator.daivinchikmatcher.handler.Identifier.*;
 
 public class HandlerImpl implements Handler {
 
@@ -33,12 +34,54 @@ public class HandlerImpl implements Handler {
 
     @Override
     public String getAnswer(String messageText, List<Button> buttons) {
-        System.out.println("message: " + messageText);
-        System.out.println("buttons:");
-        for (Button b : buttons) {
-            System.out.println("\tlabel=" + b.getAction().getLabel() + " payload:" + b.getAction().getPayload());
+//        System.out.println("message: " + messageText);
+//        System.out.println("buttons:");
+//        for (Button b : buttons) {
+//            System.out.println("\tlabel=" + b.getAction().getLabel() + " payload:" + b.getAction().getPayload());
+//        }
+        
+        if (buttons == null) {
+            return null;
         }
-        return "1";
+        
+        if (isProfile(messageText, buttons)) {
+            //TODO: filter profiles
+            System.out.println("[profile]");
+            for (String s : dictionary) {
+                if (messageText.contains(s)) {
+                    return "1";
+                }
+            }
+            return "3";
+        } else if (isExpired(messageText, buttons)) {
+            System.out.println("[expired]");
+            return "2";
+        } else if (isNeedSubscription(messageText, buttons)) {
+            System.out.println("[subscription]");
+            return "2";
+        } else if (isNoTextInProfileWarn(messageText, buttons)) {
+            System.out.println("no text my in profile warn");
+            return "1";
+        } else if (isLikedBySomeone(messageText, buttons)) {
+            System.out.println("liked by someone");
+            return "1";
+        } else if (isSleeping(messageText, buttons)) {
+            System.out.println("sleeping");
+            return "1";
+        } else if (isNewProfilesWantToMeet(messageText, buttons)) {
+            System.out.println("new profiles");
+            return "1";
+        } else if (isQuestion(messageText, buttons)) {
+            System.out.println("question");
+            return "2";
+        } else if (isLocation(messageText, buttons)) {
+            System.out.println("location");
+            return "2";
+        } else {
+            throw new UnsupportedOperationException("Unknown state");
+        }
+
+        //return "1";
     }
 
     public static Set<String> readDict(String path) {
@@ -52,8 +95,9 @@ public class HandlerImpl implements Handler {
         } catch (IOException ex) {
             Logger.getLogger(HandlerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return dict;
     }
+
 
 }
