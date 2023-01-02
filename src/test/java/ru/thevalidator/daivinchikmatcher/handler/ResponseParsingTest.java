@@ -4,6 +4,7 @@
 package ru.thevalidator.daivinchikmatcher.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.logging.Level;
@@ -69,10 +70,10 @@ public class ResponseParsingTest {
             LongPollServerResponse responseDTO = mapper.readValue(responseProfileWithoutContetnData, LongPollServerResponse.class);
             for (List<Object> u : responseDTO.getUpdates()) {
                 int code = (Integer) u.get(0);
-                
+
                 if (code == 4) {
                     KeyboardRoot root = mapper.convertValue(u.get(6), KeyboardRoot.class);
-                    List<Button> buttons =  root.getKeyboard().getButtons().get(0);
+                    List<Button> buttons = root.getKeyboard().getButtons().get(0);
                     System.out.println(buttons.size());
                     for (Button b : buttons) {
                         System.out.println("action: " + b.getColor());
@@ -80,12 +81,63 @@ public class ResponseParsingTest {
                         System.out.println("\tpayload:" + b.getAction().getPayload());
                         System.out.println("\tlabel:" + b.getAction().getLabel());
                     }
-                    
+
                 }
             }
 
 //            Keyboard kbrd = mapper.readValue(responseProfileWithoutContetnData, Keyboard.class);
 //            System.out.println(kbrd.getButtons().size());
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(ResponseParsingTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Test
+    public void parseButtonsFromLastMsgTest() {
+        String input = "[\n"
+                + "	{\n"
+                + "		\"action\": {\n"
+                + "			\"label\": \"1\",\n"
+                + "			\"payload\": \"1\",\n"
+                + "			\"type\": \"text\"\n"
+                + "		},\n"
+                + "		\"color\": \"positive\"\n"
+                + "	},\n"
+                + "	{\n"
+                + "		\"action\": {\n"
+                + "			\"label\": \"2\",\n"
+                + "			\"payload\": \"2\",\n"
+                + "			\"type\": \"text\"\n"
+                + "		},\n"
+                + "		\"color\": \"default\"\n"
+                + "	},\n"
+                + "	{\n"
+                + "		\"action\": {\n"
+                + "			\"label\": \"3\",\n"
+                + "			\"payload\": \"3\",\n"
+                + "			\"type\": \"text\"\n"
+                + "		},\n"
+                + "		\"color\": \"default\"\n"
+                + "	},\n"
+                + "	{\n"
+                + "		\"action\": {\n"
+                + "			\"label\": \"?? 4\",\n"
+                + "			\"payload\": \"4\",\n"
+                + "			\"type\": \"text\"\n"
+                + "		},\n"
+                + "		\"color\": \"default\"\n"
+                + "	}\n"
+                + "]";
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            List<Button> buttons = mapper.readValue(input, new TypeReference<List<Button>>(){});
+            
+            System.out.println(buttons.size());
+            for (Button b : buttons) {
+                System.out.println(b.getAction().getLabel() + " " + b.getAction().getPayload());
+            }
+            
         } catch (JsonProcessingException ex) {
             Logger.getLogger(ResponseParsingTest.class.getName()).log(Level.SEVERE, null, ex);
         }
