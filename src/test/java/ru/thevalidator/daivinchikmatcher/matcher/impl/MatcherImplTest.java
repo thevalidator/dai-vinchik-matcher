@@ -3,6 +3,7 @@
  */
 package ru.thevalidator.daivinchikmatcher.matcher.impl;
 
+import ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
@@ -38,7 +39,7 @@ public class MatcherImplTest {
 
     @Test
     public void testReadDict() {
-        Set<String> dict = MatcherImpl.readDict("src/resources/match_test.dict");
+        Set<String> dict = HandlerImpl.readDict("src/resources/match_test.dict");
 //        for (String s : dict) {
 //            System.out.println(s);
 //        }
