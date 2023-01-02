@@ -3,7 +3,6 @@
  */
 package ru.thevalidator.daivinchikmatcher.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
