@@ -3,6 +3,7 @@
  */
 package ru.thevalidator.daivinchikmatcher.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,8 +12,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
+import ru.thevalidator.daivinchikmatcher.property.Account;
 import ru.thevalidator.daivinchikmatcher.property.Property;
+import ru.thevalidator.daivinchikmatcher.property.Proxy;
+import ru.thevalidator.daivinchikmatcher.property.UserAgent;
+import ru.thevalidator.daivinchikmatcher.service.Task;
 
 /**
  *
@@ -23,6 +29,8 @@ public class AppWindow extends javax.swing.JFrame {
     private static int MAX_LINES = 400;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private Property properties = null;
+    private boolean isStarted = false;
+    private SwingWorker worker;
 
     /**
      * Creates new form AppWindow
@@ -42,14 +50,14 @@ public class AppWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        accountComboBox = new javax.swing.JComboBox<>();
+        userAgentComboBox = new javax.swing.JComboBox<>();
         proxyComboBox = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         proxyLabel = new javax.swing.JLabel();
         proxyToggleButton = new CustomToggleButton();
-        jButton1 = new javax.swing.JButton();
+        startButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -64,17 +72,17 @@ public class AppWindow extends javax.swing.JFrame {
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getAccountNames()));
-        jComboBox1.setMinimumSize(new java.awt.Dimension(200, 26));
-        jComboBox1.setPreferredSize(new java.awt.Dimension(200, 26));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 250, -1));
+        accountComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        accountComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getAccountNames()));
+        accountComboBox.setMinimumSize(new java.awt.Dimension(200, 26));
+        accountComboBox.setPreferredSize(new java.awt.Dimension(200, 26));
+        jPanel1.add(accountComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 250, -1));
 
-        jComboBox2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getUserAgentsNames()));
-        jComboBox2.setMinimumSize(new java.awt.Dimension(200, 26));
-        jComboBox2.setPreferredSize(new java.awt.Dimension(200, 26));
-        jPanel1.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 250, -1));
+        userAgentComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        userAgentComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getUserAgentsNames()));
+        userAgentComboBox.setMinimumSize(new java.awt.Dimension(200, 26));
+        userAgentComboBox.setPreferredSize(new java.awt.Dimension(200, 26));
+        jPanel1.add(userAgentComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 250, -1));
 
         proxyComboBox.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         proxyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getProxyAdresses()));
@@ -120,17 +128,22 @@ public class AppWindow extends javax.swing.JFrame {
         });
         jPanel1.add(proxyToggleButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 140, -1, -1));
 
-        jButton1.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(0, 0, 0));
-        jButton1.setText("START");
-        jButton1.setBorderPainted(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setMargin(new java.awt.Insets(2, 14, 2, 14));
-        jButton1.setMaximumSize(new java.awt.Dimension(70, 70));
-        jButton1.setMinimumSize(new java.awt.Dimension(70, 70));
-        jButton1.setPreferredSize(new java.awt.Dimension(70, 70));
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 60, -1, -1));
+        startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+        startButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        startButton.setForeground(new java.awt.Color(0, 0, 0));
+        startButton.setText("START");
+        startButton.setBorderPainted(false);
+        startButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        startButton.setMargin(new java.awt.Insets(2, 14, 2, 14));
+        startButton.setMaximumSize(new java.awt.Dimension(70, 70));
+        startButton.setMinimumSize(new java.awt.Dimension(70, 70));
+        startButton.setPreferredSize(new java.awt.Dimension(70, 70));
+        startButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(startButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 60, -1, -1));
 
         logTextArea.setBackground(new java.awt.Color(51, 51, 51));
         logTextArea.setColumns(20);
@@ -217,7 +230,7 @@ public class AppWindow extends javax.swing.JFrame {
             //logger.error("CLEAN CONSOLE METHOD: {}", e.getMessage());
         }
     }
-    
+
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         Component component = new JLabel();
         JScrollPane jScrollPane = new JScrollPane(component);
@@ -246,10 +259,56 @@ public class AppWindow extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, jScrollPane, "About", JOptionPane.PLAIN_MESSAGE);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
+        if (isStarted) {
+            isStarted = false;
+            setStartButtonStatus(-1);
+            if (worker != null & !worker.isCancelled()) {
+                worker.cancel(true);
+                appendToPane("STOPPED");
+            }
+
+        } else {
+            isStarted = true;
+            setStartButtonStatus(1);
+            Account account = properties.getAccounts().get(accountComboBox.getSelectedIndex());
+            UserAgent userAgent = properties.getUserAgents().get(userAgentComboBox.getSelectedIndex());
+            Proxy proxy = proxyToggleButton.isSelected() ? properties.getProxies().get(proxyComboBox.getSelectedIndex()) : null;
+            
+            Task task = new Task(account, proxy, userAgent, properties.getDelay());
+            worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    task.run();
+
+                    return null;
+                }
+            };
+            worker.execute();
+        }
+    }//GEN-LAST:event_startButtonActionPerformed
+
+    public void setStartButtonStatus(int status) {
+        switch (status) {
+            case 1:
+                startButton.setEnabled(true);
+                startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+                startButton.setText("STOP");
+                break;
+            case -1:
+                startButton.setEnabled(true);
+                startButton.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
+                startButton.setText("START");
+                break;
+            default:
+                startButton.setEnabled(false);
+                startButton.setText("WAIT");
+                break;
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JComboBox<String> accountComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
@@ -262,5 +321,7 @@ public class AppWindow extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> proxyComboBox;
     private javax.swing.JLabel proxyLabel;
     private javax.swing.JToggleButton proxyToggleButton;
+    private javax.swing.JButton startButton;
+    private javax.swing.JComboBox<String> userAgentComboBox;
     // End of variables declaration//GEN-END:variables
 }
