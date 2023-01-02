@@ -32,9 +32,9 @@ public class DaiVinchikMatcher {
 
     public static void main(String[] args) {
         
-        //startGuiApp();
+        startGuiApp();
         
-        startBot();
+        //startBot();
 
     }
 
