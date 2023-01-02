@@ -93,6 +93,73 @@ public class ResponseParsingTest {
     }
 
     @Test
+    public void parseResponseWithoutKEyboardTest() {
+        String responseProfileWithoutContetnData = "{\n"
+                + "	\"ts\": 1765038625,\n"
+                + "	\"updates\": [\n"
+                + "		[\n"
+                + "			3,\n"
+                + "			1628961,\n"
+                + "			1,\n"
+                + "			-91050183\n"
+                + "		],\n"
+                + "		[\n"
+                + "			7,\n"
+                + "			-91050183,\n"
+                + "			1628961,\n"
+                + "			0\n"
+                + "		],\n"
+                + "		[\n"
+                + "			4,\n"
+                + "			1628962,\n"
+                + "			1,\n"
+                + "			-91050183,\n"
+                + "			1672602951,\n"
+                + "			\"Есть взаимная симпатия! Добавляй в друзья - vk.com/id450003690<br><br>Тёня, 22, Калуга<br>Общение?\",\n"
+                + "			{\n"
+                + "				\"emoji\": \"1\",\n"
+                + "				\"content_source\": \"lgEBAsAD2SZodHRwOi8vdmsuY29tL3Bob3RvNDUwMDAzNjkwXzQ1NzI0NjMyNw==\",\n"
+                + "				\"title\": \" ... \"\n"
+                + "			},\n"
+                + "			{\n"
+                + "				\"attach1_type\": \"photo\",\n"
+                + "				\"attach1\": \"519324877_457239822\"\n"
+                + "			}\n"
+                + "		],\n"
+                + "		[\n"
+                + "			80,\n"
+                + "			12,\n"
+                + "			0\n"
+                + "		],\n"
+                + "		[\n"
+                + "			52,\n"
+                + "			11,\n"
+                + "			-91050183,\n"
+                + "			0\n"
+                + "		]\n"
+                + "	]\n"
+                + "}";
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            LongPollServerResponse responseDTO = mapper.readValue(responseProfileWithoutContetnData, LongPollServerResponse.class);
+            for (List<Object> u : responseDTO.getUpdates()) {
+                int code = (Integer) u.get(0);
+
+                if (code == 4) {
+                    KeyboardRoot root = mapper.convertValue(u.get(6), KeyboardRoot.class);
+                    assertNull(root.getKeyboard());
+                }
+            }
+
+//            Keyboard kbrd = mapper.readValue(responseProfileWithoutContetnData, Keyboard.class);
+//            System.out.println(kbrd.getButtons().size());
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(ResponseParsingTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Test
     public void parseButtonsFromLastMsgTest() {
         String input = "[\n"
                 + "	{\n"
@@ -131,13 +198,14 @@ public class ResponseParsingTest {
 
         ObjectMapper mapper = new ObjectMapper();
         try {
-            List<Button> buttons = mapper.readValue(input, new TypeReference<List<Button>>(){});
-            
+            List<Button> buttons = mapper.readValue(input, new TypeReference<List<Button>>() {
+            });
+
             System.out.println(buttons.size());
             for (Button b : buttons) {
                 System.out.println(b.getAction().getLabel() + " " + b.getAction().getPayload());
             }
-            
+
         } catch (JsonProcessingException ex) {
             Logger.getLogger(ResponseParsingTest.class.getName()).log(Level.SEVERE, null, ex);
         }
