@@ -30,3 +30,4 @@ nbactions.xml
 *.json
 match.dict
 src/resources/match_test.dict
+*.dict
