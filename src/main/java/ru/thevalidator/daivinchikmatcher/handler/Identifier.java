@@ -18,7 +18,7 @@ public class Identifier {
         boolean result = false;
         if ((buttons != null) && (buttons.size() == 4)) {
             if (!messageText.isEmpty() 
-                    && messageText.matches("(.+, \\d{1,3}, .+){1}((<br>|\\n).+)?")
+                    && messageText.matches("(.+, \\d{1,3}, .+){1}((<br>|\\n).+)?")  //TODO: fix regexp
                     && "positive".equals(buttons.get(0).getColor())
                     && "positive".equals(buttons.get(1).getColor())
                     && "negative".equals(buttons.get(2).getColor())
@@ -116,8 +116,10 @@ public class Identifier {
     public static boolean isSleeping(String messageText, List<Button> buttons) {
         boolean result = false;
         if ((buttons != null) && (buttons.size() == 4)) {
-            if (!messageText.isEmpty() 
-                    && messageText.endsWith("1. Смотреть анкеты.<br>2. Моя анкета.<br>3. Я больше не хочу никого искать.<br>***<br>4. ?? Бот знакомств Дайвинчик в Telegram.")
+            if (!messageText.isEmpty()     //1. Смотреть анкеты.<br>2. Моя анкета.<br>3. Я больше не хочу никого искать.<br>***<br>4. ✈️ Бот знакомств Дайвинчик в Telegram.
+                    //&& messageText.endsWith("1. Смотреть анкеты.<br>2. Моя анкета.<br>3. Я больше не хочу никого искать.<br>***<br>4. ?? Бот знакомств Дайвинчик в Telegram.")
+                    && messageText.startsWith("1. Смотреть анкеты.")
+                    && messageText.endsWith("Бот знакомств Дайвинчик в Telegram.")
                     && "positive".equals(buttons.get(0).getColor())
                     && "default".equals(buttons.get(1).getColor())
                     && "default".equals(buttons.get(2).getColor())
