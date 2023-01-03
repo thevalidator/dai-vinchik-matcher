@@ -4,13 +4,19 @@
 package ru.thevalidator.daivinchikmatcher.gui;
 
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import ru.thevalidator.daivinchikmatcher.property.Account;
@@ -61,6 +67,10 @@ public class AppWindow extends javax.swing.JFrame {
         logTextArea = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        addMenu = new javax.swing.JMenu();
+        addAccountMenuItem = new javax.swing.JMenuItem();
+        addUserAgentMenuItem = new javax.swing.JMenuItem();
+        addProxyMenuItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
@@ -150,6 +160,35 @@ public class AppWindow extends javax.swing.JFrame {
         jScrollPane1.setViewportView(logTextArea);
 
         jMenu1.setText("File");
+
+        addMenu.setText("Add");
+
+        addAccountMenuItem.setText("Account");
+        addAccountMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addAccountMenuItemActionPerformed(evt);
+            }
+        });
+        addMenu.add(addAccountMenuItem);
+
+        addUserAgentMenuItem.setText("User agent");
+        addUserAgentMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addUserAgentMenuItemActionPerformed(evt);
+            }
+        });
+        addMenu.add(addUserAgentMenuItem);
+
+        addProxyMenuItem.setText("Proxy");
+        addProxyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addProxyMenuItemActionPerformed(evt);
+            }
+        });
+        addMenu.add(addProxyMenuItem);
+
+        jMenu1.add(addMenu);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Help");
@@ -241,7 +280,7 @@ public class AppWindow extends javax.swing.JFrame {
                 criteria in Daivinchik bot for VK.
                 
                 
-                v1.0.0.0-alpha-01
+                v1.0.0.0-alpha-02
                 [thevalidator]
                 2023, January""");
         jTextArea.setColumns(20);
@@ -273,7 +312,7 @@ public class AppWindow extends javax.swing.JFrame {
             Account account = properties.getAccounts().get(accountComboBox.getSelectedIndex());
             UserAgent userAgent = properties.getUserAgents().get(userAgentComboBox.getSelectedIndex());
             Proxy proxy = proxyToggleButton.isSelected() ? properties.getProxies().get(proxyComboBox.getSelectedIndex()) : null;
-            
+
             Task task = new Task(account, proxy, userAgent, properties.getDelay());
             worker = new SwingWorker<Void, Void>() {
                 @Override
@@ -286,6 +325,85 @@ public class AppWindow extends javax.swing.JFrame {
             worker.execute();
         }
     }//GEN-LAST:event_startButtonActionPerformed
+
+    private void addAccountMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAccountMenuItemActionPerformed
+        JTextField nameField = new JTextField();
+        JTextField idField = new JTextField();
+        JTextField tokenField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Name:"));
+        panel.add(nameField);
+        panel.add(new JLabel("User ID:"));
+        panel.add(idField);
+        panel.add(new JLabel("Token:"));
+        panel.add(tokenField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Add account",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                properties.getAccounts().add(new Account(nameField.getText().trim(),
+                        Integer.valueOf(idField.getText().trim()),
+                        tokenField.getText().trim()));
+                Property.saveToJson(properties);
+                this.initProperties();
+                accountComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getAccountNames()));
+            } catch (Exception e) {
+                Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
+            }
+
+        }
+    }//GEN-LAST:event_addAccountMenuItemActionPerformed
+
+    private void addUserAgentMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserAgentMenuItemActionPerformed
+        JTextField name = new JTextField();
+        JTextField value = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Name:"));
+        panel.add(name);
+        panel.add(new JLabel("Value:"));
+        panel.add(value);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Add user agent",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                properties.getUserAgents().add(new UserAgent(name.getText().trim(), value.getText().trim()));
+                Property.saveToJson(properties);
+                this.initProperties();
+                userAgentComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getUserAgentsNames()));
+            } catch (Exception e) {
+                Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
+            }
+
+        }
+    }//GEN-LAST:event_addUserAgentMenuItemActionPerformed
+
+    private void addProxyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProxyMenuItemActionPerformed
+        JTextField addressField = new JTextField();
+        JTextField portField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("IP address:"));
+        panel.add(addressField);
+        panel.add(new JLabel("port:"));
+        panel.add(portField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Add proxy",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                properties.getProxies().add(new Proxy(addressField.getText().trim(), Integer.parseInt(portField.getText().trim())));
+                Property.saveToJson(properties);
+                this.initProperties();
+                proxyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getProxyAdresses()));
+            } catch (Exception e) {
+                Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
+    }//GEN-LAST:event_addProxyMenuItemActionPerformed
 
     public void setStartButtonStatus(int status) {
         switch (status) {
@@ -308,6 +426,10 @@ public class AppWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> accountComboBox;
+    private javax.swing.JMenuItem addAccountMenuItem;
+    private javax.swing.JMenu addMenu;
+    private javax.swing.JMenuItem addProxyMenuItem;
+    private javax.swing.JMenuItem addUserAgentMenuItem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
