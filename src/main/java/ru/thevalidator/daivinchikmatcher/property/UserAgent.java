@@ -12,6 +12,14 @@ public class UserAgent {
     private String name;
     private String value;
 
+    public UserAgent() {
+    }
+
+    public UserAgent(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
     public String getName() {
         return name;
     }

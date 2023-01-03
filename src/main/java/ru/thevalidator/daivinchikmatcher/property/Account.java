@@ -13,6 +13,15 @@ public class Account {
     private Integer id;
     private String token;
 
+    public Account() {
+    }
+
+    public Account(String name, Integer id, String token) {
+        this.name = name;
+        this.id = id;
+        this.token = token;
+    }
+
     public String getName() {
         return name;
     }
