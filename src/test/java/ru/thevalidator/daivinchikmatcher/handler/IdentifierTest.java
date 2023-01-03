@@ -260,6 +260,54 @@ public class IdentifierTest {
             Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    @Test
+    public void testIsSleeping2() {
+        try {
+            String text = "1. Смотреть анкеты.<br>2. Моя анкета.<br>3. Я больше не хочу никого искать.<br>***<br>4. ✈️ Бот знакомств Дайвинчик в Telegram.";
+            String buttonsData = "[\n" +
+"							{\n" +
+"								\"action\": {\n" +
+"									\"type\": \"text\",\n" +
+"									\"payload\": \"1\",\n" +
+"									\"label\": \"1\"\n" +
+"								},\n" +
+"								\"color\": \"positive\"\n" +
+"							},\n" +
+"							{\n" +
+"								\"action\": {\n" +
+"									\"type\": \"text\",\n" +
+"									\"payload\": \"2\",\n" +
+"									\"label\": \"2\"\n" +
+"								},\n" +
+"								\"color\": \"default\"\n" +
+"							},\n" +
+"							{\n" +
+"								\"action\": {\n" +
+"									\"type\": \"text\",\n" +
+"									\"payload\": \"3\",\n" +
+"									\"label\": \"3\"\n" +
+"								},\n" +
+"								\"color\": \"default\"\n" +
+"							},\n" +
+"							{\n" +
+"								\"action\": {\n" +
+"									\"type\": \"text\",\n" +
+"									\"payload\": \"4\",\n" +
+"									\"label\": \"✈️ 4\"\n" +
+"								},\n" +
+"								\"color\": \"default\"\n" +
+"							}\n" +
+"						]";
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isSleeping(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     @Test
     public void testIsLikedBySomeone() {

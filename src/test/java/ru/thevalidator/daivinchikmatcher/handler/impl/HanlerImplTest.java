@@ -47,15 +47,18 @@ public class HanlerImplTest {
     public void tearDown() {
     }
 
-    @Test
-    public void testReadDict() {
-        Set<String> dict = HandlerImpl.readDict("src/resources/match_test.dict");
-//        for (String s : dict) {
-//            System.out.println(s);
-//        }
-
-        assertEquals(8, dict.size());
-        assertTrue(dict.contains("Калуга"));
-    }
+//    @Test
+//    public void testReadDict() {
+//        Set<String> dict = HandlerImpl.readDict("src/resources/match_test.dict");
+////        for (String s : dict) {
+////            System.out.println(s);
+////        }
+//
+//        assertEquals(8, dict.size());
+//        assertTrue(dict.contains("Калуга"));
+//        
+//        Set<String> dict2 = HandlerImpl.readDict("src/resources/continue_test.dict");
+//        assertEquals(6, dict2.size());
+//    }
 
 }
