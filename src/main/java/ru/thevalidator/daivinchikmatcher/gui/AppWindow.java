@@ -280,7 +280,7 @@ public class AppWindow extends javax.swing.JFrame {
                 criteria in Daivinchik bot for VK.
                 
                 
-                v1.0.0.0-alpha-02
+                v1.0.0.0-alpha-03
                 [thevalidator]
                 2023, January""");
         jTextArea.setColumns(20);
