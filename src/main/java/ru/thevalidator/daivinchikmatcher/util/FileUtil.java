@@ -17,7 +17,7 @@ import ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl;
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
-public class Reader {
+public class FileUtil {
     
     public static Set<String> readDict(String path) {
         Set<String> dict = new HashSet<>();
