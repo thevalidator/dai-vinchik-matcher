@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.logging.log4j.LogManager;
-import ru.thevalidator.daivinchikmatcher.util.Reader;
+import ru.thevalidator.daivinchikmatcher.util.FileUtil;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
 import static ru.thevalidator.daivinchikmatcher.handler.Identifier.*;
@@ -23,7 +23,7 @@ public class HandlerImpl implements Handler {
     private final Filter filter;
 
     public HandlerImpl() {
-        this.continueWords = Reader.readDict("continue.dict");
+        this.continueWords = FileUtil.readDict("continue.dict");
         this.filter = new FilterImpl();
     }
 
