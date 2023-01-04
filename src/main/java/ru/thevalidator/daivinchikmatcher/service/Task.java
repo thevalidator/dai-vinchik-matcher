@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
 import ru.thevalidator.daivinchikmatcher.dto.LongPollServerResponse;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Keyboard;
@@ -33,6 +37,8 @@ import ru.thevalidator.daivinchikmatcher.handler.Handler;
  */
 public class Task implements Runnable {
 
+    private static final Logger logger = LogManager.getLogger(Task.class);
+    //private static final Logger LOG = LoggerFactory.getLogger(Task.class);
     private static final int[] flags = Flag.getAllFlagCodes();
     private static final Random random = new Random();
     private static final int DAI_VINCHIK_BOT_CHAT_ID = -91050183;
@@ -119,8 +125,14 @@ public class Task implements Runnable {
 
                                 answer = handler.getAnswer(message, responseButtons);
                                 if (answer == null) {
-                                    System.out.println("[LIKE]" + message);
+                                    System.out.println("[LIKE] " + message);
                                     continue;
+                                } else if (answer.startsWith("[CASE]-")) {
+                                    answer = answer.substring(7);
+                                    System.out.println("[CASE] answer=" + answer);
+                                    //log LPR
+                                    //LOG.error("[LPR]=" + response.getContent() + "\n[ANSWER]=" + answer);
+                                    logger.error("[LPR]=" + response.getContent() + "\n[ANSWER]=" + answer);
                                 }
                                   
                                     int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
