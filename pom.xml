@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>dai-vinchik-matcher</artifactId>
-    <version>v1.0.0.0-alpha-01</version>
+    <version>v1.0.0.0-alpha-02</version>
     <packaging>jar</packaging>
     
     <build>
@@ -124,11 +124,17 @@
             <artifactId>guava</artifactId>
             <version>20.0</version>
         </dependency>
-        <dependency>
+        <!--        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.26</version>
         </dependency>
+
         <!-- Log4j API and Core implementation required for binding -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
