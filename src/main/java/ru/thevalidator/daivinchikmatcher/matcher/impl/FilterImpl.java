@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
-import ru.thevalidator.daivinchikmatcher.util.Reader;
+import ru.thevalidator.daivinchikmatcher.util.FileUtil;
 
 public class FilterImpl implements Filter {
 
@@ -18,9 +18,9 @@ public class FilterImpl implements Filter {
     private final Pattern pattern;
 
     public FilterImpl() {
-        this.cities = Reader.readDict("cities.dict");
-        this.words = Reader.readDict("words.dict");
-        this.dictionary = Reader.readDict("match.dict");
+        this.cities = FileUtil.readDict("cities.dict");
+        this.words = FileUtil.readDict("words.dict");
+        this.dictionary = FileUtil.readDict("match.dict");
         pattern = Pattern.compile(regexp);
     }
 
