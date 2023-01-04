@@ -3,56 +3,61 @@
  */
 package ru.thevalidator.daivinchikmatcher.handler.impl;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import ru.thevalidator.daivinchikmatcher.util.Reader;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
 import static ru.thevalidator.daivinchikmatcher.handler.Identifier.*;
+import ru.thevalidator.daivinchikmatcher.matcher.Filter;
+import ru.thevalidator.daivinchikmatcher.matcher.impl.FilterImpl;
 
 public class HandlerImpl implements Handler {
 
-    private final Set<String> dictionary;
+    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(HandlerImpl.class);
+    private final Set<String> continueWords;
+    private final Filter filter;
 
     public HandlerImpl() {
-        this.dictionary = readDict("match.dict");
-    }
-
-    public boolean hasMatched(String text) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void handleAnswer() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.continueWords = Reader.readDict("continue.dict");
+        this.filter = new FilterImpl();
     }
 
     @Override
     public String getAnswer(String messageText, List<Button> buttons) {
-//        System.out.println("message: " + messageText);
-//        System.out.println("buttons:");
-//        for (Button b : buttons) {
-//            System.out.println("\tlabel=" + b.getAction().getLabel() + " payload:" + b.getAction().getPayload());
-//        }
         
-        if (buttons == null) {
+        if (buttons == null) { //&& !messageText.contains("Нет такого варианта ответа, напиши одну цифру")) {
             return null;
         }
         
-        if (isProfile(messageText, buttons)) {
-            //TODO: filter profiles
-            System.out.println("[profile]");
-            for (String s : dictionary) {
-                if (messageText.contains(s)) {
-                    return "1";
+        //checks continue words on buttons
+        if (!buttons.isEmpty()) {
+            for (Button b : buttons) {
+                String buttonText = b.getAction().getLabel();
+                if (buttonText.length() > 1) {
+                    for (int i = 0; i < buttonText.length(); i++) {
+                        if (Character.isLetter(buttonText.charAt(i))) {
+                            if (continueWords.contains(buttonText)) {
+                                return b.getAction().getPayload();
+                            }
+                        }
+                    }
                 }
             }
-            return "3";
+        }
+        
+        if (isProfile(messageText, buttons)) {
+            System.out.println("[profile]");
+            if (filter.isMatched(messageText)) {
+                return "1";
+            } else {
+                return "3";
+            }
+            
         } else if (isExpired(messageText, buttons)) {
             System.out.println("[expired]");
             return "2";
@@ -78,26 +83,17 @@ public class HandlerImpl implements Handler {
             System.out.println("location");
             return "2";
         } else {
-            throw new UnsupportedOperationException("Unknown state");
+            logger.error("unknown state");
+            System.out.println("[ERROR] - message:" + messageText + "\nbuttons: " + buttons.size() + "\t" + buttons.get(0).getColor());
+            System.out.print("\nENTER CORRECT ANSWER:");
+            Scanner scanner = new Scanner(System.in);
+            String answer = scanner.nextLine();
+            System.out.println("");
+            
+            return "[CASE]-" + answer;
+            //throw new UnsupportedOperationException("Unknown state");
         }
-
-        //return "1";
+        
     }
-
-    public static Set<String> readDict(String path) {
-        Set<String> dict = new HashSet<>();
-        try ( BufferedReader br
-                = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                dict.add(line.trim());
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(HandlerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return dict;
-    }
-
 
 }
