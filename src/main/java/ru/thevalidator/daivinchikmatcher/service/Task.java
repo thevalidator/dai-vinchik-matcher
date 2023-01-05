@@ -53,8 +53,8 @@ public class Task implements Runnable {
         this.userAgent = userAgent;
         this.delay = delay;
 
-        System.out.println("---------------[INFO]---------------\n" 
-                + "\tname = " +  account.getName() + "\n\tuser agent = " + userAgent.getValue() 
+        System.out.println("---------------[INFO]---------------\n"
+                + "\tname = " + account.getName() + "\n\tuser agent = " + userAgent.getValue()
                 + "\n\tproxy status = " + (proxy != null) + "\n\tbase delay = " + delay.getBaseDelay()
                 + "\n\trandom delay = " + delay.getRandomAddedDelay()
                 + "\n------------------------------------\n");
@@ -98,11 +98,11 @@ public class Task implements Runnable {
                 ts = String.valueOf(dto.getTs());
 
                 //System.out.println("[LPR] " + response.getContent());
-
                 if (!isStartedMessageSent && dto.getUpdates().isEmpty()) {
                     System.out.println("SENDING START MESSAGE");
                     isStartedMessageSent = true;
-                    System.out.println(createMessageQuery(vk, actor, answer).executeAsRaw().getContent());
+                    createMessageQuery(vk, actor, answer).executeAsRaw().getContent();
+                    //System.out.println(createMessageQuery(vk, actor, answer).executeAsRaw().getContent());
                     //createMessageQuery(vk, actor, answer).execute();
                     continue;
                 }
@@ -117,7 +117,7 @@ public class Task implements Runnable {
                         if (!messageFlags.contains(Flag.OUTBOX.getFlagCode())) {
                             Integer minorId = (Integer) o.get(3);
                             if (minorId == DAI_VINCHIK_BOT_CHAT_ID) { //2_000_000_000  // > 
-                                System.out.println("[LPR] " + response.getContent());
+                                //System.out.println("[LPR] " + response.getContent());
                                 String message = o.get(5).toString();
                                 Keyboard actualKeyboard = ResponseParser.parseKeyboard(o.get(6));
                                 //List<Button> responseButtons = actualKeyboard.getButtons().get(0);
@@ -125,35 +125,29 @@ public class Task implements Runnable {
 
                                 answer = handler.getAnswer(message, responseButtons);
                                 if (answer == null) {
-                                    System.out.println("[LIKE] " + message);
+                                    if (message.startsWith("Есть взаимная симпатия! Добавляй в друзья -")) {
+                                        System.out.println("[LIKE] " + message);
+                                        logger.info("[LIKE] {}", message);
+                                        //continue;
+                                    } else {
+                                        logger.error("\n[LPR]={}\n[ANSWER]=NULL\n", response.getContent().trim());
+                                    }
                                     continue;
+
                                 } else if (answer.startsWith("[CASE]-")) {
                                     answer = answer.substring(7);
-                                    System.out.println("[CASE] answer=" + answer);
-                                    //log LPR
-                                    //LOG.error("[LPR]=" + response.getContent() + "\n[ANSWER]=" + answer);
-                                    logger.error("[LPR]=" + response.getContent() + "\n[ANSWER]=" + answer);
+                                    System.out.println("[LOGGED]");
+                                    logger.error("\n[LPR]={}\n[ANSWER]={}\n", response.getContent().trim(), answer);
                                 }
-                                  
-                                    int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
-                                    System.out.println("SLEEPING " + timeToWait + " secs");
-                                    TimeUnit.SECONDS.sleep(timeToWait);
-//                                    query.message(answer);
-//                                    
-//                                } else {
-//                                    System.out.println("[UNEXPECTED RESPONSE] " + response.getContent());
-//                                    throw new UnsupportedOperationException("Not supported yet.");
-////                                    System.out.print("input answer: ");
-////                                    String input = sc.nextLine();
-////                                    System.out.println("");
-////                                    query.message(input);
-//                                }
-                                //ClientResponse responseAfterSendMessage = query.executeAsRaw();
-                                //System.out.println(">>> answer: " + responseAfterSendMessage.getContent());
-                                //handle if captacha in response
+
+                                int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
+                                System.out.println("SLEEPING " + timeToWait + " secs");
+                                TimeUnit.SECONDS.sleep(timeToWait);
+
                                 ClientResponse responseAfterSendMessage = createMessageQuery(vk, actor, answer).executeAsRaw();
-                                System.out.println("[RAW]" + responseAfterSendMessage.getContent());
-                                
+                                //logger.info(responseAfterSendMessage.getContent());
+                                //System.out.println("[RAW]" + responseAfterSendMessage.getContent());
+
 //                                if () {
 //                                    //TODO: CAPTCHA HANDLE
 //                                }
@@ -165,6 +159,8 @@ public class Task implements Runnable {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            logger.error("[CHECK] - {}", e.getMessage());
+            System.out.println("STOPPED, PLEASE PRESS STOP BUTTON AND TRY AGAIN");
         }
 
         //EventHandler handler = new EventHandler(vk, actor);
@@ -183,7 +179,7 @@ public class Task implements Runnable {
                 .message(answer)
                 .peerId(DAI_VINCHIK_BOT_CHAT_ID)
                 .randomId(timestamp.intValue());
-        
+
         return query;
     }
 
