@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import ru.thevalidator.daivinchikmatcher.dto.LongPollServerResponse;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
-import ru.thevalidator.daivinchikmatcher.dto.keyboard.Keyboard;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.KeyboardRoot;
 
 /**

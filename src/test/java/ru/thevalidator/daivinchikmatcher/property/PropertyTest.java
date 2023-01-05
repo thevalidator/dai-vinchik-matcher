@@ -40,7 +40,7 @@ public class PropertyTest {
 
     @Test
     public void testReadFromJson() {
-        Property result = Property.readFromJson("src/resources/properties_test.json");
+        Property result = Property.readFromJson("src/main/resources/properties_test.json");//\src\main\resources
         assertEquals(2, result.getAccounts().size());
         assertEquals(2, result.getUserAgents().size());
         assertEquals(2, result.getProxies().size());

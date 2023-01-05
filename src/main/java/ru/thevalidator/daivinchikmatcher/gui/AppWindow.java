@@ -8,8 +8,7 @@ import java.awt.GridLayout;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,6 +18,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
+import org.apache.logging.log4j.LogManager;
 import ru.thevalidator.daivinchikmatcher.property.Account;
 import ru.thevalidator.daivinchikmatcher.property.Property;
 import ru.thevalidator.daivinchikmatcher.property.Proxy;
@@ -31,6 +31,7 @@ import ru.thevalidator.daivinchikmatcher.service.Task;
  */
 public class AppWindow extends javax.swing.JFrame {
 
+    private static final Logger logger = LogManager.getLogger(AppWindow.class);
     private static int MAX_LINES = 400;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
     private Property properties = null;
@@ -43,6 +44,7 @@ public class AppWindow extends javax.swing.JFrame {
     public AppWindow() {
         initProperties();
         initComponents();
+        //logger.error("TEST ERROR MSG");
     }
 
     /**
@@ -253,7 +255,7 @@ public class AppWindow extends javax.swing.JFrame {
             logTextArea.append(line);
             logTextArea.setCaretPosition(logTextArea.getDocument().getLength());
         } catch (Exception e) {
-            //logger.error("APPEND METHOD: {}", e.getMessage());
+            logger.error("APPEND METHOD: {}", e.getMessage());
         }
     }
 
@@ -265,7 +267,7 @@ public class AppWindow extends javax.swing.JFrame {
                 logTextArea.getDocument().remove(0, firstLine.getEndOffset());
             }
         } catch (BadLocationException e) {
-            //logger.error("CLEAN CONSOLE METHOD: {}", e.getMessage());
+            logger.error("CLEAN CONSOLE METHOD: {}", e.getMessage());
         }
     }
 
@@ -350,7 +352,7 @@ public class AppWindow extends javax.swing.JFrame {
                 this.initProperties();
                 accountComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getAccountNames()));
             } catch (Exception e) {
-                Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
+               // Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
             }
 
         }
@@ -375,7 +377,7 @@ public class AppWindow extends javax.swing.JFrame {
                 this.initProperties();
                 userAgentComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getUserAgentsNames()));
             } catch (Exception e) {
-                Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
+                //Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
             }
 
         }
@@ -400,7 +402,7 @@ public class AppWindow extends javax.swing.JFrame {
                 this.initProperties();
                 proxyComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getProxyAdresses()));
             } catch (Exception e) {
-                Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
+                //Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }//GEN-LAST:event_addProxyMenuItemActionPerformed

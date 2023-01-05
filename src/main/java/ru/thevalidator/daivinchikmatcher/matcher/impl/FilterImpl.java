@@ -13,14 +13,14 @@ public class FilterImpl implements Filter {
 
     private static final String regexp = "^(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 -]+)(?<text>((<br>)|\\n).+)?";
     private final Set<String> cities;
-    private final Set<String> words;
+    //private final Set<String> words;
     private final Set<String> dictionary;
     private final Pattern pattern;
 
     public FilterImpl() {
         this.cities = FileUtil.readDict("cities.dict");
-        this.words = FileUtil.readDict("words.dict");
-        this.dictionary = FileUtil.readDict("match.dict");
+        this.dictionary = FileUtil.readDict("words.dict");
+        //this.dictionary = FileUtil.readDict("match.dict");
         pattern = Pattern.compile(regexp);
     }
 
@@ -30,7 +30,7 @@ public class FilterImpl implements Filter {
         String description = getText(text);
         if (cities.contains(city)) {
             for (String s : dictionary) {
-                if (description.contains(s)) {
+                if (description != null && description.contains(s)) {
                     return true;
                 }
             }
