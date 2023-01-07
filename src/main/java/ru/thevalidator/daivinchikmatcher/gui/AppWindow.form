@@ -42,6 +42,40 @@
             </Menu>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="filterMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Filters"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="ageCheckBoxMenuItem">
+              <Properties>
+                <Property name="selected" type="boolean" value="true" postCode="filters.add(new AgeFilterImpl());"/>
+                <Property name="text" type="java.lang.String" value="Age filter"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ageCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cityCheckBoxMenuItem">
+              <Properties>
+                <Property name="selected" type="boolean" value="true" postCode="filters.add(new CityFilterImpl());"/>
+                <Property name="text" type="java.lang.String" value="City filter"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cityCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="textCheckBoxMenuItem">
+              <Properties>
+                <Property name="selected" type="boolean" value="true" postCode="filters.add(new TextFilterImpl());"/>
+                <Property name="text" type="java.lang.String" value="Text filter"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu2">
           <Properties>
             <Property name="text" type="java.lang.String" value="Help"/>

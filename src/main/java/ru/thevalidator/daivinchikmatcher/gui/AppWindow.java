@@ -7,6 +7,11 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.Logger;
 import javax.swing.BorderFactory;
@@ -19,6 +24,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import org.apache.logging.log4j.LogManager;
+import ru.thevalidator.daivinchikmatcher.matcher.Filter;
+import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.AgeFilterImpl;
+import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.CityFilterImpl;
+import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.TextFilterImpl;
 import ru.thevalidator.daivinchikmatcher.property.Account;
 import ru.thevalidator.daivinchikmatcher.property.Property;
 import ru.thevalidator.daivinchikmatcher.property.Proxy;
@@ -37,14 +46,15 @@ public class AppWindow extends javax.swing.JFrame {
     private Property properties = null;
     private boolean isStarted = false;
     private SwingWorker worker;
+    private Set<Filter> filters;
 
     /**
      * Creates new form AppWindow
      */
     public AppWindow() {
+        filters = new HashSet<>();
         initProperties();
         initComponents();
-        //logger.error("TEST ERROR MSG");
     }
 
     /**
@@ -73,6 +83,10 @@ public class AppWindow extends javax.swing.JFrame {
         addAccountMenuItem = new javax.swing.JMenuItem();
         addUserAgentMenuItem = new javax.swing.JMenuItem();
         addProxyMenuItem = new javax.swing.JMenuItem();
+        filterMenu = new javax.swing.JMenu();
+        ageCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        cityCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        textCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
@@ -193,6 +207,40 @@ public class AppWindow extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
+        filterMenu.setText("Filters");
+
+        ageCheckBoxMenuItem.setSelected(true);
+        filters.add(new AgeFilterImpl());
+        ageCheckBoxMenuItem.setText("Age filter");
+        ageCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ageCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        filterMenu.add(ageCheckBoxMenuItem);
+
+        cityCheckBoxMenuItem.setSelected(true);
+        filters.add(new CityFilterImpl());
+        cityCheckBoxMenuItem.setText("City filter");
+        cityCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cityCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        filterMenu.add(cityCheckBoxMenuItem);
+
+        textCheckBoxMenuItem.setSelected(true);
+        filters.add(new TextFilterImpl());
+        textCheckBoxMenuItem.setText("Text filter");
+        textCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        filterMenu.add(textCheckBoxMenuItem);
+
+        jMenuBar1.add(filterMenu);
+
         jMenu2.setText("Help");
 
         jMenuItem1.setText("About");
@@ -282,7 +330,7 @@ public class AppWindow extends javax.swing.JFrame {
                 criteria in Daivinchik bot for VK.
                 
                 
-                v1.0.0.0-alpha-03
+                v1.0.0.0-alpha-04
                 [thevalidator]
                 2023, January""");
         jTextArea.setColumns(20);
@@ -315,7 +363,7 @@ public class AppWindow extends javax.swing.JFrame {
             UserAgent userAgent = properties.getUserAgents().get(userAgentComboBox.getSelectedIndex());
             Proxy proxy = proxyToggleButton.isSelected() ? properties.getProxies().get(proxyComboBox.getSelectedIndex()) : null;
 
-            Task task = new Task(account, proxy, userAgent, properties.getDelay());
+            Task task = new Task(account, proxy, userAgent, properties.getDelay(), filters);
             worker = new SwingWorker<Void, Void>() {
                 @Override
                 protected Void doInBackground() throws Exception {
@@ -352,7 +400,7 @@ public class AppWindow extends javax.swing.JFrame {
                 this.initProperties();
                 accountComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(properties.getAccountNames()));
             } catch (Exception e) {
-               // Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
+                // Logger.getLogger(AppWindow.class.getName()).log(Level.SEVERE, null, e);
             }
 
         }
@@ -407,6 +455,63 @@ public class AppWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_addProxyMenuItemActionPerformed
 
+    private void textCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textCheckBoxMenuItemActionPerformed
+        if (textCheckBoxMenuItem.isSelected()) {
+            filters.add(new TextFilterImpl());
+        } else {
+            Iterator it = filters.iterator();
+            while (it.hasNext()) {
+                Object item = it.next();
+                if (item instanceof TextFilterImpl) {
+                    it.remove();
+                }
+            }
+//            for (Filter filter : filters) {
+//                if (filter instanceof TextFilterImpl) {
+//                    filters.remove(filter);
+//                }
+//            }
+        }
+    }//GEN-LAST:event_textCheckBoxMenuItemActionPerformed
+
+    private void ageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ageCheckBoxMenuItemActionPerformed
+        if (ageCheckBoxMenuItem.isSelected()) {
+            filters.add(new AgeFilterImpl());
+        } else {
+            Iterator it = filters.iterator();
+            while (it.hasNext()) {
+                Object item = it.next();
+                if (item instanceof AgeFilterImpl) {
+                    it.remove();
+                }
+            }
+//            for (Filter filter : filters) {
+//                if (filter instanceof AgeFilterImpl) {
+//                    filters.remove(filter);
+//                }
+//            }
+        }
+    }//GEN-LAST:event_ageCheckBoxMenuItemActionPerformed
+
+    private void cityCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cityCheckBoxMenuItemActionPerformed
+        if (cityCheckBoxMenuItem.isSelected()) {
+            filters.add(new CityFilterImpl());
+        } else {
+            Iterator it = filters.iterator();
+            while (it.hasNext()) {
+                Object item = it.next();
+                if (item instanceof CityFilterImpl) {
+                    it.remove();
+                }
+            }
+//            for (Filter filter : filters) {
+//                if (filter instanceof CityFilterImpl) {
+//                    filters.remove(filter);
+//                }
+//            }
+        }
+    }//GEN-LAST:event_cityCheckBoxMenuItemActionPerformed
+
     public void setStartButtonStatus(int status) {
         switch (status) {
             case 1:
@@ -432,6 +537,9 @@ public class AppWindow extends javax.swing.JFrame {
     private javax.swing.JMenu addMenu;
     private javax.swing.JMenuItem addProxyMenuItem;
     private javax.swing.JMenuItem addUserAgentMenuItem;
+    private javax.swing.JCheckBoxMenuItem ageCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem cityCheckBoxMenuItem;
+    private javax.swing.JMenu filterMenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
@@ -445,6 +553,7 @@ public class AppWindow extends javax.swing.JFrame {
     private javax.swing.JLabel proxyLabel;
     private javax.swing.JToggleButton proxyToggleButton;
     private javax.swing.JButton startButton;
+    private javax.swing.JCheckBoxMenuItem textCheckBoxMenuItem;
     private javax.swing.JComboBox<String> userAgentComboBox;
     // End of variables declaration//GEN-END:variables
 }
