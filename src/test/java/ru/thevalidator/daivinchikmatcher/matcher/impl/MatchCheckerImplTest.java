@@ -3,6 +3,8 @@
  */
 package ru.thevalidator.daivinchikmatcher.matcher.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,20 +16,20 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author thevalidator <the.validator@yandex.ru>
  */
-public class FilterImplTest {
+public class MatchCheckerImplTest {
 
-    private static FilterImpl instance;
+    private static MatchCheckerImpl instance;
     String text;
     String text2;
 
-    public FilterImplTest() {
+    public MatchCheckerImplTest() {
         text = "Victoria, 21, Малоярославец<br>Секретная страница";
         text2 = "Яна, 24, Калуга";
     }
 
     @BeforeAll
     public static void setUpClass() {
-        instance = new FilterImpl();
+        instance = new MatchCheckerImpl(new HashSet<>());
     }
 
     @AfterAll
@@ -46,7 +48,7 @@ public class FilterImplTest {
     public void testIsMatched() {
 //        System.out.println("isMatched");
 //        String text = "";
-//        FilterImpl instance = new FilterImpl();
+//        MatchCheckerImpl instance = new MatchCheckerImpl();
 //        boolean expResult = false;
 //        boolean result = instance.isMatched(text);
 //        assertEquals(expResult, result);
@@ -88,8 +90,9 @@ public class FilterImplTest {
         String result = instance.getText(text);
         assertEquals("<br>Секретная страница", result);
         
+        String expected = "";//null;
         String result2 = instance.getText(text2);
-        assertEquals(null, result2);
+        assertEquals(expected, result2);
     }
 
 }

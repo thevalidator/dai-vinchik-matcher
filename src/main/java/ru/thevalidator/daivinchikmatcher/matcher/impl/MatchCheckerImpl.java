@@ -6,37 +6,33 @@ package ru.thevalidator.daivinchikmatcher.matcher.impl;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import ru.thevalidator.daivinchikmatcher.dto.Profile;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
-import ru.thevalidator.daivinchikmatcher.util.FileUtil;
+import ru.thevalidator.daivinchikmatcher.matcher.MatchChecker;
 
-public class FilterImpl implements Filter {
+public class MatchCheckerImpl implements MatchChecker {
 
-    private static final String regexp = "^(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 -]+)(?<text>((<br>)|\\n).+)?";
-    private final Set<String> cities;
-    //private final Set<String> words;
-    private final Set<String> dictionary;
-    private final Pattern pattern;
+    public static final String REGEXP = "(?<name>.+,) "
+            + "(?<age>\\d{1,3},) "
+            + "(?<city>[a-zA-Zа-яА-я0-9 \\-,\\.ёЁ]+)"
+            + "(?<text>(((<br>)|\\n){1,}.+){0,})";
+    private final Pattern pattern; 
+    private Set<Filter> filters;
 
-    public FilterImpl() {
-        this.cities = FileUtil.readDict("cities.dict");
-        this.dictionary = FileUtil.readDict("words.dict");
-        //this.dictionary = FileUtil.readDict("match.dict");
-        pattern = Pattern.compile(regexp);
+    public MatchCheckerImpl(Set<Filter> filters) {
+        this.filters = filters;
+        pattern = Pattern.compile(REGEXP);
     }
-
+    
     @Override
-    public boolean isMatched(String text) {
-        String city = getCity(text).toLowerCase();
-        String description = getText(text);
-        if (cities.contains(city)) {
-            for (String s : dictionary) {
-                if (description != null && description.contains(s)) {
-                    return true;
-                }
+    public boolean matches(String text) {
+        Profile profile = new Profile(getName(text), getAge(text), getCity(text).toLowerCase(), getText(text));
+        for (Filter filter : filters) {
+            if (!filter.isFiltered(profile)) {
+                return false;
             }
         }
-
-        return false;
+        return true;
     }
 
     public String getName(String text) {
@@ -45,7 +41,7 @@ public class FilterImpl implements Filter {
             String match = matcher.group("name");
             return match.substring(0, match.length() - 1).trim();
         }
-        throw new IllegalArgumentException("Name not found");
+        throw new IllegalArgumentException("Name not found:" + text);
     }
 
     public String getAge(String text) {
@@ -54,7 +50,7 @@ public class FilterImpl implements Filter {
             String match = matcher.group("age");
             return match.substring(0, match.length() - 1).trim();
         }
-        throw new IllegalArgumentException("Age not found");
+        throw new IllegalArgumentException("Age not found: " + text);
     }
 
     public String getCity(String text) {
@@ -63,7 +59,7 @@ public class FilterImpl implements Filter {
             String match = matcher.group("city");
             return match.trim();
         }
-        throw new IllegalArgumentException("City not found");
+        throw new IllegalArgumentException("City not found: " + text);
     }
 
     public String getText(String text) {
@@ -73,6 +69,7 @@ public class FilterImpl implements Filter {
             return match;
         }
         return null;
+        //TODO: check if need return null or throw ex (now it finds empty text in case of no text) 
     }
 
 }
