@@ -47,12 +47,12 @@ public class IdentifierTest {
 
     @Test
     public void testIsProfile() {
-        String text = "\"Ирина, 22, Ворсино<br>Приветик, хочу познакомиться пообщаться а там как пойдет общение?."
+        String text = "Ирина, 22, Ворсино<br>Приветик, хочу познакомиться пообщаться а там как пойдет общение?."
                 + "<br>О себе коротко расскажу: <br>Я девочка с характером в которой ещ? дество играет.Мне нравит"
                 + "ся рисовать, смотреть фильмы и ^~^анимешку.Обажаю животных особенно кошек, так же нравится экс"
                 + "периментировать с выпечкой)).<br>По национальности ??. <br>Из музыки мне нравится Рок, Металл "
                 + "и что-нибудь хорошо звучащее(нравится тусить в хорошей компании,но не получается?). <br>Моя ме"
-                + "чта путешествовать по миру и однажды слетать в Японию.???\",";
+                + "чта путешествовать по миру и однажды слетать в Японию.???,";
         String buttonsData = "[\n"
                 + "	{\n"
                 + "		\"action\": {\n"
@@ -87,6 +87,88 @@ public class IdentifierTest {
                 + "		\"color\": \"default\"\n"
                 + "	}\n"
                 + "]";
+
+        try {
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+//            System.out.println("res = " + result);
+//            boolean isHeader = "Ирина, 22, Ворсино<br>Приветик, хочу познакомиться пообщаться а там как пойдет общение?.<br>О себе к"
+//                    .matches(".+, \\d+, .+(<br>.+)?");
+//            System.out.println("header " + isHeader);
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(ResponseParsingTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Test
+    public void testIsProfile2() {
+        String text = "Ирина, 22, Ворсино\n"
+                + "Приветик, хочу познакомиться пообщаться а там как пойдет общение?.\n"
+                + "О себе коротко расскажу: \n"
+                + "Я девочка с характером в которой ещ? дество играет.Мне нравится рисовать, смотреть фильмы и ^~^анимешку.Обажаю животных особенно кошек, так же нравится экспериментировать с выпечкой)).\n"
+                + "По национальности ??. \n"
+                + "Из музыки мне нравится Рок, Металл и что-нибудь хорошо звучащее(нравится тусить в хорошей компании,но не получается?). \n"
+                + "Моя мечта путешествовать по миру и однажды слетать в Японию.???";
+        String buttonsData = "[\n"
+                + "	{\n"
+                + "		\"action\": {\n"
+                + "			\"type\": \"text\",\n"
+                + "			\"payload\": \"1\",\n"
+                + "			\"label\": \"??\"\n"
+                + "		},\n"
+                + "		\"color\": \"positive\"\n"
+                + "	},\n"
+                + "	{\n"
+                + "		\"action\": {\n"
+                + "			\"type\": \"text\",\n"
+                + "			\"payload\": \"2\",\n"
+                + "			\"label\": \"?\"\n"
+                + "		},\n"
+                + "		\"color\": \"positive\"\n"
+                + "	},\n"
+                + "	{\n"
+                + "		\"action\": {\n"
+                + "			\"type\": \"text\",\n"
+                + "			\"payload\": \"3\",\n"
+                + "			\"label\": \"?\"\n"
+                + "		},\n"
+                + "		\"color\": \"negative\"\n"
+                + "	},\n"
+                + "	{\n"
+                + "		\"action\": {\n"
+                + "			\"type\": \"text\",\n"
+                + "			\"payload\": \"4\",\n"
+                + "			\"label\": \"?\"\n"
+                + "		},\n"
+                + "		\"color\": \"default\"\n"
+                + "	}\n"
+                + "]";
+
+        try {
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+//            System.out.println("res = " + result);
+//            boolean isHeader = "Ирина, 22, Ворсино<br>Приветик, хочу познакомиться пообщаться а там как пойдет общение?.<br>О себе к"
+//                    .matches(".+, \\d+, .+(<br>.+)?");
+//            System.out.println("header " + isHeader);
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(ResponseParsingTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Test
+    public void testIsProfile3() {
+        String text = "Время просмотра анкеты истекло, действие не выполнено.\n"
+                + "\n"
+                + "🦊~ LиSенOК ~🦊, 23, Калуга\n"
+                + "Но у меня с мартини разговор короткий. Я его не... ну, не... очень люб.. ну, пил, но не любл... но люблю... но не много пью его.. но пью";
+        String buttonsData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"💌\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
 
         try {
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
@@ -154,8 +236,9 @@ public class IdentifierTest {
     @Test
     public void testIsLocation() {
         try {
-            String text = "";
-            String buttonsData = "";
+            String text = "Время просмотра анкеты истекло, действие не выполнено.<br><br>Александр, пришли мне свое местоположение и увидишь кто находится рядом";
+            String buttonsData = "[\n"
+                    + "{\"action\":{\"label\":\"Продолжить просмотр анкет\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"default\"}\n]";
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
             boolean result = Identifier.isLocation(text, buttons);
@@ -260,45 +343,45 @@ public class IdentifierTest {
             Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Test
     public void testIsSleeping2() {
         try {
             String text = "1. Смотреть анкеты.<br>2. Моя анкета.<br>3. Я больше не хочу никого искать.<br>***<br>4. ✈️ Бот знакомств Дайвинчик в Telegram.";
-            String buttonsData = "[\n" +
-"							{\n" +
-"								\"action\": {\n" +
-"									\"type\": \"text\",\n" +
-"									\"payload\": \"1\",\n" +
-"									\"label\": \"1\"\n" +
-"								},\n" +
-"								\"color\": \"positive\"\n" +
-"							},\n" +
-"							{\n" +
-"								\"action\": {\n" +
-"									\"type\": \"text\",\n" +
-"									\"payload\": \"2\",\n" +
-"									\"label\": \"2\"\n" +
-"								},\n" +
-"								\"color\": \"default\"\n" +
-"							},\n" +
-"							{\n" +
-"								\"action\": {\n" +
-"									\"type\": \"text\",\n" +
-"									\"payload\": \"3\",\n" +
-"									\"label\": \"3\"\n" +
-"								},\n" +
-"								\"color\": \"default\"\n" +
-"							},\n" +
-"							{\n" +
-"								\"action\": {\n" +
-"									\"type\": \"text\",\n" +
-"									\"payload\": \"4\",\n" +
-"									\"label\": \"✈️ 4\"\n" +
-"								},\n" +
-"								\"color\": \"default\"\n" +
-"							}\n" +
-"						]";
+            String buttonsData = "[\n"
+                    + "							{\n"
+                    + "								\"action\": {\n"
+                    + "									\"type\": \"text\",\n"
+                    + "									\"payload\": \"1\",\n"
+                    + "									\"label\": \"1\"\n"
+                    + "								},\n"
+                    + "								\"color\": \"positive\"\n"
+                    + "							},\n"
+                    + "							{\n"
+                    + "								\"action\": {\n"
+                    + "									\"type\": \"text\",\n"
+                    + "									\"payload\": \"2\",\n"
+                    + "									\"label\": \"2\"\n"
+                    + "								},\n"
+                    + "								\"color\": \"default\"\n"
+                    + "							},\n"
+                    + "							{\n"
+                    + "								\"action\": {\n"
+                    + "									\"type\": \"text\",\n"
+                    + "									\"payload\": \"3\",\n"
+                    + "									\"label\": \"3\"\n"
+                    + "								},\n"
+                    + "								\"color\": \"default\"\n"
+                    + "							},\n"
+                    + "							{\n"
+                    + "								\"action\": {\n"
+                    + "									\"type\": \"text\",\n"
+                    + "									\"payload\": \"4\",\n"
+                    + "									\"label\": \"✈️ 4\"\n"
+                    + "								},\n"
+                    + "								\"color\": \"default\"\n"
+                    + "							}\n"
+                    + "						]";
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
             boolean result = Identifier.isSleeping(text, buttons);
@@ -312,8 +395,25 @@ public class IdentifierTest {
     @Test
     public void testIsLikedBySomeone() {
         try {
-            String text = "";
-            String buttonsData = "";
+            String text = "Ты понравился 1 девушке, показать её";
+            String buttonsData = "[\n"
+                    + "	{\n"
+                    + "		\"action\": {\n"
+                    + "			\"type\": \"text\",\n"
+                    + "			\"payload\": \"1\",\n"
+                    + "			\"label\": \"?\"\n"
+                    + "		},\n"
+                    + "		\"color\": \"positive\"\n"
+                    + "	},\n"
+                    + "	{\n"
+                    + "		\"action\": {\n"
+                    + "			\"type\": \"text\",\n"
+                    + "			\"payload\": \"2\",\n"
+                    + "			\"label\": \"?\"\n"
+                    + "		},\n"
+                    + "		\"color\": \"default\"\n"
+                    + "	}\n"
+                    + "]";
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
             boolean result = Identifier.isLikedBySomeone(text, buttons);
