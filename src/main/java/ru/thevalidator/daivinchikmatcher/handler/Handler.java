@@ -11,7 +11,9 @@ import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
  * @author thevalidator <the.validator@yandex.ru>
  */
 public interface Handler {
-    
-    String getAnswer(String messageText, List<Button> buttons);
+
+    String getStartMessage(String lastMessageText, List<Button> buttons);
+
+    String getAnswerMessage(List<List<Object>> updates);
 
 }
