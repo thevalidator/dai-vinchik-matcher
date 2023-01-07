@@ -458,6 +458,7 @@ public class AppWindow extends javax.swing.JFrame {
     private void textCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textCheckBoxMenuItemActionPerformed
         if (textCheckBoxMenuItem.isSelected()) {
             filters.add(new TextFilterImpl());
+            appendToPane("AGE filter is ON");
         } else {
             Iterator it = filters.iterator();
             while (it.hasNext()) {
@@ -466,17 +467,14 @@ public class AppWindow extends javax.swing.JFrame {
                     it.remove();
                 }
             }
-//            for (Filter filter : filters) {
-//                if (filter instanceof TextFilterImpl) {
-//                    filters.remove(filter);
-//                }
-//            }
+            appendToPane("TEXT filter is OFF");
         }
     }//GEN-LAST:event_textCheckBoxMenuItemActionPerformed
 
     private void ageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ageCheckBoxMenuItemActionPerformed
         if (ageCheckBoxMenuItem.isSelected()) {
             filters.add(new AgeFilterImpl());
+            appendToPane("AGE filter is ON");
         } else {
             Iterator it = filters.iterator();
             while (it.hasNext()) {
@@ -485,17 +483,14 @@ public class AppWindow extends javax.swing.JFrame {
                     it.remove();
                 }
             }
-//            for (Filter filter : filters) {
-//                if (filter instanceof AgeFilterImpl) {
-//                    filters.remove(filter);
-//                }
-//            }
+            appendToPane("AGE filter is OFF");
         }
     }//GEN-LAST:event_ageCheckBoxMenuItemActionPerformed
 
     private void cityCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cityCheckBoxMenuItemActionPerformed
         if (cityCheckBoxMenuItem.isSelected()) {
             filters.add(new CityFilterImpl());
+            appendToPane("CITY filter is ON");
         } else {
             Iterator it = filters.iterator();
             while (it.hasNext()) {
@@ -504,11 +499,7 @@ public class AppWindow extends javax.swing.JFrame {
                     it.remove();
                 }
             }
-//            for (Filter filter : filters) {
-//                if (filter instanceof CityFilterImpl) {
-//                    filters.remove(filter);
-//                }
-//            }
+            appendToPane("CITY filter is OFF");
         }
     }//GEN-LAST:event_cityCheckBoxMenuItemActionPerformed
 
