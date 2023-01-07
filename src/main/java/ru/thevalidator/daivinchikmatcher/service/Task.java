@@ -9,6 +9,7 @@ import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.httpclient.CustomHttpTransportClient;
 import com.vk.api.sdk.objects.messages.Conversation;
+import com.vk.api.sdk.objects.messages.KeyboardButton;
 import com.vk.api.sdk.queries.messages.MessagesSendQuery;
 import java.util.HashSet;
 import java.util.List;
@@ -17,8 +18,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
-//import org.slf4j.Logger;
 import ru.thevalidator.daivinchikmatcher.dto.LongPollServerResponse;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Keyboard;
@@ -31,6 +30,8 @@ import ru.thevalidator.daivinchikmatcher.property.Delay;
 import ru.thevalidator.daivinchikmatcher.property.Proxy;
 import ru.thevalidator.daivinchikmatcher.property.UserAgent;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
+import ru.thevalidator.daivinchikmatcher.matcher.Filter;
+import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
@@ -38,7 +39,6 @@ import ru.thevalidator.daivinchikmatcher.handler.Handler;
 public class Task implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(Task.class);
-    //private static final Logger LOG = LoggerFactory.getLogger(Task.class);
     private static final int[] flags = Flag.getAllFlagCodes();
     private static final Random random = new Random();
     private static final int DAI_VINCHIK_BOT_CHAT_ID = -91050183;
@@ -46,12 +46,14 @@ public class Task implements Runnable {
     private final Proxy proxy;
     private final UserAgent userAgent;
     private final Delay delay;
+    private Set<Filter> filters;
 
-    public Task(Account account, Proxy proxy, UserAgent userAgent, Delay delay) {
+    public Task(Account account, Proxy proxy, UserAgent userAgent, Delay delay, Set<Filter> filters) {
         this.account = account;
         this.proxy = proxy;
         this.userAgent = userAgent;
         this.delay = delay;
+        this.filters = filters;
 
         System.out.println("---------------[INFO]---------------\n"
                 + "\tname = " + account.getName() + "\n\tuser agent = " + userAgent.getValue()
@@ -66,14 +68,15 @@ public class Task implements Runnable {
         TransportClient transportClient = new CustomHttpTransportClient(userAgent.getValue(), proxy);
         VkApiClient vk = new VkApiClient(transportClient);
         UserActor actor = new UserActor(account.getId(), account.getToken());
-        Handler handler = new HandlerImpl();
+        Handler handler = new HandlerImpl(filters);
 
         String answer = null;
         boolean isStartedMessageSent = false;
+        ClientResponse response = null;
+        String startMessage = null;
 
         try {
-            //////
-
+            //////          
             var conversationsResponse = vk.messages().getConversationsById(actor, DAI_VINCHIK_BOT_CHAT_ID).execute();
             List<Conversation> conversations = conversationsResponse.getItems();
             var messages = conversations.get(0);
@@ -82,30 +85,40 @@ public class Task implements Runnable {
             String lastMessageText = lastMessage.getItems().get(0).getText();
 
             var kbrd = conversations.get(0).getCurrentKeyboard();
-            List<Button> buttons = ResponseParser.parseButtons(kbrd.getButtons().get(0).toString());
+            System.out.println(kbrd.toPrettyString());
+//            System.out.println("btns list size " + kbrd.getButtons().size());
+            int i = 1;
+            for (List<KeyboardButton> b : kbrd.getButtons()) {
+                System.out.println(i++ + " btn list: " + b.toString());
+                System.out.println("\tlist size: " + b.size());
+            }
+            List<Button> buttons = ResponseParser.parseButtons(kbrd.getButtons().get(kbrd.getButtons().size() - 1).toString());
+//            System.out.println("[info] - msg -" + lastMessageText);
+//            System.out.println("[info] - btns" );
+//            buttons.forEach((b) -> System.out.println(b.getAction().getLabel()));
 
-            answer = handler.getAnswer(lastMessageText, buttons);
-
+            startMessage = handler.getAnswer(lastMessageText, buttons);
+            
             //////
+            
+            // get long poll server data for connection
             var serverData = vk.messages().getLongPollServer(actor).execute();
             String server = serverData.getServer();
             String key = serverData.getKey();
             String ts = String.valueOf(serverData.getTs());
 
             while (true) {
-                ClientResponse response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));
-                LongPollServerResponse dto = ResponseParser.parseLonPollRespone(response.getContent());
-                ts = String.valueOf(dto.getTs());
-
-                //System.out.println("[LPR] " + response.getContent());
-                if (!isStartedMessageSent && dto.getUpdates().isEmpty()) {
+                System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>  **********  <<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                if (!isStartedMessageSent) {
                     System.out.println("SENDING START MESSAGE");
                     isStartedMessageSent = true;
-                    createMessageQuery(vk, actor, answer).executeAsRaw().getContent();
-                    //System.out.println(createMessageQuery(vk, actor, answer).executeAsRaw().getContent());
-                    //createMessageQuery(vk, actor, answer).execute();
-                    continue;
+                    createMessageQuery(vk, actor, startMessage).execute();
                 }
+                
+                response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));
+                System.out.println("[LPR RECIEVE] - " + response.getContent().trim());                                 //debug. delete in future
+                LongPollServerResponse dto = ResponseParser.parseLonPollRespone(response.getContent());
+                ts = String.valueOf(dto.getTs());
 
                 for (List<Object> o : dto.getUpdates()) {
                     Integer code = (Integer) o.get(0);
@@ -117,18 +130,20 @@ public class Task implements Runnable {
                         if (!messageFlags.contains(Flag.OUTBOX.getFlagCode())) {
                             Integer minorId = (Integer) o.get(3);
                             if (minorId == DAI_VINCHIK_BOT_CHAT_ID) { //2_000_000_000  // > 
-                                //System.out.println("[LPR] " + response.getContent());
+                                System.out.println("[INCOMING DAIVIN] - " + o.toString());                      //debug. delete in future
                                 String message = o.get(5).toString();
                                 Keyboard actualKeyboard = ResponseParser.parseKeyboard(o.get(6));
                                 //List<Button> responseButtons = actualKeyboard.getButtons().get(0);
-                                List<Button> responseButtons = actualKeyboard != null ? actualKeyboard.getButtons().get(0) : null;
+                                List<Button> responseButtons = actualKeyboard != null
+                                        ? actualKeyboard.getButtons().get(actualKeyboard.getButtons().size() - 1)
+                                        : null;
 
                                 answer = handler.getAnswer(message, responseButtons);
                                 if (answer == null) {
                                     if (message.startsWith("Есть взаимная симпатия! Добавляй в друзья -")) {
                                         System.out.println("[LIKE] " + message);
-                                        logger.info("[LIKE] {}", message);
-                                        //continue;
+                                        //logger.info("[LIKE] {}", message);
+                                        
                                     } else {
                                         logger.error("\n[LPR]={}\n[ANSWER]=NULL\n", response.getContent().trim());
                                     }
@@ -158,9 +173,16 @@ public class Task implements Runnable {
 
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            logger.error("[CHECK] - {}", e.getMessage());
-            System.out.println("STOPPED, PLEASE PRESS STOP BUTTON AND TRY AGAIN");
+            if (e instanceof InterruptedException) {
+                System.out.println("====== STOPPED ======");
+            } else {
+                System.out.println(e.getMessage());
+                if (response != null) {
+                    logger.error("[LPR] - {}", response.getContent());
+                }
+                logger.error("[CHECK] - {}", ExceptionUtil.getFormattedDescription(e));
+                System.out.println("====== STOPPED, PLEASE PRESS STOP BUTTON AND TRY AGAIN ======");
+            }
         }
 
         //EventHandler handler = new EventHandler(vk, actor);
