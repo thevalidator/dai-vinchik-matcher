@@ -4,11 +4,13 @@
 
 package ru.thevalidator.daivinchikmatcher.matcher;
 
+import ru.thevalidator.daivinchikmatcher.dto.Profile;
+
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
 public interface Filter {
     
-    boolean isMatched(String text);
+    boolean isFiltered(Profile profile);
 
 }
