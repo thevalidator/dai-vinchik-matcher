@@ -3,8 +3,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>dai-vinchik-matcher</artifactId>
-    <version>v1.0.0.0-alpha-03</version>
+    <version>v1.0.0.0-alpha-04</version>
     <packaging>jar</packaging>
+    
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
     
     <build>
         <plugins>
@@ -14,6 +21,7 @@
                 <version>2.22.0</version>
                 <configuration>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <!--<argLine>-Dconsole.encoding=UTF-8</argLine>-->
                 </configuration>
             </plugin>
             <plugin>
@@ -24,9 +32,16 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive>
+                        <!--                        <manifest>
+                            <mainClass>ru.thevalidator.daivinchikmatcher.DaiVinchikMatcher</mainClass>
+                        </manifest>-->
+                        <index>true</index>
                         <manifest>
                             <mainClass>ru.thevalidator.daivinchikmatcher.DaiVinchikMatcher</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
                     </archive>
                 </configuration>
                 <executions>
@@ -59,10 +74,15 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>com.github.umjammer</groupId>
+            <artifactId>jlayer</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <!--        <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <version>2.4.0</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -134,13 +154,13 @@
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.7.26</version>
         </dependency>-->
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>2.0.6</version>
         </dependency>-->
 
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>2.19.0</version>
