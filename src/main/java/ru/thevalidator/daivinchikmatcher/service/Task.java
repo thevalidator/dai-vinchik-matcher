@@ -9,7 +9,6 @@ import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.CustomHttpTransportClient;
-import com.vk.api.sdk.objects.messages.Conversation;
 import com.vk.api.sdk.queries.messages.MessagesSendQuery;
 import java.util.List;
 import java.util.Random;
@@ -29,6 +28,7 @@ import ru.thevalidator.daivinchikmatcher.handler.Handler;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
 import static ru.thevalidator.daivinchikmatcher.property.Data.DAI_VINCHIK_BOT_CHAT_ID;
 import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
+import ru.thevalidator.daivinchikmatcher.util.FileUtil;
 import ru.thevalidator.daivinchikmatcher.util.VKUtil;
 
 /**
@@ -37,6 +37,7 @@ import ru.thevalidator.daivinchikmatcher.util.VKUtil;
 public class Task implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(Task.class);
+    private static final String responseDelay = FileUtil.readDelay("delay.txt");
 
     private static final Random random = new Random();
     private final Account account;
@@ -163,7 +164,7 @@ public class Task implements Runnable {
     }
 
     private String getLongPollServerRequestAdress(String server, String key, String ts) {
-        return String.format("https://%s?act=a_check&key=%s&ts=%s&wait=25&mode=2&version=3", server, key, ts);
+        return String.format("https://%s?act=a_check&key=%s&ts=%s&wait=%s&mode=2&version=3", server, key, ts, responseDelay);
     }
 
 }
