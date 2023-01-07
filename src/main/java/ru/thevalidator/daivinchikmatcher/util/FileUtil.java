@@ -46,8 +46,27 @@ public class FileUtil {
         } catch (IOException ex) {
             Logger.getLogger(HandlerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return ages;
+    }
+
+    public static String readDelay(String path) {
+        try ( BufferedReader br
+                = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
+            String line = br.readLine().trim();
+            if (line != null && line.matches("\\d{1,2}")) {
+                //max 90
+                int delay = Integer.parseInt(line);
+                if (delay > 2 && delay <= 90) {
+                    return line.trim();
+                }
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(HandlerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        throw new IllegalArgumentException("Wrong data in file " + path);
     }
 
 }
