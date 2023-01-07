@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2023 thevalidator
  */
-
 package ru.thevalidator.daivinchikmatcher.util;
 
 import java.io.BufferedReader;
@@ -18,7 +17,7 @@ import ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl;
  * @author thevalidator <the.validator@yandex.ru>
  */
 public class FileUtil {
-    
+
     public static Set<String> readDict(String path) {
         Set<String> dict = new HashSet<>();
         try ( BufferedReader br
@@ -32,6 +31,23 @@ public class FileUtil {
         }
 
         return dict;
+    }
+
+    public static int[] readAgeDict(String path) {
+        int[] ages = new int[2];
+        try ( BufferedReader br
+                = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
+            String line = br.readLine().trim();
+            if (line != null && line.matches("\\d{1,3}-\\d{1,3}")) {
+                ages[0] = Integer.parseInt(line.substring(0, line.indexOf("-")));
+                ages[1] = Integer.parseInt(line.substring(line.indexOf("-") + 1));
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(HandlerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return ages;
     }
 
 }
