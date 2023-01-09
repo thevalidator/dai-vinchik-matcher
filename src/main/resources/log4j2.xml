@@ -30,7 +30,8 @@
             <!--<AppenderRef ref="Console"/>-->
         </Logger>
         <Logger name="ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl" level="info" additivity="false">
-            <AppenderRef ref="Console-short"/>
+            <!--<AppenderRef ref="Console-short"/>-->
+            <AppenderRef ref="File"/>
         </Logger>
         <Logger name="ru.thevalidator.daivinchikmatcher.gui.AppWindow" level="info" additivity="false">
             <!--<AppenderRef ref="File"/>-->
