@@ -3,17 +3,20 @@
  */
 package ru.thevalidator.daivinchikmatcher.handler.impl;
 
+import ru.thevalidator.daivinchikmatcher.exception.TooManyLikesException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.objects.messages.GetHistoryRev;
 import com.vk.api.sdk.objects.messages.KeyboardButton;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.daivinchikmatcher.util.FileUtil;
@@ -49,26 +52,27 @@ public class HandlerImpl implements Handler {
 
     @Override
     public String getStartMessage(String lastMessageText, List<Button> buttons) {
-        return generateMessage(lastMessageText, buttons);
+        return generateMessage(lastMessageText, buttons, null);
     }
 
     @Override
     public String getAnswerMessage(List<List<Object>> updates) {
         String answer = null;
-        for (List<Object> o : updates) {
-            Integer code = (Integer) o.get(0);
+        for (int i = updates.size() - 1; i >= 0; i--) {
+        //for (List<Object> o : updates) {
+            Integer code = (Integer) updates.get(i).get(0);
 
             if (code == Code.INCOMING_MESSAGE) {
-                Integer flagsSum = (Integer) o.get(2);
+                Integer flagsSum = (Integer) updates.get(i).get(2);
                 Set<Integer> messageFlags = getFlags(flagsSum);
 
-                if (!messageFlags.contains(Flag.OUTBOX.getFlagCode())) {
-                    Integer minorId = (Integer) o.get(3);
+                if (!messageFlags.contains(Flag.OUTBOX.getFlagCode()) && updates.get(i).size() == 8) {
+                    Integer minorId = (Integer) updates.get(i).get(3);
 
                     if (minorId == DAI_VINCHIK_BOT_CHAT_ID) { //2_000_000_000  // > 
                         //System.out.println("[INCOMING DAIVIN] - " + o.toString());                      //debug. delete in future
-                        String message = o.get(5).toString();
-                        Keyboard actualKeyboard = ResponseParser.parseKeyboard(o.get(6));
+                        String message = updates.get(i).get(5).toString();
+                        Keyboard actualKeyboard = ResponseParser.parseKeyboard(updates.get(i).get(6));
                         List<Button> buttons = actualKeyboard != null
                                 ? actualKeyboard.getButtons().get(actualKeyboard.getButtons().size() - 1)
                                 : null;
@@ -76,13 +80,13 @@ public class HandlerImpl implements Handler {
                         if (buttons == null) {
                             if (message.startsWith("Есть взаимная симпатия! Добавляй в друзья -")) {
                                 System.out.println("\"[MUTUAL LIKE CASE] - " +  message);
-                                //logger.info("[MUTUAL LIKE CASE] - {}", message);
+                                logger.info("[MUTUAL LIKE CASE] - {}", message);
                             } else if (message.startsWith("Нет такого варианта ответа")) {
-                                answer = getCustomAnswer();
+                                answer = getCustomAnswer(updates);
                                 break;
                             }
                         } else {
-                            answer = generateMessage(message, buttons);
+                            answer = generateMessage(message, buttons, updates);
                             break;
                         }
                     }
@@ -95,7 +99,7 @@ public class HandlerImpl implements Handler {
         return answer;
     }
 
-    private String generateMessage(String messageText, List<Button> buttons) {
+    private String generateMessage(String messageText, List<Button> buttons, List<List<Object>> updates) {
         String message = null;
         
         //checks continue words on buttons
@@ -138,6 +142,9 @@ public class HandlerImpl implements Handler {
         } else if (isLikedBySomeone(messageText, buttons)) {
             System.out.println("[LIKED BY SOMEONE CASE]");
             return "1";
+        } else if (isTooManyLikes(messageText, buttons)) {
+            throw new TooManyLikesException();
+            //return "1";
         } else if (isSleeping(messageText, buttons)) {
             System.out.println("[SLEEPING CASE]");
             return "1";
@@ -153,14 +160,15 @@ public class HandlerImpl implements Handler {
                 //startSoundAlarm();
                 ObjectMapper mapper = new ObjectMapper();
                 String output = mapper.writeValueAsString(buttons);
-                System.out.println("[LOCATION DEBUG INFO]\nmessage=" + messageText + "\nbuttons=" + output);
-                //logger.info("- [LOCATION] - message={}, buttons{}", messageText, output);
+                String output2 = mapper.writeValueAsString(updates);
+                //System.out.println("[LOCATION DEBUG INFO]\nmessage=" + messageText + "\nbuttons=" + output);
+                logger.error("- [LOCATION - DEBUG] \nmessage={}, \nbuttons={}, \nupdates={}", messageText, output, output2);
             } catch (JsonProcessingException ex) {
                 logger.error(ex.getMessage());
             }
             return "1";
         } else {
-            message = getCustomAnswer();
+            message = getCustomAnswer(updates);
         }
 
         return message;
@@ -193,15 +201,22 @@ public class HandlerImpl implements Handler {
         System.out.println("**********************");
     }
 
-    private String getCustomAnswer() {
+    private String getCustomAnswer(List<List<Object>> updates) {
         String answer = null;
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            String output = mapper.writeValueAsString(updates);
+            
             var conversation = VKUtil.getConversation(vk, actor, DAI_VINCHIK_BOT_CHAT_ID);
             
             var keyboard = conversation.getCurrentKeyboard();
             List<List<KeyboardButton>> buttonRows = keyboard.getButtons();
             printButtons(buttonRows);
-            System.out.print("ENTER CORRECT ANSWER:");
+            
+            
+            
+            //System.out.println("[UNKNOWN STATE] updates=" + output);
+            System.out.print("\nENTER CORRECT ANSWER:");
             startSoundAlarm();
             Scanner scanner = new Scanner(System.in);
             answer = scanner.nextLine();
@@ -209,11 +224,20 @@ public class HandlerImpl implements Handler {
                 System.out.print("ERROR: empty input, try again: ");
                 answer = scanner.nextLine();
             }
-            String history = vk.messages().getHistory(actor).peerId(DAI_VINCHIK_BOT_CHAT_ID).count(5).executeAsString();
-            logger.error(" - UNKNOWN STATE: \nhistory={}, \nkeyboard={}, \nanswer={}", history, keyboard.toPrettyString(), answer);
+            String history = vk.messages()
+                    .getHistory(actor)
+                    .peerId(DAI_VINCHIK_BOT_CHAT_ID)
+                    .count(5)
+                    .rev(GetHistoryRev.REVERSE_CHRONOLOGICAL)
+                    .executeAsString();
+            
+            logger.error(" - UNKNOWN STATE: \nhistory={}, \nkeyboard={}, \nanswer={}, \nupdates={}",
+                    history, keyboard.toPrettyString(), answer, output);
 
         } catch (ApiException | ClientException ex) {
             logger.error(ExceptionUtil.getFormattedDescription(ex));
+        } catch (JsonProcessingException ex) {
+            java.util.logging.Logger.getLogger(HandlerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return answer;
