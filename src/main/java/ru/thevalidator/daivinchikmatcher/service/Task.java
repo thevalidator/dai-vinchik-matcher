@@ -112,10 +112,13 @@ public class Task implements Runnable {
             String ts = String.valueOf(serverData.getTs());
             
             answer = handler.getStartMessage(lastMessageText, buttons);
-            System.out.println("SENDING START MESSAGE");
+            System.out.println("[ANSWER] - " + answer);
             sendAnswer(query.build(answer));
 
             while (true) {
+                int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
+                System.out.println("SLEEPING " + timeToWait + " secs");
+                TimeUnit.SECONDS.sleep(timeToWait);
                 response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));
                 LongPollServerResponse dto = ResponseParser.parseLonPollRespone(response.getContent());
                 ts = String.valueOf(dto.getTs());
@@ -124,9 +127,6 @@ public class Task implements Runnable {
                     continue;
                 }
                 System.out.println("[ANSWER] - " + answer);
-                int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
-                System.out.println("SLEEPING " + timeToWait + " secs");
-                TimeUnit.SECONDS.sleep(timeToWait);
                 sendAnswer(query.build(answer));
                 //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>  **********  <<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
             }
@@ -146,13 +146,6 @@ public class Task implements Runnable {
 
     }
 
-//    private void checkAnswerForNonStandartSituation(String answer) {
-//        if (answer.startsWith("[CASE]-")) {
-//            answer = answer.substring(7);
-//            System.out.println("[LOGGED]");
-//            logger.error("\n[LPR]={}\n[ANSWER]={}\n", response.getContent().trim(), answer);
-//        }
-//    }
     private void sendAnswer(MessagesSendQuery query) throws ClientException {
         ClientResponse response = query.executeAsRaw();
         //logger.info(response.getContent());
