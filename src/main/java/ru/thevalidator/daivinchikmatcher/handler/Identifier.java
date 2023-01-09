@@ -4,6 +4,7 @@
 
 package ru.thevalidator.daivinchikmatcher.handler;
 
+import com.vdurmont.emoji.EmojiParser;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,15 +17,16 @@ import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
  */
 public class Identifier {
                                        //(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.-ёЁ ]+)(?<text>(((<br>)|\\n){1,}.+){0,})
-    public static final String REGEXP = "(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-ёЁ ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
+    public static final String REGEXP = "(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-ёЁ– ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
     //"(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 \\-,\\.ёЁ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
 //"(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 -,.]+)(?<text>(((<br>)|\\n).+){0,})";
     
     public static boolean isProfile(String messageText, List<Button> buttons) {
+        String text = EmojiParser.removeAllEmojis(messageText);
         boolean result = false;
         if ((buttons != null) && (buttons.size() == 4)) {
-            if (!messageText.isEmpty() 
-                    && messageText.matches(REGEXP)
+            if (!text.isEmpty() 
+                    && text.matches(REGEXP)
                     //&& messageText.matches("^(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 -]+)(?<text>(((<br>)|\\n).+){0,})")
                     //&& messageText.matches("(.+, \\d{1,3}, .+){1}((<br>|\\n).+)?")  //TODO: fix regexp
                     && "positive".equals(buttons.get(0).getColor())
