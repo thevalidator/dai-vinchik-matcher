@@ -16,7 +16,7 @@ import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
  */
 public class Identifier {
     
-    public static final String REGEXP = "(.+(<br>|\\n){1,})?(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-ёЁ ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
+    public static final String REGEXP = "(.+(<br>|\\n){1,})?(?<name>.+,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-ёЁ ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
     //"(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 \\-,\\.ёЁ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
 //"(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 -,.]+)(?<text>(((<br>)|\\n).+){0,})";
     
@@ -77,9 +77,9 @@ public class Identifier {
         if ((buttons != null) && (buttons.size() == 1)) {
             if (!messageText.isEmpty() 
                     //&& messageText.contains("пришли мне свое местоположение и увидишь кто находится рядом")
-                    && messageText.endsWith("пришли мне свое местоположение и увидишь кто находится рядом")
+                    && messageText.endsWith("пришли мне свое местоположение и увидишь кто находится рядом")) {
                     //&& "default".equals(buttons.get(0).getColor())
-                    && "Продолжить просмотр анкет".equals(buttons.get(0).getAction().getLabel())) {
+//                    && "Продолжить просмотр анкет".equals(buttons.get(0).getAction().getLabel())) {
                 
                 //startSoundAlarm();
                 
