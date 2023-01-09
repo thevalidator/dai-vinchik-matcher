@@ -15,8 +15,8 @@ import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
  * @author thevalidator <the.validator@yandex.ru>
  */
 public class Identifier {
-    
-    public static final String REGEXP = "(.+(<br>|\\n){1,})?(?<name>.+,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-ёЁ ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
+                                       //(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.-ёЁ ]+)(?<text>(((<br>)|\\n){1,}.+){0,})
+    public static final String REGEXP = "(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-ёЁ ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
     //"(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 \\-,\\.ёЁ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
 //"(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 -,.]+)(?<text>(((<br>)|\\n).+){0,})";
     
@@ -124,6 +124,23 @@ public class Identifier {
         return result;
     }
     
+    public static boolean isTooManyLikes(String messageText, List<Button> buttons) {
+        boolean result = false;
+        if ((buttons != null) && (buttons.size() == 4)) {
+            if (!messageText.isEmpty() 
+                    && messageText.contains("Слишком много лайков за сегодня")
+                    && "positive".equals(buttons.get(0).getColor())
+                    && "default".equals(buttons.get(1).getColor())
+                    && "default".equals(buttons.get(2).getColor())
+                    && "default".equals(buttons.get(3).getColor())) {
+                
+                result = true;
+            }
+        }
+
+        return result;
+    }
+    
     public static boolean isSleeping(String messageText, List<Button> buttons) {
         boolean result = false;
         if ((buttons != null) && (buttons.size() == 4)) {
@@ -174,18 +191,18 @@ public class Identifier {
         return result;
     }
     
-    public static boolean isMutualLike(String messageText, List<Button> buttons) {
-        boolean result = false;
-        if ((buttons == null) || (buttons.isEmpty())) {
-            if (!messageText.isEmpty() 
-                    && messageText.startsWith("Есть взаимная симпатия! Добавляй в друзья")) {
-                
-                result = true;
-            }
-        }
-
-        return result;
-    }
+//    public static boolean isMutualLike(String messageText, List<Button> buttons) {
+//        boolean result = false;
+//        if ((buttons == null) || (buttons.isEmpty())) {
+//            if (!messageText.isEmpty() 
+//                    && messageText.startsWith("Есть взаимная симпатия! Добавляй в друзья")) {
+//                
+//                result = true;
+//            }
+//        }
+//
+//        return result;
+//    }
     
     public static boolean isCaptcha(String messageText, List<Button> buttons) {
         boolean result = false;
