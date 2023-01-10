@@ -17,7 +17,7 @@ import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
  */
 public class Identifier {
                                        //(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.-ёЁ ]+)(?<text>(((<br>)|\\n){1,}.+){0,})
-    public static final String REGEXP = "(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-ёЁ– ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
+    public static final String REGEXP = "(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-–ёЁ ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
     //"(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 \\-,\\.ёЁ]+)(?<text>(((<br>)|\\n){1,}.+){0,})";
 //"(?<name>.+,) (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9 -,.]+)(?<text>(((<br>)|\\n).+){0,})";
     
@@ -76,7 +76,7 @@ public class Identifier {
     
     public static boolean isLocation(String messageText, List<Button> buttons) {
         boolean result = false;
-        if ((buttons != null) && (buttons.size() == 1)) {
+        //if ((buttons != null) && (buttons.size() == 1)) {
             if (!messageText.isEmpty() 
                     //&& messageText.contains("пришли мне свое местоположение и увидишь кто находится рядом")
                     && messageText.endsWith("пришли мне свое местоположение и увидишь кто находится рядом")) {
@@ -87,7 +87,7 @@ public class Identifier {
                 
                 result = true;
             }
-        }
+        //}
 
         return result;
     }
