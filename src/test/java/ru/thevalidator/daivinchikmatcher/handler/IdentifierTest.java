@@ -7,8 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
+import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
 
 /**
  *
@@ -89,17 +88,15 @@ public class IdentifierTest {
                 + "]";
 
         try {
+            
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
             boolean result = Identifier.isProfile(text, buttons);
             assertTrue(result);
-
-//            System.out.println("res = " + result);
-//            boolean isHeader = "Ирина, 22, Ворсино<br>Приветик, хочу познакомиться пообщаться а там как пойдет общение?.<br>О себе к"
-//                    .matches(".+, \\d+, .+(<br>.+)?");
-//            System.out.println("header " + isHeader);
+            
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(ResponseParsingTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
@@ -148,17 +145,15 @@ public class IdentifierTest {
                 + "]";
 
         try {
+            
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
             boolean result = Identifier.isProfile(text, buttons);
             assertTrue(result);
-
-//            System.out.println("res = " + result);
-//            boolean isHeader = "Ирина, 22, Ворсино<br>Приветик, хочу познакомиться пообщаться а там как пойдет общение?.<br>О себе к"
-//                    .matches(".+, \\d+, .+(<br>.+)?");
-//            System.out.println("header " + isHeader);
+            
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(ResponseParsingTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
@@ -171,17 +166,268 @@ public class IdentifierTest {
         String buttonsData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"💌\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
 
         try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+            
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile4() {
+        String text = ", 15, Москва<br>нужен интересный собеседник, повышенный интеллект и инициатива в счёт.";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+            
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
             boolean result = Identifier.isProfile(text, buttons);
             assertTrue(result);
 
-//            System.out.println("res = " + result);
-//            boolean isHeader = "Ирина, 22, Ворсино<br>Приветик, хочу познакомиться пообщаться а там как пойдет общение?.<br>О себе к"
-//                    .matches(".+, \\d+, .+(<br>.+)?");
-//            System.out.println("header " + isHeader);
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(ResponseParsingTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile5() {
+        //String text = "наташа, 15, Москва\nпривет)\n15 лет, рост 175, стрелец\nучусь в политехе, сплю\nищу новые знакомства поблизости, желательно простых ребят\nобнимаю!";
+        String text = "наташа, 15, Москва<br>привет)<br>15 лет, рост 175, стрелец<br>учусь в политехе, сплю<br>ищу новые знакомства поблизости, желательно простых ребят<br>обнимаю!";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile6() {
+        String text = ", 16, Москва<br>Костя";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile7() {
+        String text = "энвисли, 16, Москва\nосновное чтобы понять пролистывать вам или нет \nиграю в игры(генш, бс, секай, дети света и тд), аниме, ну база короче, люблю чай, чай любит меня, по знаку зодиака телец, хочу чебупиццу, обычно активнее всего я вечером и ночью";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile8() {
+        String text = "Никак , 15, Москва 😚<br>Взаимные лайки💗";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile9() {
+        String text = "Н0дежда, 15, Москва\nменя задолбал ДВ с тем, чтобы в моей анкете был какой-то текст. Я не знаю, что писать, поэтому напишу какой-то фигни для \"астрологов\" и микрочеликов:\nРост: 172\nЗЗ: лев\nПолная дата рождения:\nВремя рождения: 23.30\nмне скучно";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile10() {
+        String text = "Дарья, 18, Москва – район Гольяново.<br>Учусь на повара-кондитера. Ищу новые знакомства ёпт.";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile11() {
+        String text = "Мар_ина, 21, поселок городского типа Селенгинск<br>???";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile12() {
+        String text = "Vika, 21, Калуга<br>💙💙💙";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testIsProfile13() {
+        String text = "Я Настя, мне 14, милая, весёлая) добрая,, 15, Москва)\nИщу весёлых ребят, так как одной скучно , найдитесь ?\nP.S. Особенно красивых ?";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testIsProfile14() {
+        String text = "?, 16, мск?";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testIsProfile15() {
+        String text = "Таня, 17, Москва (северо-запад)<br>привет ?<br>люблю кошек и в целом всех животных, растения, хороших, уважающих других людей, боба ти и чизкейки <br>??";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testIsProfile16() {
+        //what about symbols <>
+        String text = "Та_ня!@#$%^&*()-+=\"|/':;`~№?, 17, Москва (северо-запад)<br>привет ?<br>люблю кошек и в целом всех животных, растения, хороших, уважающих других людей, боба ти и чизкейки <br>??";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testIsProfile17() {
+        String text = "мурк, 16, москва<br>????????????";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]";
+
+        try {
+            
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(text, buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
@@ -207,98 +453,69 @@ public class IdentifierTest {
                     + "		\"color\": \"default\"\n"
                     + "	}\n"
                     + "]";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
             boolean result = Identifier.isNoTextInProfileWarn(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
 
     }
 
     @Test
-    public void testIsExpired() {
+    public void testIsTelegramInvite() {
         try {
+            
             String text = "Время просмотра анкеты истекло, действие не выполнено.<br><br>Александр, Дайвинчик всегда доступен в Telegram и VK.<br>Ты можешь в один клик перейти к оценке анкет в Telegram и так же быстро вернуться в VK.";
             String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"Анкеты в Telegram\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"Анкеты в VK\"},\"color\":\"default\"}]";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
-            boolean result = Identifier.isExpired(text, buttons);
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
+            boolean result = Identifier.isTelegramInvite(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
     @Test
     public void testIsLocation() {
         try {
+            
             String text = "Время просмотра анкеты истекло, действие не выполнено.<br><br>Александр, пришли мне свое местоположение и увидишь кто находится рядом";
-            String buttonsData = "[\n"
-                    + "{\"action\":{\"label\":\"Продолжить просмотр анкет\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"default\"}\n]";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
+            String buttonsData = "[{\"action\":{\"payload\":\"1\",\"label\":\"Продолжить\"}}]";
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
             boolean result = Identifier.isLocation(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
     @Test
     public void testIsNeedSubscription() {
         try {
+            
             String text = "Чтобы продолжить тебе необходимо подписаться на сообщество Дайвинчика ? [club91050183|@dayvinchik].";
             String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"Продолжить\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"Возможно позже\"},\"color\":\"default\"}]";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
             boolean result = Identifier.isNeedSubscription(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Test
-    public void testIsQuestion() {
-        try {
-            String text = "Александр, хочешь больше взаимок?<br>Жми ? и спроси что-либо интересное у девушки.<br>Она обязательно ответит ?";
-            String buttonsData = "[\n"
-                    + "	{\n"
-                    + "		\"action\": {\n"
-                    + "			\"type\": \"text\",\n"
-                    + "			\"payload\": \"1\",\n"
-                    + "			\"label\": \"Как это работает?\"\n"
-                    + "		},\n"
-                    + "		\"color\": \"positive\"\n"
-                    + "	},\n"
-                    + "	{\n"
-                    + "		\"action\": {\n"
-                    + "			\"type\": \"text\",\n"
-                    + "			\"payload\": \"2\",\n"
-                    + "			\"label\": \"Хороший совет\"\n"
-                    + "		},\n"
-                    + "		\"color\": \"default\"\n"
-                    + "	}\n"
-                    + "]";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
-            boolean result = Identifier.isQuestion(text, buttons);
-            assertTrue(result);
-
-        } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
     @Test
     public void testIsSleeping() {
         try {
+            
             String text = "1. Смотреть анкеты.<br>2. Моя анкета.<br>3. Я больше не хочу никого искать.<br>***<br>4. ?? Бот знакомств Дайвинчик в Telegram.";
             String buttonsData = "[\n"
                     + "	{\n"
@@ -334,19 +551,20 @@ public class IdentifierTest {
                     + "		\"color\": \"default\"\n"
                     + "	}\n"
                     + "]";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
             boolean result = Identifier.isSleeping(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
     @Test
     public void testIsSleeping2() {
         try {
+            
             String text = "1. Смотреть анкеты.<br>2. Моя анкета.<br>3. Я больше не хочу никого искать.<br>***<br>4. ✈️ Бот знакомств Дайвинчик в Telegram.";
             String buttonsData = "[\n"
                     + "							{\n"
@@ -382,19 +600,20 @@ public class IdentifierTest {
                     + "								\"color\": \"default\"\n"
                     + "							}\n"
                     + "						]";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
             boolean result = Identifier.isSleeping(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
     @Test
     public void testIsLikedBySomeone() {
         try {
+            
             String text = "Ты понравился 1 девушке, показать её";
             String buttonsData = "[\n"
                     + "	{\n"
@@ -414,19 +633,20 @@ public class IdentifierTest {
                     + "		\"color\": \"default\"\n"
                     + "	}\n"
                     + "]";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
             boolean result = Identifier.isLikedBySomeone(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
     @Test
     public void testIsNewProfilesWantToMeet() {
         try {
+            
             String text = "хотят познакомиться с тобой прямо сейчас";
             String buttonsData = "[\n"
                     + "	{\n"
@@ -446,29 +666,62 @@ public class IdentifierTest {
                     + "		\"color\": \"default\"\n"
                     + "	}\n"
                     + "]";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
             boolean result = Identifier.isNewProfilesWantToMeet(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
 
     @Test
     public void testIsMutualLike() {
         try {
+            
             String text = "Есть взаимная симпатия! Добавляй в друзья - vk.com/id450003690<br><br>Тёня, 22, Калуга<br>Общение?";
-            String buttonsData = "";
-            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
-            });
+            String buttonsData = "[\n"
+                    + "	{\n"
+                    + "		\"action\": {\n"
+                    + "			\"type\": \"text\",\n"
+                    + "			\"payload\": \"1\",\n"
+                    + "			\"label\": \"1\"\n"
+                    + "		},\n"
+                    + "		\"color\": \"positive\"\n"
+                    + "	},\n"
+                    + "	{\n"
+                    + "		\"action\": {\n"
+                    + "			\"type\": \"text\",\n"
+                    + "			\"payload\": \"2\",\n"
+                    + "			\"label\": \"2\"\n"
+                    + "		},\n"
+                    + "		\"color\": \"default\"\n"
+                    + "	},\n"
+                    + "	{\n"
+                    + "		\"action\": {\n"
+                    + "			\"type\": \"text\",\n"
+                    + "			\"payload\": \"3\",\n"
+                    + "			\"label\": \"3\"\n"
+                    + "		},\n"
+                    + "		\"color\": \"default\"\n"
+                    + "	},\n"
+                    + "	{\n"
+                    + "		\"action\": {\n"
+                    + "			\"type\": \"text\",\n"
+                    + "			\"payload\": \"4\",\n"
+                    + "			\"label\": \"?? 4\"\n"
+                    + "		},\n"
+                    + "		\"color\": \"default\"\n"
+                    + "	}\n"
+                    + "]";
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
             boolean result = Identifier.isMutualLike(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
-            Logger.getLogger(IdentifierTest.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
         }
     }
-
 }
