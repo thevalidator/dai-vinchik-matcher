@@ -31,6 +31,7 @@ import ru.thevalidator.daivinchikmatcher.matcher.impl.ProfileMatchCheckerImpl;
 import ru.thevalidator.daivinchikmatcher.matcher.MatchChecker;
 import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
 import static ru.thevalidator.daivinchikmatcher.property.Data.DAI_VINCHIK_BOT_CHAT_ID;
+import static ru.thevalidator.daivinchikmatcher.util.AlarmUtil.startSoundAlarm;
 import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
 import ru.thevalidator.daivinchikmatcher.util.VKUtil;
 
@@ -52,6 +53,9 @@ public class HandlerImpl implements Handler {
 
     @Override
     public String getStartMessage(String lastMessageText, List<Button> buttons) {
+        if (isTooManyLikes(lastMessageText, buttons)) {
+            return "1";
+        }
         return generateMessage(lastMessageText, buttons, null);
     }
 
@@ -78,10 +82,11 @@ public class HandlerImpl implements Handler {
                                 : null;
 
                         if (buttons == null) {
-                            if (message.startsWith("Есть взаимная симпатия! Добавляй в друзья -")) {
-                                System.out.println("\"[MUTUAL LIKE CASE] - " +  message);
-                                logger.info("[MUTUAL LIKE CASE] - {}", message);
-                            } else if (message.startsWith("Нет такого варианта ответа")) {
+//                            if (message.startsWith("Есть взаимная симпатия! Добавляй в друзья -")) {
+//                                System.out.println("\"[MUTUAL LIKE CASE] - " +  message);
+//                                logger.info("[MUTUAL LIKE CASE] - {}", message);
+//                            } else 
+                                if (message.startsWith("Нет такого варианта ответа")) {
                                 answer = getCustomAnswer(updates);
                                 break;
                             }
@@ -118,7 +123,17 @@ public class HandlerImpl implements Handler {
             }
         }
         
-        if (isProfile(messageText, buttons)) {
+        if (messageText.startsWith("Время просмотра анкеты истекло")) {
+            messageText = messageText.replaceFirst("Время просмотра анкеты истекло, действие не выполнено.(<br><br>|\n\n)", "");
+        }
+        
+        if (isMutualLike(messageText, buttons)) {
+            logger.info("[LIKE] - {}", messageText);
+            System.out.println("[MUTUAL LIKE] - " + messageText);
+            startSoundAlarm();
+            //TODO: correct log for likes
+            return "1";
+        } else if (isProfile(messageText, buttons)) {
             //logger.info("[PROFILE CASE] - {}", messageText);
             System.out.println("[PROFILE] - " + messageText);
             if (checker.matches(messageText)) {
@@ -130,19 +145,25 @@ public class HandlerImpl implements Handler {
                 System.out.println("[NO MATCH]");
                 return "3";
             }
-        } else if (isExpired(messageText, buttons)) {
-            System.out.println("[EXPIRED CASE]");
+        } else if (isTelegramInvite(messageText, buttons)) {
+            System.out.println("[TELEGRAM INVITE CASE]");
+            startSoundAlarm();
             return "2";
         } else if (isNeedSubscription(messageText, buttons)) {
             System.out.println("[NEED SUBSCRIPTION CASE]");
+            startSoundAlarm();
             return "2";
         } else if (isNoTextInProfileWarn(messageText, buttons)) {
             System.out.println("[NO TEXT IN PROFILE WARN CASE]");
+            startSoundAlarm();
             return "1";
         } else if (isLikedBySomeone(messageText, buttons)) {
             System.out.println("[LIKED BY SOMEONE CASE]");
+            startSoundAlarm();
             return "1";
         } else if (isTooManyLikes(messageText, buttons)) {
+            System.out.println("[TOO MANY LIKES]");
+            startSoundAlarm();
             throw new TooManyLikesException();
             //return "1";
         } else if (isSleeping(messageText, buttons)) {
@@ -150,14 +171,16 @@ public class HandlerImpl implements Handler {
             return "1";
         } else if (isNewProfilesWantToMeet(messageText, buttons)) {
             System.out.println("[NEW PROFILES CASE]");
+            startSoundAlarm();
             return "1";
-        } else if (isQuestion(messageText, buttons)) {
-            System.out.println("[QUESTION/ADVERTISEMENT CASE]");
-            return "2";
+//        } else if (isQuestion(messageText, buttons)) {
+//            System.out.println("[QUESTION/ADVERTISEMENT CASE]");
+//            startSoundAlarm();
+//            return "2";
         } else if (isLocation(messageText, buttons)) {
             try {
                 System.out.println("[LOCATION CASE]");
-                //startSoundAlarm();
+                startSoundAlarm();
                 ObjectMapper mapper = new ObjectMapper();
                 String output = mapper.writeValueAsString(buttons);
                 String output2 = mapper.writeValueAsString(updates);
