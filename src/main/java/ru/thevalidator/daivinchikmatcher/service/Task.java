@@ -104,23 +104,46 @@ public class Task implements Runnable {
 
             String lastMessageText = lastMessage.getItems().get(0).getText();
             List<Button> buttons = ResponseParser.parseButtons(kbrd.getButtons().get(kbrd.getButtons().size() - 1).toString());
+
+            answer = handler.getStartMessage(lastMessageText, buttons);
+            System.out.println("[ANSWER] - " + answer);
+            sendAnswer(query.build(answer));
             
             // get long poll server data for connection
             var serverData = vk.messages().getLongPollServer(actor).execute();
             String server = serverData.getServer();
             String key = serverData.getKey();
             String ts = String.valueOf(serverData.getTs());
-            
-            answer = handler.getStartMessage(lastMessageText, buttons);
-            System.out.println("[ANSWER] - " + answer);
-            sendAnswer(query.build(answer));
 
             while (true) {
                 int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
                 System.out.println("SLEEPING " + timeToWait + " secs");
                 TimeUnit.SECONDS.sleep(timeToWait);
                 response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));
-                LongPollServerResponse dto = ResponseParser.parseLonPollRespone(response.getContent());
+                String responseContent = response.getContent();
+                System.out.println("[LPR] " + responseContent.trim());
+                if (responseContent.startsWith("{\"failed\":")) {
+                    char errorCode = responseContent.charAt(10);
+                    //"failed":1 — история событий устарела или была частично утеряна, приложение может получать события далее, используя новое значение ts из ответа.
+                    //"failed":2 — истекло время действия ключа, нужно заново получить key методом messages.getLongPollServer.
+                    //"failed":3 — информация о пользователе утрачена, нужно запросить новые key и ts методом messages.getLongPollServer.
+                    switch (errorCode) {
+                        case '1' ->
+                            ts = responseContent.substring(17, responseContent.length() - 1);
+                        case '2' -> {
+                            serverData = vk.messages().getLongPollServer(actor).execute();
+                            key = serverData.getKey();
+                        }
+                        default -> {
+                            serverData = vk.messages().getLongPollServer(actor).execute();
+                            key = serverData.getKey();
+                            ts = String.valueOf(serverData.getTs());
+                        }
+                    }
+                    continue;
+                }
+
+                LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
                 ts = String.valueOf(dto.getTs());
                 answer = handler.getAnswerMessage(dto.getUpdates());
                 if (answer == null) {
