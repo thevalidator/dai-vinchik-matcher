@@ -26,6 +26,8 @@ import ru.thevalidator.daivinchikmatcher.property.Proxy;
 import ru.thevalidator.daivinchikmatcher.property.UserAgent;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
+import ru.thevalidator.daivinchikmatcher.notification.Informer;
+import ru.thevalidator.daivinchikmatcher.property.Data;
 import static ru.thevalidator.daivinchikmatcher.property.Data.DAI_VINCHIK_BOT_CHAT_ID;
 import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
 import ru.thevalidator.daivinchikmatcher.util.FileUtil;
@@ -34,12 +36,12 @@ import ru.thevalidator.daivinchikmatcher.util.VKUtil;
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
-public class Task implements Runnable {
+public class Task extends Informer implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(Task.class);
-    private static final String responseDelay = FileUtil.readDelay("delay.txt");
-
+    private static final String responseDelay = FileUtil.readDelay(Data.DELAY);
     private static final Random random = new Random();
+    
     private final Account account;
     private final Proxy proxy;
     private final UserAgent userAgent;
@@ -51,18 +53,23 @@ public class Task implements Runnable {
         this.proxy = proxy;
         this.userAgent = userAgent;
         this.delay = delay;
-        this.filters = filters;
-
-        System.out.println("---------------[INFO]---------------\n"
-                + "\tname = " + account.getName() + "\n\tuser agent = " + userAgent.getValue()
-                + "\n\tproxy status = " + (proxy != null) + "\n\tbase delay = " + delay.getBaseDelay()
-                + "\n\trandom delay = " + delay.getRandomAddedDelay()
-                + "\n------------------------------------\n");
+        this.filters = filters;        
     }
 
     @Override
     public void run() {
 
+        String threadName = Thread.currentThread().getName();
+        String info = "[INFO]"
+                + "\n> thread: " + threadName
+                + "\n> name = " + account.getName() 
+                + "\n> user agent = " + userAgent.getValue()
+                + "\n> proxy status = " + (proxy != null) 
+//                + "\nbase delay = " + delay.getBaseDelay()
+//                + "\nrandom delay = " + delay.getRandomAddedDelay()
+                + "";
+        informObservers(info);
+        
         class QueryBuilder {
 
             private final VkApiClient vk;
@@ -91,6 +98,7 @@ public class Task implements Runnable {
 
         QueryBuilder query = new QueryBuilder(vk, actor);
         Handler handler = new HandlerImpl(filters, vk, actor);
+        ((HandlerImpl) handler).setInformer(this);
 
         String answer = null;
         ClientResponse response = null;
@@ -105,8 +113,10 @@ public class Task implements Runnable {
             String lastMessageText = lastMessage.getItems().get(0).getText();
             List<Button> buttons = ResponseParser.parseButtons(kbrd.getButtons().get(kbrd.getButtons().size() - 1).toString());
 
+            //TODO: probably need to check msg before for mutual like if sleepeing case found
             answer = handler.getStartMessage(lastMessageText, buttons);
-            System.out.println("[ANSWER] - " + answer);
+            //System.out.println("[ANSWER] - " + answer);
+            //informObservers(threadName + "\n> [ANSWER] - " + answer);
             sendAnswer(query.build(answer));
             
             // get long poll server data for connection
@@ -117,11 +127,12 @@ public class Task implements Runnable {
 
             while (true) {
                 int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
-                System.out.println("SLEEPING " + timeToWait + " secs");
+                //System.out.println("SLEEPING " + timeToWait + " secs");
+                informObservers(threadName + "\n> SLEEPING " + timeToWait + " secs");
                 TimeUnit.SECONDS.sleep(timeToWait);
-                response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));
+                response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));                
                 String responseContent = response.getContent();
-                System.out.println("[LPR] " + responseContent.trim());
+                //System.out.println("[LPR] " + responseContent.trim());
                 if (responseContent.startsWith("{\"failed\":")) {
                     char errorCode = responseContent.charAt(10);
                     //"failed":1 — история событий устарела или была частично утеряна, приложение может получать события далее, используя новое значение ts из ответа.
@@ -149,22 +160,26 @@ public class Task implements Runnable {
                 if (answer == null) {
                     continue;
                 }
-                System.out.println("[ANSWER] - " + answer);
+                //System.out.println("[ANSWER] - " + answer);
+                //informObservers(threadName + "\n> [ANSWER] - " + answer);
                 sendAnswer(query.build(answer));
                 //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>  **********  <<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
             }
 
         } catch (Exception e) {
             if (e instanceof InterruptedException) {
-                System.out.println("====== STOPPED ======");
+                //System.out.println("====== STOPPED ======");
+                //informObservers(threadName + "\n====== STOPPED ======");
             } else {
-                System.out.println(e.getMessage());
+                //System.out.println(e.getMessage());
+                informObservers(threadName + "\n> [ERROR] " + e.getMessage());
                 if (response != null) {
                     logger.error("[LPR] - {}", response.getContent());
                 }
                 logger.error("[CHECK] - {}", ExceptionUtil.getFormattedDescription(e));
-                System.out.println("====== STOPPED, PLEASE PRESS STOP BUTTON AND TRY AGAIN ======");
+                //System.out.println("====== STOPPED, PLEASE PRESS STOP BUTTON AND TRY AGAIN ======");
             }
+            informObservers(threadName + "\n====== STOPPED ======");
         }
 
     }
@@ -172,7 +187,7 @@ public class Task implements Runnable {
     private void sendAnswer(MessagesSendQuery query) throws ClientException {
         ClientResponse response = query.executeAsRaw();
         //logger.info(response.getContent());
-        System.out.println("[RAW] - " + response.getContent() + "\n\n");
+        //System.out.println("[RAW] - " + response.getContent() + "\n\n");
 
 //                                if () {
 //                                    //TODO: CAPTCHA HANDLE
