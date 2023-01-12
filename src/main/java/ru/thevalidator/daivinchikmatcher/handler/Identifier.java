@@ -22,7 +22,7 @@ public class Identifier {
                                       //"([\\p{L}\\p{N}\\p{P}\\p{Z}$^+=|><`~№]+(<br>|\\n){1,})?(?<name>([\\p{L}\\p{N}\\p{P}\\p{Z}$^+=|><`~№]+),){1} (?<age>\\d{1,3},){1} (?<city>[\\p{L}\\p{N}\\p{P}\\p{Z}$^+=|><`~№]+){1}(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
                                       //"(.+(<br>|\\n){1,})?(?<name>(.+)?,){1} (?<age>\\d{1,3},){1} (?<city>[a-zA-Zа-яА-я0-9,\\.\\-–ёЁ()? ]+){1}(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
                                       //"(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-–ёЁ()? ]+)(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
-    public static final String REGEXP = "([\\p{L}\\p{N}\\p{P}\\p{Z}\\W$\\^+=|`~№]+(<br>|\\n){1,})?(?<name>([\\p{L}\\p{N}\\p{P}\\p{Z}\\W$\\^+=|`~№]+)?,){1} (?<age>\\d{1,3},){1} (?<city>[\\p{L}\\p{N}\\p{P}\\p{Z}\\W$\\^+=|`~№]+){1}(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
+    public static final String REGEXP = "([\\p{L}\\p{N}\\p{P}\\p{Z}\\W$\\^+=|`~№]+(<br>|\\n){1,})?(?<name>([\\p{L}\\p{N}\\p{P}\\p{Z}\\W$\\^+=|`~№]+)?,){1} (?<age>\\d{1,3},){1} (?<city>[\\p{L}\\p{N}\\p{P}\\p{Z}$\\^+=|`~№]+){1}(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
    
     public static boolean isProfile(String messageText, List<Button> buttons) {
         String text = EmojiParser.removeAllEmojis(messageText);
