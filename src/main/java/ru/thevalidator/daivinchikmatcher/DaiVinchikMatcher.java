@@ -18,7 +18,6 @@ import javax.swing.UIManager;
 //import static org.fusesource.jansi.Ansi.ansi;
 //import org.fusesource.jansi.AnsiConsole;
 import ru.thevalidator.daivinchikmatcher.gui.AppWindow;
-import ru.thevalidator.daivinchikmatcher.handler.EventHandler;
 import ru.thevalidator.daivinchikmatcher.property.Delay;
 import ru.thevalidator.daivinchikmatcher.property.Property;
 import ru.thevalidator.daivinchikmatcher.property.Proxy;
@@ -33,8 +32,6 @@ public class DaiVinchikMatcher {
     public static void main(String[] args) {
         
         startGuiApp();
-        
-        //startBot();
 
     }
 
@@ -75,28 +72,6 @@ public class DaiVinchikMatcher {
         p.setDelay(delay);
 
         Property.saveToJson(p);
-    }
-
-    public static void startBot() {
-        //AnsiConsole.systemInstall();
-        try {
-            Proxy proxy = new Proxy("129.213.95.20", 80);
-            String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5000.120 Safari/537.36 OPR/83.0.2205.142";
-            
-            TransportClient transportClient = new CustomHttpTransportClient(null, null);
-            VkApiClient vk = new VkApiClient(transportClient);
-            UserActor actor = new UserActor(Account.getUserID(), Account.getToken());
-
-            EventHandler handler = new EventHandler(vk, actor);
-            handler.startHandle();
-
-            //System.out.println(ansi().eraseScreen().fg(RED).a("Hello").fg(GREEN).a(" World").reset());
-            System.out.println("FINISH");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } finally {
-            //AnsiConsole.systemUninstall();
-        }
     }
 
     public static void startGuiApp() {
