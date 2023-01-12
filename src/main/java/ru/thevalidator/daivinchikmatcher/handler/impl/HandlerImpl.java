@@ -30,6 +30,7 @@ import ru.thevalidator.daivinchikmatcher.matcher.Filter;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.ProfileMatchCheckerImpl;
 import ru.thevalidator.daivinchikmatcher.matcher.MatchChecker;
 import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
+import ru.thevalidator.daivinchikmatcher.property.Data;
 import static ru.thevalidator.daivinchikmatcher.property.Data.DAI_VINCHIK_BOT_CHAT_ID;
 import static ru.thevalidator.daivinchikmatcher.util.AlarmUtil.startSoundAlarm;
 import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
@@ -45,7 +46,7 @@ public class HandlerImpl implements Handler {
     private UserActor actor;
 
     public HandlerImpl(Set<Filter> filters, VkApiClient vk, UserActor actor) {
-        this.continueWords = FileUtil.readDict("continue.dict");
+        this.continueWords = FileUtil.readDict(Data.CONTINUE_WORDS);
         this.checker = new ProfileMatchCheckerImpl(filters);
         this.vk = vk;
         this.actor = actor;

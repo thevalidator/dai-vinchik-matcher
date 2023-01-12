@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
+import ru.thevalidator.daivinchikmatcher.property.Data;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
@@ -16,7 +17,7 @@ import javazoom.jl.player.Player;
 public class AlarmUtil {
 
     public static void startSoundAlarm() {
-        String audioFilePath = "signal.mp3";
+        String audioFilePath = Data.ALERT_PATH;
         try {
             BufferedInputStream buffer = new BufferedInputStream(
                     new FileInputStream(new File(audioFilePath))

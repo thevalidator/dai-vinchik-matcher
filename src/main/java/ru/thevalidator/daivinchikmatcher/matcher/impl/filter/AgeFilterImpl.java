@@ -6,6 +6,7 @@ package ru.thevalidator.daivinchikmatcher.matcher.impl.filter;
 
 import ru.thevalidator.daivinchikmatcher.dto.Profile;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
+import ru.thevalidator.daivinchikmatcher.property.Data;
 import ru.thevalidator.daivinchikmatcher.util.FileUtil;
 
 
@@ -14,7 +15,7 @@ public class AgeFilterImpl implements Filter {
     private final int[] ages;
 
     public AgeFilterImpl() {
-        this.ages = FileUtil.readAgeDict("ages.dict");
+        this.ages = FileUtil.readAgeDict(Data.AGES);
     }
 
     @Override

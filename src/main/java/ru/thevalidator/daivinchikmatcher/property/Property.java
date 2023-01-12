@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Property {
 
-    public static final String PROP_FILE = "properties.json";
+    public static final String PROP_FILE = Data.PROPERTIES;
     private List<Account> accounts;
     private List<UserAgent> userAgents;
     private List<Proxy> proxies;
