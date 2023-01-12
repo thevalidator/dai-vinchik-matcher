@@ -33,3 +33,5 @@ src/resources/match_test.dict
 *.dict
 *.mp3
 *.bat
+*.exe
+*.ico
