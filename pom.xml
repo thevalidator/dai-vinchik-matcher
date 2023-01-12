@@ -3,8 +3,23 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>dai-vinchik-matcher</artifactId>
-    <version>v1.0.0.0-alpha-05</version>
+    <version>v1.0.0.0-alpha-06</version>
     <packaging>jar</packaging>
+    
+    <licenses>
+        <license>
+            <name>GNU AFFERO GENERAL PUBLIC LICENSE VERSION 3</name>
+            <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+        </license>
+    </licenses>
+    
+    <developers>
+        <developer>
+            <id>thevalidator</id>
+            <name>illusion</name>
+            <!--<email>email@email.com</email>-->
+        </developer>
+    </developers>
     
     <repositories>
         <repository>
@@ -13,7 +28,17 @@
         </repository>
     </repositories>
     
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <exec.mainClass>ru.thevalidator.dai.vinchik.matcher.DaiVinchikMatcher</exec.mainClass>
+        <log4j.version>2.19.0</log4j.version>
+        <jackson.version>2.14.1</jackson.version>
+    </properties>
+    
     <build>
+        <finalName>DaiVinchikMatcher</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -32,9 +57,6 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive>
-                        <!--                        <manifest>
-                            <mainClass>ru.thevalidator.daivinchikmatcher.DaiVinchikMatcher</mainClass>
-                        </manifest>-->
                         <index>true</index>
                         <manifest>
                             <mainClass>ru.thevalidator.daivinchikmatcher.DaiVinchikMatcher</mainClass>
@@ -54,17 +76,85 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <stayAlive>true</stayAlive>
+                            <jar>target/${project.build.finalName}-jar-with-dependencies.jar</jar>
+                            <outfile>${basedir}/${project.build.finalName}_${project.version}.exe</outfile>
+                            <icon>${project.basedir}/src/main/resources/dvm.ico</icon>
+                            <singleInstance>
+                                <mutexName>dvmMutex0</mutexName>
+                                <windowTitle>Daivinchik matcher</windowTitle>
+                            </singleInstance>
+                            <classPath>
+                                <mainClass>ru.thevalidator.daivinchikmatcher.DaiVinchikMatcher</mainClass>
+                            </classPath>
+                            <jre>
+                                <!--<path>${java.home}</path>-->
+                                <path>jre</path>
+                                <bundledJre64Bit>true</bundledJre64Bit>
+                                <bundledJreAsFallback>false</bundledJreAsFallback>
+                                <minVersion></minVersion>
+                                <maxVersion></maxVersion>
+                                <jdkPreference>jdkOnly</jdkPreference>
+                                <runtimeBits>64/32</runtimeBits>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>1.0.0.0</fileVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
+                                <fileDescription>Daivinchik matcher app</fileDescription>
+                                <copyright>Thevalidator 2023</copyright>
+                                <productVersion>1.0.0.0</productVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
+                                <productName>Daivinchik matcher</productName>
+                                <companyName></companyName>
+                                <internalName>daivinchikmatcher</internalName>
+                                <originalFilename>${project.build.finalName}_${project.version}.exe</originalFilename>
+                                <trademarks></trademarks>
+                                <language>ENGLISH</language>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>net.jsign</groupId>
+                <artifactId>jsign-maven-plugin</artifactId>
+                <version>4.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.finalName}_${project.version}.exe</file>
+                            <name>Daivinchik matcher</name>
+                            <!--<url>http://www.website.ru</url>-->
+                            <keystore>C:\Users\User\keystore.jks</keystore>
+                            <alias>trivia.solver</alias>
+                            <storepass>trvaslvr</storepass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            
         </plugins>
     </build>
     
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <exec.mainClass>ru.thevalidator.dai.vinchik.matcher.DaiVinchikMatcher</exec.mainClass>
-        <log4j.version>2.19.0</log4j.version>
-        <jackson.version>2.14.1</jackson.version>
-    </properties>
+    
     
     <dependencies>
         <dependency>
