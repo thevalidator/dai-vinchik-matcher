@@ -28,6 +28,7 @@ import ru.thevalidator.daivinchikmatcher.matcher.Filter;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.AgeFilterImpl;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.CityFilterImpl;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.TextFilterImpl;
+import ru.thevalidator.daivinchikmatcher.notification.Observer;
 import ru.thevalidator.daivinchikmatcher.property.Account;
 import ru.thevalidator.daivinchikmatcher.property.Property;
 import ru.thevalidator.daivinchikmatcher.property.Proxy;
@@ -38,7 +39,7 @@ import ru.thevalidator.daivinchikmatcher.service.Task;
  *
  * @author thevalidator <the.validator@yandex.ru>
  */
-public class AppWindow extends javax.swing.JFrame {
+public class AppWindow extends javax.swing.JFrame implements Observer {
 
     private static final Logger logger = LogManager.getLogger(AppWindow.class);
     private static int MAX_LINES = 400;
@@ -55,6 +56,11 @@ public class AppWindow extends javax.swing.JFrame {
         filters = new HashSet<>();
         initProperties();
         initComponents();
+    }
+
+    @Override
+    public void onUpdateRecieve(String message) {
+        appendToPane(message);
     }
 
     /**
@@ -172,6 +178,7 @@ public class AppWindow extends javax.swing.JFrame {
 
         logTextArea.setBackground(new java.awt.Color(51, 51, 51));
         logTextArea.setColumns(20);
+        logTextArea.setLineWrap(true);
         logTextArea.setRows(5);
         jScrollPane1.setViewportView(logTextArea);
 
@@ -298,7 +305,7 @@ public class AppWindow extends javax.swing.JFrame {
     public void appendToPane(String msg) {
         try {
             String timestamp = LocalDateTime.now().format(formatter);
-            String line = "[" + timestamp + "] - " + msg + "\n";
+            String line = "[" + timestamp + "] - " + msg + "\n\n";
             cleanConsole();
             logTextArea.append(line);
             logTextArea.setCaretPosition(logTextArea.getDocument().getLength());
@@ -330,7 +337,7 @@ public class AppWindow extends javax.swing.JFrame {
                 criteria in Daivinchik bot for VK.
                 
                 
-                v1.0.0.0-alpha-05
+                v1.0.0.0-alpha-06
                 [thevalidator]
                 2023, January""");
         jTextArea.setColumns(20);
@@ -353,7 +360,7 @@ public class AppWindow extends javax.swing.JFrame {
             setStartButtonStatus(-1);
             if (worker != null & !worker.isCancelled()) {
                 worker.cancel(true);
-                appendToPane("STOPPED");
+                //appendToPane("STOPPED");
             }
 
         } else {
@@ -364,6 +371,7 @@ public class AppWindow extends javax.swing.JFrame {
             Proxy proxy = proxyToggleButton.isSelected() ? properties.getProxies().get(proxyComboBox.getSelectedIndex()) : null;
 
             Task task = new Task(account, proxy, userAgent, properties.getDelay(), filters);
+            task.registerObserver(this);
             worker = new SwingWorker<Void, Void>() {
                 @Override
                 protected Void doInBackground() throws Exception {
