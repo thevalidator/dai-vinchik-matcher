@@ -62,42 +62,49 @@ public class HandlerImpl implements Handler {
     @Override
     public String getAnswerMessage(List<List<Object>> updates) {
         String answer = null;
-        for (int i = updates.size() - 1; i >= 0; i--) {
-        //for (List<Object> o : updates) {
-            Integer code = (Integer) updates.get(i).get(0);
+
+        Integer lastMsgIndex = null;
+        for (int i = 0; i < updates.size(); i++) {
+            List<Object> o = updates.get(i);
+            Integer code = (Integer) o.get(0);
 
             if (code == Code.INCOMING_MESSAGE) {
-                Integer flagsSum = (Integer) updates.get(i).get(2);
+                Integer flagsSum = (Integer) o.get(2);
                 Set<Integer> messageFlags = getFlags(flagsSum);
 
-                if (!messageFlags.contains(Flag.OUTBOX.getFlagCode()) && updates.get(i).size() == 8) {
-                    Integer minorId = (Integer) updates.get(i).get(3);
+                if (!messageFlags.contains(Flag.OUTBOX.getFlagCode()) && o.size() == 8) {
+                    Integer minorId = (Integer) o.get(3);
 
-                    if (minorId == DAI_VINCHIK_BOT_CHAT_ID) { //2_000_000_000  // > 
-                        //System.out.println("[INCOMING DAIVIN] - " + o.toString());                      //debug. delete in future
-                        String message = updates.get(i).get(5).toString();
-                        Keyboard actualKeyboard = ResponseParser.parseKeyboard(updates.get(i).get(6));
-                        List<Button> buttons = actualKeyboard != null
-                                ? actualKeyboard.getButtons().get(actualKeyboard.getButtons().size() - 1)
-                                : null;
-
-                        if (buttons == null) {
-//                            if (message.startsWith("Есть взаимная симпатия! Добавляй в друзья -")) {
-//                                System.out.println("\"[MUTUAL LIKE CASE] - " +  message);
-//                                logger.info("[MUTUAL LIKE CASE] - {}", message);
-//                            } else 
-                                if (message.startsWith("Нет такого варианта ответа")) {
-                                answer = getCustomAnswer(updates);
-                                break;
-                            }
-                        } else {
-                            answer = generateMessage(message, buttons, updates);
-                            break;
+                    if (minorId == DAI_VINCHIK_BOT_CHAT_ID) {
+                        lastMsgIndex = i;
+                        String message = o.get(5).toString();
+                        if (message.startsWith("Есть взаимная симпатия")) {
+                            logger.info("[LIKE - no kbrd] - {}", message);
+                            System.out.println("[MUTUAL LIKE - no kbrd] - " + message);
+                            startSoundAlarm();
                         }
                     }
 
                 }
 
+            }
+
+        }
+
+        if (lastMsgIndex != null) {
+            List<Object> lastMsgData = updates.get(lastMsgIndex);
+            String message = lastMsgData.get(5).toString();
+            Object keyboardData = lastMsgData.get(6);
+
+            Keyboard actualKeyboard = ResponseParser.parseKeyboard(keyboardData);
+            List<Button> buttons = actualKeyboard != null
+                    ? actualKeyboard.getButtons().get(actualKeyboard.getButtons().size() - 1)
+                    : null;
+
+            if (buttons == null) {
+                answer = getCustomAnswer(updates);
+            } else {
+                answer = generateMessage(message, buttons, updates);
             }
         }
 
@@ -106,7 +113,7 @@ public class HandlerImpl implements Handler {
 
     private String generateMessage(String messageText, List<Button> buttons, List<List<Object>> updates) {
         String message = null;
-        
+
         //checks continue words on buttons
         if (!buttons.isEmpty()) {
             for (Button b : buttons) {
@@ -115,6 +122,7 @@ public class HandlerImpl implements Handler {
                     for (int i = 0; i < buttonText.length(); i++) {
                         if (Character.isLetter(buttonText.charAt(i))) {
                             if (continueWords.contains(buttonText)) {
+                                System.out.println("[CONTINUE WORD FOUND]");
                                 return b.getAction().getPayload();
                             }
                         }
@@ -122,11 +130,11 @@ public class HandlerImpl implements Handler {
                 }
             }
         }
-        
+
         if (messageText.startsWith("Время просмотра анкеты истекло")) {
             messageText = messageText.replaceFirst("Время просмотра анкеты истекло, действие не выполнено.(<br><br>|\n\n)", "");
         }
-        
+
         if (isMutualLike(messageText, buttons)) {
             logger.info("[LIKE] - {}", messageText);
             System.out.println("[MUTUAL LIKE] - " + messageText);
@@ -149,13 +157,12 @@ public class HandlerImpl implements Handler {
             System.out.println("[TELEGRAM INVITE CASE]");
             startSoundAlarm();
             return "2";
-        } else if (isNeedSubscription(messageText, buttons)) {
-            System.out.println("[NEED SUBSCRIPTION CASE]");
-            startSoundAlarm();
-            return "2";
+//        } else if (isNeedSubscription(messageText, buttons)) {
+//            System.out.println("[NEED SUBSCRIPTION CASE]");
+//            startSoundAlarm();
+//            return "2";
         } else if (isNoTextInProfileWarn(messageText, buttons)) {
             System.out.println("[NO TEXT IN PROFILE WARN CASE]");
-            startSoundAlarm();
             return "1";
         } else if (isLikedBySomeone(messageText, buttons)) {
             System.out.println("[LIKED BY SOMEONE CASE]");
@@ -185,7 +192,7 @@ public class HandlerImpl implements Handler {
                 String output = mapper.writeValueAsString(buttons);
                 String output2 = mapper.writeValueAsString(updates);
                 //System.out.println("[LOCATION DEBUG INFO]\nmessage=" + messageText + "\nbuttons=" + output);
-                logger.error("- [LOCATION - DEBUG] \nmessage={}, \nbuttons={}, \nupdates={}", messageText, output, output2);
+                logger.error(" - [LOCATION - DEBUG] \nmessage={}, \nbuttons={}, \nupdates={}", messageText, output, output2);
             } catch (JsonProcessingException ex) {
                 logger.error(ex.getMessage());
             }
@@ -229,15 +236,13 @@ public class HandlerImpl implements Handler {
         try {
             ObjectMapper mapper = new ObjectMapper();
             String output = mapper.writeValueAsString(updates);
-            
+
             var conversation = VKUtil.getConversation(vk, actor, DAI_VINCHIK_BOT_CHAT_ID);
-            
+
             var keyboard = conversation.getCurrentKeyboard();
             List<List<KeyboardButton>> buttonRows = keyboard.getButtons();
             printButtons(buttonRows);
-            
-            
-            
+
             //System.out.println("[UNKNOWN STATE] updates=" + output);
             System.out.print("\nENTER CORRECT ANSWER:");
             startSoundAlarm();
@@ -253,7 +258,7 @@ public class HandlerImpl implements Handler {
                     .count(5)
                     .rev(GetHistoryRev.REVERSE_CHRONOLOGICAL)
                     .executeAsString();
-            
+
             logger.error(" - UNKNOWN STATE: \nhistory={}, \nkeyboard={}, \nanswer={}, \nupdates={}",
                     history, keyboard.toPrettyString(), answer, output);
 
