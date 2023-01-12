@@ -2,36 +2,36 @@
 <Configuration status="info">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n"/>
-            <!--<PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n" charset="UTF-8"/>-->
+            <PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n" charset="UTF-8"/>
+                <!--<PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n" charset="UTF-8"/>-->
         </Console>
         <Console name="Console-short" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] - %msg%n"/>
+            <PatternLayout pattern="[%-5level] - %msg%n" charset="UTF-8"/>
         </Console>
         <File name="File" fileName="logs/main.log">
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n"/>
+            <PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n" charset="UTF-8"/>
         </File>
         <File name="Likes" fileName="logs/likes.log">
-            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <!--<ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>-->
-            <PatternLayout pattern="- %msg%n"/>
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="[LIKE] - %msg%n" charset="UTF-8"/>
         </File>
     </Appenders>
 
     <Loggers>
         <Root level="info">
             <AppenderRef ref="Console"/>
-            <!--<AppenderRef ref="File"/>-->
         </Root>
-        <Logger name="ru.thevalidator.daivinchikmatcher.service.Task" level="info" additivity="true">
+        <Logger name="ru.thevalidator.daivinchikmatcher.service.Task" level="info" additivity="false">
             <AppenderRef ref="File"/>
-            <AppenderRef ref="Likes"/>
-            <!--<AppenderRef ref="Console"/>-->
         </Logger>
         <Logger name="ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl" level="info" additivity="false">
             <!--<AppenderRef ref="Console-short"/>-->
             <AppenderRef ref="File"/>
+            <AppenderRef ref="Likes"/>
         </Logger>
         <Logger name="ru.thevalidator.daivinchikmatcher.gui.AppWindow" level="info" additivity="false">
             <!--<AppenderRef ref="File"/>-->
