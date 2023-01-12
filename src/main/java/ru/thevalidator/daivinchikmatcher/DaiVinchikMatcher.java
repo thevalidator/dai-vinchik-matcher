@@ -4,11 +4,6 @@
 package ru.thevalidator.daivinchikmatcher;
 
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.vk.api.sdk.client.TransportClient;
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.httpclient.CustomHttpTransportClient;
-//import com.vk.api.sdk.httpclient.HttpTransportClient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
