@@ -88,22 +88,22 @@ public class Identifier {
         return result;
     }
     
-    public static boolean isNeedSubscription(String messageText, List<Button> buttons) {
-        boolean result = false;
-        if ((buttons != null) && (buttons.size() == 2)) {
-            if (!messageText.isEmpty() 
-                    && messageText.contains("Чтобы продолжить тебе необходимо подписаться на сообщество Дайвинчика")
-                    && "positive".equals(buttons.get(0).getColor())
-                    && "Продолжить".equals(buttons.get(0).getAction().getLabel())
-                    && "default".equals(buttons.get(1).getColor())
-                    && "Возможно позже".equals(buttons.get(1).getAction().getLabel())) {
-                
-                result = true;
-            }
-        }
-
-        return result;
-    }
+//    public static boolean isNeedSubscription(String messageText, List<Button> buttons) {
+//        boolean result = false;
+//        if ((buttons != null) && (buttons.size() == 2)) {
+//            if (!messageText.isEmpty() 
+//                    && messageText.contains("Чтобы продолжить тебе необходимо подписаться на сообщество Дайвинчика")
+//                    && "positive".equals(buttons.get(0).getColor())
+//                    && "Продолжить".equals(buttons.get(0).getAction().getLabel())
+//                    && "default".equals(buttons.get(1).getColor())
+//                    && "Возможно позже".equals(buttons.get(1).getAction().getLabel())) {
+//                
+//                result = true;
+//            }
+//        }
+//
+//        return result;
+//    }
     
     public static boolean isTooManyLikes(String messageText, List<Button> buttons) {
         boolean result = false;
