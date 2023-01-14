@@ -12,11 +12,20 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.GetHistoryRev;
 import com.vk.api.sdk.objects.messages.KeyboardButton;
+import java.awt.GridLayout;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.daivinchikmatcher.util.FileUtil;
@@ -29,6 +38,7 @@ import static ru.thevalidator.daivinchikmatcher.handler.Identifier.*;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.ProfileMatchCheckerImpl;
 import ru.thevalidator.daivinchikmatcher.matcher.MatchChecker;
+import ru.thevalidator.daivinchikmatcher.notification.Informer;
 import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
 import ru.thevalidator.daivinchikmatcher.property.Data;
 import static ru.thevalidator.daivinchikmatcher.property.Data.DAI_VINCHIK_BOT_CHAT_ID;
@@ -44,12 +54,17 @@ public class HandlerImpl implements Handler {
     private final MatchChecker checker;
     private VkApiClient vk;
     private UserActor actor;
+    private Informer informer;
 
     public HandlerImpl(Set<Filter> filters, VkApiClient vk, UserActor actor) {
         this.continueWords = FileUtil.readDict(Data.CONTINUE_WORDS);
         this.checker = new ProfileMatchCheckerImpl(filters);
         this.vk = vk;
         this.actor = actor;
+    }
+
+    public void setInformer(Informer informer) {
+        this.informer = informer;
     }
 
     @Override
@@ -80,9 +95,16 @@ public class HandlerImpl implements Handler {
                         lastMsgIndex = i;
                         String message = o.get(5).toString();
                         if (message.startsWith("Есть взаимная симпатия")) {
-                            logger.info("[LIKE - no kbrd] - {}", message);
-                            System.out.println("[MUTUAL LIKE - no kbrd] - " + message);
-                            startSoundAlarm();
+                            Matcher matcher = Pattern.compile("([\\p{L}\\p{N}\\p{P}\\p{Z}]+ - )(?<link>([\\p{L}\\p{N}\\p{P}\\p{Z}]+)){1}(<br>|\\n){1,}.+").matcher(message);
+                            //String res = "";
+                            if (matcher.find()) {
+                                message = matcher.group("link");
+                            }
+                            logger.info("{}", message);
+                            //System.out.println("[MUTUAL LIKE - no kbrd] - " + message);
+                            informer.informObservers(Thread.currentThread().getName()
+                                    + "\n> [LIKE] " + message);
+                            //startSoundAlarm();
                         }
                     }
 
@@ -98,12 +120,27 @@ public class HandlerImpl implements Handler {
             Object keyboardData = lastMsgData.get(6);
 
             Keyboard actualKeyboard = ResponseParser.parseKeyboard(keyboardData);
+            //System.out.println("KBRD");
+            //System.out.println(actualKeyboard == null);
             List<Button> buttons = actualKeyboard != null
                     ? actualKeyboard.getButtons().get(actualKeyboard.getButtons().size() - 1)
                     : null;
 
+            //
+            //System.out.println(">>> " + message);
+            //System.out.println(">>> " + (buttons != null ? buttons.size() : "null"));
+            //
+
             if (buttons == null) {
-                answer = getCustomAnswer(updates);
+                if (message.endsWith("пришли мне свое местоположение и увидишь кто находится рядом")
+                        || message.equals("Нашли кое-кого для тебя ;) Заканчивай с вопросом выше и увидишь кто это")) {
+                    return "1";
+                } else if (message.equals("Нашли кое-кого для тебя ;) Заканчивай с вопросом выше и увидишь кто это")) {
+                    //System.out.println("FOUND");
+                    //TODO: make normal handling messages without keyboard
+                }
+                //System.out.println(message);
+                answer = getCustomAnswer(message, updates);
             } else {
                 answer = generateMessage(message, buttons, updates);
             }
@@ -123,7 +160,9 @@ public class HandlerImpl implements Handler {
                     for (int i = 0; i < buttonText.length(); i++) {
                         if (Character.isLetter(buttonText.charAt(i))) {
                             if (continueWords.contains(buttonText)) {
-                                System.out.println("[CONTINUE WORD FOUND]");
+                                //System.out.println("[CONTINUE WORD FOUND]");
+                                informer.informObservers(Thread.currentThread().getName()
+                                        + "\n> [CONTINUE WORD FOUND]");
                                 return b.getAction().getPayload();
                             }
                         }
@@ -132,74 +171,103 @@ public class HandlerImpl implements Handler {
             }
         }
 
-        if (messageText.startsWith("Время просмотра анкеты истекло")) {
-            messageText = messageText.replaceFirst("Время просмотра анкеты истекло, действие не выполнено.(<br><br>|\n\n)", "");
-        }
+//        if (messageText.startsWith("Время просмотра анкеты истекло")) {
+//            messageText = messageText.replaceFirst("Время просмотра анкеты истекло, действие не выполнено.(<br><br>|\n\n)", "");
+//        }
 
+        //System.out.println("IDENTIFY");
         if (isMutualLike(messageText, buttons)) {
             logger.info("[LIKE] - {}", messageText);
-            System.out.println("[MUTUAL LIKE] - " + messageText);
-            startSoundAlarm();
-            //TODO: correct log for likes
+            //System.out.println("[MUTUAL LIKE] - " + messageText);
+            informer.informObservers(Thread.currentThread().getName()
+                    + "\n> [LIKE] " + messageText);
+            //startSoundAlarm();
             return "1";
         } else if (isProfile(messageText, buttons)) {
-            //logger.info("[PROFILE CASE] - {}", messageText);
-            System.out.println("[PROFILE] - " + messageText);
+            //getCustomAnswer(messageText, updates);
+            //System.out.println("[PROFILE] - " + messageText);
+            
+            String msg = Thread.currentThread().getName()
+                    + "\n> [PROFILE] - " + messageText;
             if (checker.matches(messageText)) {
-                //logger.info("[MATCH]");
-                System.out.println("[MATCH]");
-                return "1";
+                //System.out.println("[MATCH]");
+                informer.informObservers(msg
+                        + "\n> [MATCH]");
+                message = "1";
             } else {
-                //logger.info("[NO MATCH]");
-                System.out.println("[NO MATCH]");
-                return "3";
+                //System.out.println("[NO MATCH]");
+                informer.informObservers(msg
+                        + "\n> [NO MATCH]");
+                for (Button button : buttons) {
+                    if (button.getColor().equals("negative")) {
+                        message = button.getAction().getPayload();
+                    }
+                }
             }
-        } else if (isTelegramInvite(messageText, buttons)) {
-            System.out.println("[TELEGRAM INVITE CASE]");
-            startSoundAlarm();
-            return "2";
-//        } else if (isNeedSubscription(messageText, buttons)) {
-//            System.out.println("[NEED SUBSCRIPTION CASE]");
-//            startSoundAlarm();
-//            return "2";
+        } else if (isAdvertisement(messageText, buttons)) {
+            //System.out.println("[TELEGRAM INVITE CASE]");
+            informer.informObservers(Thread.currentThread().getName()
+                    + "\n> [ADVERTISEMENT CASE]");
+            //startSoundAlarm();
+            for (Button button : buttons) {
+                if (button.getColor().equals("default")) {
+                    message = button.getAction().getPayload();
+                }
+            }
+            //return "2";
         } else if (isNoTextInProfileWarn(messageText, buttons)) {
-            System.out.println("[NO TEXT IN PROFILE WARN CASE]");
+            //System.out.println("[NO TEXT IN PROFILE WARN CASE]");
+            informer.informObservers(Thread.currentThread().getName()
+                    + "\n> [NO TEXT IN PROFILE WARN CASE]");
             return "1";
         } else if (isLikedBySomeone(messageText, buttons)) {
-            System.out.println("[LIKED BY SOMEONE CASE]");
-            startSoundAlarm();
+            //System.out.println("[LIKED BY SOMEONE CASE]");
+            informer.informObservers(Thread.currentThread().getName()
+                    + "\n> [LIKED BY SOMEONE CASE]");
+            //startSoundAlarm();
             return "1";
         } else if (isTooManyLikes(messageText, buttons)) {
-            System.out.println("[TOO MANY LIKES]");
-            startSoundAlarm();
-            throw new TooManyLikesException();
-            //return "1";
+            //System.out.println("[TOO MANY LIKES]");
+            informer.informObservers(Thread.currentThread().getName()
+                    + "\n> [TOO MANY LIKES CASE] sleeping 24 hours");
+            try {
+                TimeUnit.DAYS.sleep(1);
+                //throw new TooManyLikesException();
+            } catch (InterruptedException ex) {
+                //nothing to do
+            }
         } else if (isSleeping(messageText, buttons)) {
-            System.out.println("[SLEEPING CASE]");
+            //System.out.println("[SLEEPING CASE]");
+            informer.informObservers(Thread.currentThread().getName()
+                    + "\n> [SLEEPING CASE]");
             return "1";
         } else if (isNewProfilesWantToMeet(messageText, buttons)) {
-            System.out.println("[NEW PROFILES CASE]");
-            startSoundAlarm();
+            //System.out.println("[NEW PROFILES CASE]");
+            informer.informObservers(Thread.currentThread().getName()
+                    + "\n> [NEW PROFILES CASE]");
+            //startSoundAlarm();
             return "1";
 //        } else if (isQuestion(messageText, buttons)) {
 //            System.out.println("[QUESTION/ADVERTISEMENT CASE]");
 //            startSoundAlarm();
 //            return "2";
         } else if (isLocation(messageText, buttons)) {
-            try {
-                System.out.println("[LOCATION CASE]");
-                startSoundAlarm();
-                ObjectMapper mapper = new ObjectMapper();
-                String output = mapper.writeValueAsString(buttons);
-                String output2 = mapper.writeValueAsString(updates);
+//            try {
+                //System.out.println("[LOCATION CASE]");
+                informer.informObservers(Thread.currentThread().getName()
+                        + "\n> [LOCATION CASE]");
+                //startSoundAlarm();
+//                ObjectMapper mapper = new ObjectMapper();
+//                String output = mapper.writeValueAsString(buttons);
+//                String output2 = mapper.writeValueAsString(updates);
                 //System.out.println("[LOCATION DEBUG INFO]\nmessage=" + messageText + "\nbuttons=" + output);
-                logger.error(" - [LOCATION - DEBUG] \nmessage={}, \nbuttons={}, \nupdates={}", messageText, output, output2);
-            } catch (JsonProcessingException ex) {
-                logger.error(ex.getMessage());
-            }
+//                logger.error(" - [LOCATION - DEBUG] \nmessage={}, \nbuttons={}, \nupdates={}", messageText, output, output2);
+//            } catch (JsonProcessingException ex) {
+//                logger.error(ex.getMessage());
+//            }
             return "1";
         } else {
-            message = getCustomAnswer(updates);
+            message = getCustomAnswer(messageText, updates);
         }
 
         return message;
@@ -216,60 +284,86 @@ public class HandlerImpl implements Handler {
         return result;
     }
 
-    private void printButtons(List<List<KeyboardButton>> buttonRows) {
-        System.out.println("""
-                           **********************
-                           *       BUTTONS      *
-                           **********************
-                           """);
-        for (List<KeyboardButton> row : buttonRows) {
-            System.out.println(">>> NEW LINE");
-            for (KeyboardButton button : row) {
-                System.out.println("\t'PAYLOAD' = " + button.getAction().getPayload()
-                        + " 'LABEL' = " + button.getAction().getLabel());
-            }
-        }
-        System.out.println("**********************");
-    }
+    public String getCustomAnswer(String messageText, List<List<Object>> updates) {
 
-    private String getCustomAnswer(List<List<Object>> updates) {
         String answer = null;
+
         try {
+
             ObjectMapper mapper = new ObjectMapper();
-            String output = mapper.writeValueAsString(updates);
+            String longPollResponse = mapper.writeValueAsString(updates);
 
             var conversation = VKUtil.getConversation(vk, actor, DAI_VINCHIK_BOT_CHAT_ID);
 
             var keyboard = conversation.getCurrentKeyboard();
             List<List<KeyboardButton>> buttonRows = keyboard.getButtons();
-            printButtons(buttonRows);
 
-            //System.out.println("[UNKNOWN STATE] updates=" + output);
-            System.out.print("\nENTER CORRECT ANSWER:");
-            startSoundAlarm();
-            Scanner scanner = new Scanner(System.in);
-            answer = scanner.nextLine();
-            while (answer == null || answer.isEmpty() || answer.isBlank()) {
-                System.out.print("ERROR: empty input, try again: ");
-                answer = scanner.nextLine();
+            Thread t = new Thread(() -> {
+                startSoundAlarm();
+            });
+            t.start();
+
+            while (answer == null) {
+                answer = getUserAnswer(messageText, buttonRows);
             }
+
             String history = vk.messages()
                     .getHistory(actor)
                     .peerId(DAI_VINCHIK_BOT_CHAT_ID)
-                    .count(5)
+                    .count(3)
                     .rev(GetHistoryRev.REVERSE_CHRONOLOGICAL)
                     .executeAsString();
 
             logger.error(" - UNKNOWN STATE: \nhistory={}, \nkeyboard={}, \nanswer={}, \nupdates={}",
-                    history, keyboard.toPrettyString(), answer, output);
+                    history, keyboard.toPrettyString(), answer, longPollResponse);
 
-        } catch (ApiException | ClientException ex) {
+        } catch (ApiException | ClientException | JsonProcessingException ex) {
             logger.error(ExceptionUtil.getFormattedDescription(ex));
-        } catch (JsonProcessingException ex) {
-            java.util.logging.Logger.getLogger(HandlerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return answer;
+    }
+
+    private String getUserAnswer(String messageText, List<List<KeyboardButton>> buttonRows) {
+
+        String input = null;
+
+        Set<String> payloads = new HashSet<>();
+        StringBuilder sb = new StringBuilder(messageText + "\n");
+
+        for (List<KeyboardButton> row : buttonRows) {
+            for (KeyboardButton button : row) {
+                payloads.add(button.getAction().getPayload());
+                sb.append("\nLABEL = ").append(button.getAction().getLabel())
+                        .append(" : PAYLOAD = ").append(button.getAction().getPayload());
+            }
+        }
+
+        JTextArea jTextArea = new JTextArea(sb.toString());
+        JTextField answerField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(jTextArea);
+        panel.add(new JLabel("Payload"));
+        panel.add(answerField);
+
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                panel,
+                "Give answer",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String answer = answerField.getText().trim();
+            if (payloads.contains(answer)) {
+                return answer;
+            }
+
+        }
+
+        return input;
+
     }
 
 }
