@@ -23,7 +23,8 @@ public class Identifier {
                                       //"(.+(<br>|\\n){1,})?(?<name>(.+)?,){1} (?<age>\\d{1,3},){1} (?<city>[a-zA-Zа-яА-я0-9,\\.\\-–ёЁ()? ]+){1}(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
                                       //"(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-–ёЁ()? ]+)(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
     public static final String REGEXP = "([\\p{L}\\p{N}\\p{P}\\p{Z}\\W$\\^+=|`~№]+(<br>|\\n){1,})?(?<name>([\\p{L}\\p{N}\\p{P}\\p{Z}\\W$\\^+=|`~№]+)?,){1} (?<age>\\d{1,3},){1} (?<city>[\\p{L}\\p{N}\\p{P}\\p{Z}$\\^+=|`~№]+){1}(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
-   
+    public static final String BUTTON_REGEXP = "[\\p{L}\\p{N}\\p{P}\\p{Z}]{2,}";
+    
     public static boolean isProfile(String messageText, List<Button> buttons) {
         String text = EmojiParser.removeAllEmojis(messageText);
         boolean result = false;
@@ -31,8 +32,8 @@ public class Identifier {
             if (!text.isEmpty() 
                     && text.matches(REGEXP)
                     && "positive".equals(buttons.get(0).getColor())
-                    && "positive".equals(buttons.get(1).getColor())
-                    && "negative".equals(buttons.get(2).getColor())
+                    //&& "positive".equals(buttons.get(1).getColor())
+                    //&& "negative".equals(buttons.get(2).getColor())
                     && "default".equals(buttons.get(3).getColor())) {
                 
                 result = true;
@@ -58,15 +59,17 @@ public class Identifier {
         return result;
     }
     
-    public static boolean isTelegramInvite(String messageText, List<Button> buttons) {
+    public static boolean isAdvertisement(String messageText, List<Button> buttons) {
         boolean result = false;
         if ((buttons != null) && (buttons.size() == 2)) {
             if (!messageText.isEmpty() 
-                    && messageText.endsWith("Ты можешь в один клик перейти к оценке анкет в Telegram и так же быстро вернуться в VK.")
+                    //&& messageText.endsWith("Ты можешь в один клик перейти к оценке анкет в Telegram и так же быстро вернуться в VK.")
+                    && buttons.get(0).getAction().getLabel().matches("[\\p{L}\\p{N}\\p{P}\\p{Z}]+")
                     && "positive".equals(buttons.get(0).getColor())
-                    && "Анкеты в Telegram".equals(buttons.get(0).getAction().getLabel())
-                    && "default".equals(buttons.get(1).getColor())
-                    && "Анкеты в VK".equals(buttons.get(1).getAction().getLabel())) {
+                    //&& "Анкеты в Telegram".equals(buttons.get(0).getAction().getLabel())
+                    && buttons.get(1).getAction().getLabel().matches("[\\p{L}\\p{N}\\p{P}\\p{Z}]+")
+                    && "default".equals(buttons.get(1).getColor())) {
+                    //&& "Анкеты в VK".equals(buttons.get(1).getAction().getLabel())) {
                 
                 result = true;
             }
@@ -80,30 +83,13 @@ public class Identifier {
         //if ((buttons != null) && (buttons.size() == 1)) {
             if (!messageText.isEmpty() 
                     && messageText.endsWith("пришли мне свое местоположение и увидишь кто находится рядом")) {
-                
+                //System.out.println("LOCATION");
                 result = true;
             }
         //}
 
         return result;
     }
-    
-//    public static boolean isNeedSubscription(String messageText, List<Button> buttons) {
-//        boolean result = false;
-//        if ((buttons != null) && (buttons.size() == 2)) {
-//            if (!messageText.isEmpty() 
-//                    && messageText.contains("Чтобы продолжить тебе необходимо подписаться на сообщество Дайвинчика")
-//                    && "positive".equals(buttons.get(0).getColor())
-//                    && "Продолжить".equals(buttons.get(0).getAction().getLabel())
-//                    && "default".equals(buttons.get(1).getColor())
-//                    && "Возможно позже".equals(buttons.get(1).getAction().getLabel())) {
-//                
-//                result = true;
-//            }
-//        }
-//
-//        return result;
-//    }
     
     public static boolean isTooManyLikes(String messageText, List<Button> buttons) {
         boolean result = false;
