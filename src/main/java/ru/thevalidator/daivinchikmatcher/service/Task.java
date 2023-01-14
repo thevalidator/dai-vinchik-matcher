@@ -140,7 +140,7 @@ public class Task extends Informer implements Runnable {
                     //"failed":3 — информация о пользователе утрачена, нужно запросить новые key и ts методом messages.getLongPollServer.
                     switch (errorCode) {
                         case '1' ->
-                            ts = responseContent.substring(17, responseContent.length() - 1);
+                            ts = responseContent.substring(17, responseContent.length() - 2);
                         case '2' -> {
                             serverData = vk.messages().getLongPollServer(actor).execute();
                             key = serverData.getKey();
