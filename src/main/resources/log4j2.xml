@@ -17,7 +17,7 @@
                 <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
-            <PatternLayout pattern="[LIKE] - %msg%n" charset="UTF-8"/>
+            <PatternLayout pattern="[%d{dd.MM.yyyy HH:mm:ss}] - %msg%n" charset="UTF-8"/>
         </File>
     </Appenders>
 
