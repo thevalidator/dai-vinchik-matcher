@@ -303,9 +303,14 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
     private void proxyToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proxyToggleButtonActionPerformed
         if (proxyToggleButton.isSelected()) {
-            proxyComboBox.setEnabled(false);
-            proxyToggleButton.setText("ON");
-            appendToPane("PROXY IS ON");
+            if (proxyComboBox.getItemCount() == 0) {
+                proxyToggleButton.setSelected(false);
+                appendToPane("ERROR: PROXY LIST IS EMPTY! Add proxy first");
+            } else {
+                proxyComboBox.setEnabled(false);
+                proxyToggleButton.setText("ON");
+                appendToPane("PROXY IS ON");
+            }
         } else {
             proxyComboBox.setEnabled(true);
             proxyToggleButton.setText("OFF");
@@ -349,7 +354,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 criteria in Daivinchik bot for VK.
                 
                 
-                v1.0.0.0-alpha-07
+                v1.0.0.0-alpha-08
                 [thevalidator]
                 2023, January""");
         jTextArea.setColumns(20);
@@ -376,36 +381,39 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             }
 
         } else {
-            isStarted = true;
-            setStartButtonStatus(1);
-            Account account = properties.getAccounts().get(accountComboBox.getSelectedIndex());
-            UserAgent userAgent = properties.getUserAgents().get(userAgentComboBox.getSelectedIndex());
-            Proxy proxy = proxyToggleButton.isSelected() ? properties.getProxies().get(proxyComboBox.getSelectedIndex()) : null;
+            if (accountComboBox.getItemCount() == 0) {
+                appendToPane("ERROR: ACCOUNTS LIST IS EMPTY! Add account");
+            } else if (userAgentComboBox.getItemCount() == 0) {
+                appendToPane("ERROR: USER AGENT LIST IS EMPTY! Add user agent");
+            } else {
+                isStarted = true;
+                setStartButtonStatus(1);
+                Account account = properties.getAccounts().get(accountComboBox.getSelectedIndex());
+                UserAgent userAgent = properties.getUserAgents().get(userAgentComboBox.getSelectedIndex());
+                Proxy proxy = proxyToggleButton.isSelected() ? properties.getProxies().get(proxyComboBox.getSelectedIndex()) : null;
 
-            Task task = new Task(account, proxy, userAgent, properties.getDelay(), filters);
-            task.registerObserver(this);
-            worker = new SwingWorker<Void, Void>() {
-                @Override
-                protected Void doInBackground() throws Exception {
-                    task.run();
+                Task task = new Task(account, proxy, userAgent, properties.getDelay(), filters);
+                task.registerObserver(this);
+                worker = new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        task.run();
 
-                    return null;
-                }
-            };
-            worker.execute();
+                        return null;
+                    }
+                };
+                worker.execute();
+            }
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void addAccountMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAccountMenuItemActionPerformed
         JTextField nameField = new JTextField();
-        JTextField idField = new JTextField();
         JTextField tokenField = new JTextField();
 
         JPanel panel = new JPanel(new GridLayout(0, 1));
         panel.add(new JLabel("Name:"));
         panel.add(nameField);
-        panel.add(new JLabel("User ID:"));
-        panel.add(idField);
         panel.add(new JLabel("Token:"));
         panel.add(tokenField);
 
@@ -414,7 +422,6 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         if (result == JOptionPane.OK_OPTION) {
             try {
                 properties.getAccounts().add(new Account(nameField.getText().trim(),
-                        Integer.valueOf(idField.getText().trim()),
                         tokenField.getText().trim()));
                 Property.saveToJson(properties);
                 this.initProperties();
