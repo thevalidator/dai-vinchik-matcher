@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,12 @@ public class Property {
     private List<UserAgent> userAgents;
     private List<Proxy> proxies;
     private Delay delay;
+
+    public Property() {
+        accounts = new ArrayList<>();
+        userAgents = new ArrayList<>();
+        proxies = new ArrayList<>();
+    }
 
     public List<Account> getAccounts() {
         return accounts;
