@@ -45,7 +45,7 @@ public class Informer {
             observersCopy = new HashSet<>(observers);
         }
         for (Observer observer : observersCopy) {
-            observer.onUpdateRecieve(message);
+            observer.onUpdateRecieve(message + "\n> thread: " + Thread.currentThread().getName());
         }
     }
     
