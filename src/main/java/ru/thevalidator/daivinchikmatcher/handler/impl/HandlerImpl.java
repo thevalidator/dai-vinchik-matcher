@@ -3,11 +3,10 @@
  */
 package ru.thevalidator.daivinchikmatcher.handler.impl;
 
-import ru.thevalidator.daivinchikmatcher.exception.TooManyLikesException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.UserActor;
+import com.vk.api.sdk.client.actors.UserActorWithoutId;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.GetHistoryRev;
@@ -15,10 +14,8 @@ import com.vk.api.sdk.objects.messages.KeyboardButton;
 import java.awt.GridLayout;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JLabel;
@@ -53,14 +50,16 @@ public class HandlerImpl implements Handler {
     private final Set<String> continueWords;
     private final MatchChecker checker;
     private VkApiClient vk;
-    private UserActor actor;
+    private UserActorWithoutId actor;
     private Informer informer;
+    private int likes;
 
-    public HandlerImpl(Set<Filter> filters, VkApiClient vk, UserActor actor) {
+    public HandlerImpl(Set<Filter> filters, VkApiClient vk, UserActorWithoutId actor) {
         this.continueWords = FileUtil.readDict(Data.CONTINUE_WORDS);
         this.checker = new ProfileMatchCheckerImpl(filters);
         this.vk = vk;
         this.actor = actor;
+        likes = 0;
     }
 
     public void setInformer(Informer informer) {
@@ -102,7 +101,7 @@ public class HandlerImpl implements Handler {
                             }
                             logger.info("{}", message);
                             //System.out.println("[MUTUAL LIKE - no kbrd] - " + message);
-                            informer.informObservers(Thread.currentThread().getName()
+                            informer.informObservers(actor.getUserName()
                                     + "\n> [LIKE] " + message);
                             //startSoundAlarm();
                         }
@@ -130,7 +129,6 @@ public class HandlerImpl implements Handler {
             //System.out.println(">>> " + message);
             //System.out.println(">>> " + (buttons != null ? buttons.size() : "null"));
             //
-
             if (buttons == null) {
                 if (message.endsWith("пришли мне свое местоположение и увидишь кто находится рядом")
                         || message.equals("Нашли кое-кого для тебя ;) Заканчивай с вопросом выше и увидишь кто это")) {
@@ -160,9 +158,7 @@ public class HandlerImpl implements Handler {
                     for (int i = 0; i < buttonText.length(); i++) {
                         if (Character.isLetter(buttonText.charAt(i))) {
                             if (continueWords.contains(buttonText)) {
-                                //System.out.println("[CONTINUE WORD FOUND]");
-                                informer.informObservers(Thread.currentThread().getName()
-                                        + "\n> [CONTINUE WORD FOUND]");
+                                informer.informObservers(actor.getUserName() + "\n> [CONTINUE WORD FOUND]");
                                 return b.getAction().getPayload();
                             }
                         }
@@ -178,26 +174,18 @@ public class HandlerImpl implements Handler {
         //System.out.println("IDENTIFY");
         if (isMutualLike(messageText, buttons)) {
             logger.info("[LIKE] - {}", messageText);
-            //System.out.println("[MUTUAL LIKE] - " + messageText);
-            informer.informObservers(Thread.currentThread().getName()
-                    + "\n> [LIKE] " + messageText);
-            //startSoundAlarm();
+            informer.informObservers(actor.getUserName() + "\n> [LIKE] " + messageText);
             return "1";
         } else if (isProfile(messageText, buttons)) {
-            //getCustomAnswer(messageText, updates);
-            //System.out.println("[PROFILE] - " + messageText);
-            
-            String msg = Thread.currentThread().getName()
-                    + "\n> [PROFILE] - " + messageText;
-            if (checker.matches(messageText)) {
-                //System.out.println("[MATCH]");
-                informer.informObservers(msg
-                        + "\n> [MATCH]");
+            String msg = actor.getUserName() + "\n> [PROFILE] - " + messageText;
+            if (likes > 0 || checker.matches(messageText)) {
+                informer.informObservers(msg + "\n> [MATCH]");
+                if (likes > 0) {
+                    likes--;
+                }
                 message = "1";
             } else {
-                //System.out.println("[NO MATCH]");
-                informer.informObservers(msg
-                        + "\n> [NO MATCH]");
+                informer.informObservers(msg + "\n> [NO MATCH]");
                 for (Button button : buttons) {
                     if (button.getColor().equals("negative")) {
                         message = button.getAction().getPayload();
@@ -205,66 +193,36 @@ public class HandlerImpl implements Handler {
                 }
             }
         } else if (isAdvertisement(messageText, buttons)) {
-            //System.out.println("[TELEGRAM INVITE CASE]");
-            informer.informObservers(Thread.currentThread().getName()
-                    + "\n> [ADVERTISEMENT CASE]");
-            //startSoundAlarm();
+            informer.informObservers(actor.getUserName() + "\n> [ADVERTISEMENT CASE]");
             for (Button button : buttons) {
                 if (button.getColor().equals("default")) {
                     message = button.getAction().getPayload();
                 }
             }
-            //return "2";
         } else if (isNoTextInProfileWarn(messageText, buttons)) {
-            //System.out.println("[NO TEXT IN PROFILE WARN CASE]");
-            informer.informObservers(Thread.currentThread().getName()
-                    + "\n> [NO TEXT IN PROFILE WARN CASE]");
+            informer.informObservers(actor.getUserName() + "\n> [NO TEXT IN PROFILE WARN CASE]");
             return "1";
         } else if (isLikedBySomeone(messageText, buttons)) {
-            //System.out.println("[LIKED BY SOMEONE CASE]");
-            informer.informObservers(Thread.currentThread().getName()
-                    + "\n> [LIKED BY SOMEONE CASE]");
-            //startSoundAlarm();
+            informer.informObservers(actor.getUserName() + "\n> [LIKED BY SOMEONE CASE]");
+            updateLikes();
             return "1";
         } else if (isTooManyLikes(messageText, buttons)) {
-            //System.out.println("[TOO MANY LIKES]");
-            informer.informObservers(Thread.currentThread().getName()
-                    + "\n> [TOO MANY LIKES CASE] sleeping 24 hours");
+            int hoursToSleep = 12;
+            informer.informObservers(actor.getUserName() + "\n> [TOO MANY LIKES CASE] sleeping " + hoursToSleep + " hours");
             try {
-                TimeUnit.DAYS.sleep(1);
+                TimeUnit.HOURS.sleep(hoursToSleep);
                 //throw new TooManyLikesException();
             } catch (InterruptedException ex) {
                 //nothing to do
             }
         } else if (isSleeping(messageText, buttons)) {
-            //System.out.println("[SLEEPING CASE]");
-            informer.informObservers(Thread.currentThread().getName()
-                    + "\n> [SLEEPING CASE]");
+            informer.informObservers(actor.getUserName() + "\n> [SLEEPING CASE]");
             return "1";
         } else if (isNewProfilesWantToMeet(messageText, buttons)) {
-            //System.out.println("[NEW PROFILES CASE]");
-            informer.informObservers(Thread.currentThread().getName()
-                    + "\n> [NEW PROFILES CASE]");
-            //startSoundAlarm();
+            informer.informObservers(actor.getUserName() + "\n> [NEW PROFILES CASE]");
             return "1";
-//        } else if (isQuestion(messageText, buttons)) {
-//            System.out.println("[QUESTION/ADVERTISEMENT CASE]");
-//            startSoundAlarm();
-//            return "2";
         } else if (isLocation(messageText, buttons)) {
-//            try {
-                //System.out.println("[LOCATION CASE]");
-                informer.informObservers(Thread.currentThread().getName()
-                        + "\n> [LOCATION CASE]");
-                //startSoundAlarm();
-//                ObjectMapper mapper = new ObjectMapper();
-//                String output = mapper.writeValueAsString(buttons);
-//                String output2 = mapper.writeValueAsString(updates);
-                //System.out.println("[LOCATION DEBUG INFO]\nmessage=" + messageText + "\nbuttons=" + output);
-//                logger.error(" - [LOCATION - DEBUG] \nmessage={}, \nbuttons={}, \nupdates={}", messageText, output, output2);
-//            } catch (JsonProcessingException ex) {
-//                logger.error(ex.getMessage());
-//            }
+            informer.informObservers(actor.getUserName() + "\n> [LOCATION CASE]");
             return "1";
         } else {
             message = getCustomAnswer(messageText, updates);
@@ -364,6 +322,10 @@ public class HandlerImpl implements Handler {
 
         return input;
 
+    }
+
+    private void updateLikes() {
+        likes++;
     }
 
 }
