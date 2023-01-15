@@ -10,15 +10,13 @@ package ru.thevalidator.daivinchikmatcher.property;
 public class Account {
     
     private String name;
-    private Integer id;
     private String token;
 
     public Account() {
     }
 
-    public Account(String name, Integer id, String token) {
+    public Account(String name, String token) {
         this.name = name;
-        this.id = id;
         this.token = token;
     }
 
@@ -36,14 +34,6 @@ public class Account {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
 }
