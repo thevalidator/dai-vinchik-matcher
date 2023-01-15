@@ -142,6 +142,21 @@ public class Identifier {
         return result;
     }
     
+    public static boolean isLikedBySomeoneAfterProfile(String messageText, List<Button> buttons) {
+        boolean result = false;
+        if ((buttons == null)) {
+            //Кому-то понравилась твоя анкета! Заканчивай с вопросом выше и посмотрим кто это
+            if (!messageText.isEmpty() 
+                    //&& messageText.contains("Кому-то понравилась твоя анкета")
+                    && messageText.contains("Кому-то понравилась твоя анкета")) {
+                
+                result = true;
+            }
+        }
+
+        return result;
+    }
+    
     public static boolean isNewProfilesWantToMeet(String messageText, List<Button> buttons) {
         boolean result = false;
         if ((buttons != null) && (buttons.size() == 2)) {
@@ -166,6 +181,17 @@ public class Identifier {
                 result = true;
             }
         //}
+
+        return result;
+    }
+    
+    public static boolean isAdvise(String messageText, List<Button> buttons) {
+        boolean result = false;
+            if (!messageText.isEmpty() 
+                    && messageText.contains("Твоя анкета может собирать больше лайков")) {
+                
+                result = true;
+            }
 
         return result;
     }
