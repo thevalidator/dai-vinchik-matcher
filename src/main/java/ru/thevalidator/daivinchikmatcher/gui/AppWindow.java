@@ -5,6 +5,7 @@ package ru.thevalidator.daivinchikmatcher.gui;
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -93,11 +94,14 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         ageCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         cityCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         textCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        likeOnLikeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Daivinchik matcher");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/dvm.png")));
         setMinimumSize(new java.awt.Dimension(600, 500));
         setResizable(false);
 
@@ -248,6 +252,14 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
         jMenuBar1.add(filterMenu);
 
+        jMenu3.setText("Options");
+
+        likeOnLikeCheckBoxMenuItem.setSelected(true);
+        likeOnLikeCheckBoxMenuItem.setText("Always like on like");
+        jMenu3.add(likeOnLikeCheckBoxMenuItem);
+
+        jMenuBar1.add(jMenu3);
+
         jMenu2.setText("Help");
 
         jMenuItem1.setText("About");
@@ -337,7 +349,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 criteria in Daivinchik bot for VK.
                 
                 
-                v1.0.0.0-alpha-06
+                v1.0.0.0-alpha-07
                 [thevalidator]
                 2023, January""");
         jTextArea.setColumns(20);
@@ -543,10 +555,12 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JCheckBoxMenuItem likeOnLikeCheckBoxMenuItem;
     private javax.swing.JTextArea logTextArea;
     private javax.swing.JComboBox<String> proxyComboBox;
     private javax.swing.JLabel proxyLabel;
