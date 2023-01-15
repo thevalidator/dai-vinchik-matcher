@@ -126,16 +126,21 @@ public class HandlerImpl implements Handler {
                     : null;
 
             //
-            //System.out.println(">>> " + message);
-            //System.out.println(">>> " + (buttons != null ? buttons.size() : "null"));
+            System.out.println(">>> " + message);
+            System.out.println(">>> " + (buttons != null ? buttons.size() : "null"));
             //
             if (buttons == null) {
                 if (message.endsWith("пришли мне свое местоположение и увидишь кто находится рядом")
-                        || message.equals("Нашли кое-кого для тебя ;) Заканчивай с вопросом выше и увидишь кто это")) {
+                        || message.contains("Заканчивай с вопросом выше ")) {
                     return "1";
                 } else if (message.equals("Нашли кое-кого для тебя ;) Заканчивай с вопросом выше и увидишь кто это")) {
                     //System.out.println("FOUND");
                     //TODO: make normal handling messages without keyboard
+                    
+                    // ?????????
+                    //Кому-то понравилась твоя анкета! Заканчивай с вопросом выше и посмотрим кто это
+                    //Нашли кое-кого для тебя ;) Заканчивай с вопросом выше и увидишь кто это
+                    // ?????????
                 }
                 //System.out.println(message);
                 answer = getCustomAnswer(message, updates);
@@ -224,7 +229,26 @@ public class HandlerImpl implements Handler {
         } else if (isLocation(messageText, buttons)) {
             informer.informObservers(actor.getUserName() + "\n> [LOCATION CASE]");
             return "1";
+        } else if (isAdvise(messageText, buttons)) {
+            informer.informObservers(actor.getUserName() + "\n> [ADVISE CASE]");
+            return "2";
         } else {
+            //experimental//
+            
+            // 1
+            //===========
+            //keyboard=Keyboard{buttons=[[{"action":{"label":"1","payload":"1","type":"text"},"color":"positive"}, {"action":{"label":"2","payload":"2","type":"text"},"color":"default"}, {"action":{"label":"3","payload":"3","type":"text"},"color":"default"}, {"action":{"label":"✈️ 4","payload":"4","type":"text"},"color":"default"}]], inline=false, authorId=-91050183, oneTime=false}, 
+            //answer=1, 
+            
+            // 2
+            //===========
+            //keyboard=Keyboard{buttons=[[{"action":{"label":"❤️","payload":"1","type":"text"},"color":"positive"}, {"action":{"label":"💌","payload":"2","type":"text"},"color":"positive"}, {"action":{"label":"👎","payload":"3","type":"text"},"color":"negative"}, {"action":{"label":"💤","payload":"4","type":"text"},"color":"default"}]], inline=false, authorId=-91050183, oneTime=false}, 
+            //answer=1, 
+            
+            
+            //
+            
+            
             message = getCustomAnswer(messageText, updates);
         }
 
