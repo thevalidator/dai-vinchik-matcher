@@ -10,6 +10,7 @@ import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.client.actors.UserActorWithoutId;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.CustomHttpTransportClient;
+import com.vk.api.sdk.objects.account.responses.GetProfileInfoResponse;
 import com.vk.api.sdk.queries.messages.MessagesSendQuery;
 import java.util.List;
 import java.util.Random;
@@ -66,6 +67,7 @@ public class Task extends Informer implements Runnable {
                 + "\n> name = " + account.getName() 
                 + "\n> user agent = " + userAgent.getValue()
                 + "\n> proxy status = " + (proxy != null);
+        
         informObservers(info);
         
         class QueryBuilder {
@@ -96,6 +98,7 @@ public class Task extends Informer implements Runnable {
         //UserActor actor = new UserActor(account.getId(), account.getToken());
         //System.out.println(">>> " + account.getId());
         //System.out.println("actor: " + actor.getId());
+        
 
         QueryBuilder query = new QueryBuilder(vk, actor);
         Handler handler = new HandlerImpl(filters, vk, actor);
@@ -105,6 +108,12 @@ public class Task extends Informer implements Runnable {
         ClientResponse response = null;
 
         try {
+            //get profile info
+            GetProfileInfoResponse profileInfo = vk.account().getProfileInfo(actor).execute();
+            String accName = "аккаунт: " + profileInfo.getFirstName() + " " + profileInfo.getLastName();
+            actor.setUserName(accName);
+            //informObservers(accName);
+            
             //get last incoming message and actual keyboard     
             var messages = VKUtil.getConversation(vk, actor, DAI_VINCHIK_BOT_CHAT_ID);
             int lastMessageId = messages.getLastMessageId();
@@ -129,10 +138,10 @@ public class Task extends Informer implements Runnable {
             while (true) {
                 int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
                 //System.out.println("SLEEPING " + timeToWait + " secs");
-                informObservers(threadName + "\n> SLEEPING " + timeToWait + " secs");
+                informObservers(actor.getUserName() + "\n> SLEEPING " + timeToWait + " secs");
                 TimeUnit.SECONDS.sleep(timeToWait);
                 response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));                
-                String responseContent = response.getContent();
+                String responseContent = response.getContent().trim();
                 //System.out.println("[LPR] " + responseContent.trim());
                 if (responseContent.startsWith("{\"failed\":")) {
                     char errorCode = responseContent.charAt(10);
@@ -141,7 +150,7 @@ public class Task extends Informer implements Runnable {
                     //"failed":3 — информация о пользователе утрачена, нужно запросить новые key и ts методом messages.getLongPollServer.
                     switch (errorCode) {
                         case '1' ->
-                            ts = responseContent.substring(17, responseContent.length() - 2);
+                            ts = responseContent.substring(17).replaceAll("[^0-9]", "");
                         case '2' -> {
                             serverData = vk.messages().getLongPollServer(actor).execute();
                             key = serverData.getKey();
@@ -173,14 +182,14 @@ public class Task extends Informer implements Runnable {
                 //informObservers(threadName + "\n====== STOPPED ======");
             } else {
                 //System.out.println(e.getMessage());
-                informObservers(threadName + "\n> [ERROR] " + e.getMessage());
+                informObservers(actor.getUserName() + "\n> [ERROR] " + e.getMessage());
                 if (response != null) {
                     logger.error("[LPR] - {}", response.getContent());
                 }
                 logger.error("[CHECK] - {}", ExceptionUtil.getFormattedDescription(e));
                 //System.out.println("====== STOPPED, PLEASE PRESS STOP BUTTON AND TRY AGAIN ======");
             }
-            informObservers(threadName + "\n====== STOPPED ======");
+            informObservers(actor.getUserName() + "\n====== STOPPED ======");
         }
 
     }
