@@ -7,6 +7,7 @@ import com.vk.api.sdk.client.ClientResponse;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
+import com.vk.api.sdk.client.actors.UserActorWithoutId;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.CustomHttpTransportClient;
 import com.vk.api.sdk.queries.messages.MessagesSendQuery;
@@ -64,10 +65,7 @@ public class Task extends Informer implements Runnable {
                 + "\n> thread: " + threadName
                 + "\n> name = " + account.getName() 
                 + "\n> user agent = " + userAgent.getValue()
-                + "\n> proxy status = " + (proxy != null) 
-//                + "\nbase delay = " + delay.getBaseDelay()
-//                + "\nrandom delay = " + delay.getRandomAddedDelay()
-                + "";
+                + "\n> proxy status = " + (proxy != null);
         informObservers(info);
         
         class QueryBuilder {
@@ -94,7 +92,10 @@ public class Task extends Informer implements Runnable {
 
         TransportClient transportClient = new CustomHttpTransportClient(userAgent.getValue(), proxy);
         VkApiClient vk = new VkApiClient(transportClient);
-        UserActor actor = new UserActor(account.getId(), account.getToken());
+        UserActorWithoutId actor = new UserActorWithoutId(account.getToken());
+        //UserActor actor = new UserActor(account.getId(), account.getToken());
+        //System.out.println(">>> " + account.getId());
+        //System.out.println("actor: " + actor.getId());
 
         QueryBuilder query = new QueryBuilder(vk, actor);
         Handler handler = new HandlerImpl(filters, vk, actor);
