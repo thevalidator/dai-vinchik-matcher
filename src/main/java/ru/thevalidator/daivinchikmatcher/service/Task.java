@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.thevalidator.daivinchikmatcher.dto.LongPollServerResponse;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
+import ru.thevalidator.daivinchikmatcher.exception.TooManyLikesException;
 import ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl;
 import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
 import ru.thevalidator.daivinchikmatcher.property.Account;
@@ -60,7 +61,7 @@ public class Task extends Informer implements Runnable {
 
     @Override
     public void run() {
-
+        
         String threadName = Thread.currentThread().getName();
         String info = "[INFO]"
                 + "\n> thread: " + threadName
@@ -180,6 +181,10 @@ public class Task extends Informer implements Runnable {
             if (e instanceof InterruptedException) {
                 //System.out.println("====== STOPPED ======");
                 //informObservers(threadName + "\n====== STOPPED ======");
+            } else if (e instanceof TooManyLikesException) {
+                
+                informObservers(actor.getUserName() + "\n> NEED COOLDOWN");
+                
             } else {
                 //System.out.println(e.getMessage());
                 informObservers(actor.getUserName() + "\n> [ERROR] " + e.getMessage());
