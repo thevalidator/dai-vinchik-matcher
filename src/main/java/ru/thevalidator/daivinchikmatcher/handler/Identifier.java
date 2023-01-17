@@ -4,9 +4,9 @@
 
 package ru.thevalidator.daivinchikmatcher.handler;
 
-import com.vdurmont.emoji.EmojiParser;
 import java.util.List;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
+import ru.thevalidator.daivinchikmatcher.util.EmojiCleaner;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
@@ -22,11 +22,17 @@ public class Identifier {
                                       //"([\\p{L}\\p{N}\\p{P}\\p{Z}$^+=|><`~№]+(<br>|\\n){1,})?(?<name>([\\p{L}\\p{N}\\p{P}\\p{Z}$^+=|><`~№]+),){1} (?<age>\\d{1,3},){1} (?<city>[\\p{L}\\p{N}\\p{P}\\p{Z}$^+=|><`~№]+){1}(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
                                       //"(.+(<br>|\\n){1,})?(?<name>(.+)?,){1} (?<age>\\d{1,3},){1} (?<city>[a-zA-Zа-яА-я0-9,\\.\\-–ёЁ()? ]+){1}(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
                                       //"(.+(<br>|\\n){1,})?(?<name>(.+)?,){0,1} (?<age>\\d{1,3},) (?<city>[a-zA-Zа-яА-я0-9,\\.\\-–ёЁ()? ]+)(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
+    
     public static final String REGEXP = "([\\p{L}\\p{N}\\p{P}\\p{Z}\\W$\\^+=|`~№]+(<br>|\\n){1,})?(?<name>([\\p{L}\\p{N}\\p{P}\\p{Z}\\W$\\^+=|`~№]+)?,){1} (?<age>\\d{1,3},){1} (?<city>[\\p{L}\\p{N}\\p{P}\\p{Z}$\\^+=|`~№]+){1}(?<text>(((<br>)|\\n){1,}.{0,}){0,})";
     public static final String BUTTON_REGEXP = "[\\p{L}\\p{N}\\p{P}\\p{Z}]{2,}";
     
     public static boolean isProfile(String messageText, List<Button> buttons) {
-        String text = EmojiParser.removeAllEmojis(messageText);
+        //String text = EmojiParser.removeAllEmojis(messageText);
+        String text = EmojiCleaner.clean(messageText);
+                
+        //System.out.println("text:" + text);
+        //System.out.println("btns:" + buttons.size());
+        
         boolean result = false;
         if ((buttons != null) && (buttons.size() == 4)) {
             if (!text.isEmpty() 
