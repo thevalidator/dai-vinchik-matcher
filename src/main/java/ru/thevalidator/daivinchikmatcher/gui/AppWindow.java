@@ -103,7 +103,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         setTitle("Daivinchik matcher");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/dvm.png")));
         setMinimumSize(new java.awt.Dimension(600, 500));
-        setResizable(false);
+        setSize(new java.awt.Dimension(600, 500));
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -354,7 +354,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 criteria in Daivinchik bot for VK.
                 
                 
-                v1.0.0.0-alpha-08
+                v1.0.0.0-alpha-09
                 [thevalidator]
                 2023, January""");
         jTextArea.setColumns(20);
