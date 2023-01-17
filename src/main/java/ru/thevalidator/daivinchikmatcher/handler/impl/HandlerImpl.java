@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import ru.thevalidator.daivinchikmatcher.util.FileUtil;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Keyboard;
+import ru.thevalidator.daivinchikmatcher.exception.TooManyLikesException;
 import ru.thevalidator.daivinchikmatcher.handler.Code;
 import ru.thevalidator.daivinchikmatcher.handler.Flag;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
@@ -214,12 +215,13 @@ public class HandlerImpl implements Handler {
         } else if (isTooManyLikes(messageText, buttons)) {
             int hoursToSleep = 12;
             informer.informObservers(actor.getUserName() + "\n> [TOO MANY LIKES CASE] sleeping " + hoursToSleep + " hours");
-            try {
-                TimeUnit.HOURS.sleep(hoursToSleep);
-                //throw new TooManyLikesException();
-            } catch (InterruptedException ex) {
-                //nothing to do
-            }
+            throw new TooManyLikesException();
+//            try {
+//                TimeUnit.HOURS.sleep(hoursToSleep);
+//                //throw new TooManyLikesException();
+//            } catch (InterruptedException ex) {
+//                //nothing to do
+//            }
         } else if (isSleeping(messageText, buttons)) {
             informer.informObservers(actor.getUserName() + "\n> [SLEEPING CASE]");
             return "1";
