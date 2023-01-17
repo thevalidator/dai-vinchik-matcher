@@ -26,6 +26,7 @@ public class ProfileMatchCheckerImpl implements MatchChecker {
     public boolean matches(String profileText) {
         String name, age, city, text;
         matcher = pattern.matcher(profileText);
+        
         if (matcher.find()) {
             name = getName(matcher);
             age = getAge(matcher);
@@ -38,6 +39,7 @@ public class ProfileMatchCheckerImpl implements MatchChecker {
                     return false;
                 }
             }
+            
             return true;
         }
         throw new IllegalArgumentException("No pattern match found in: " + profileText);
