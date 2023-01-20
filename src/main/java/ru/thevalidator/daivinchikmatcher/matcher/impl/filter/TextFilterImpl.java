@@ -21,7 +21,7 @@ public class TextFilterImpl implements Filter {
 
     @Override
     public boolean isFiltered(Profile profile) {
-        String text = profile.getText();
+        String text = profile.getText().toLowerCase();
         for (String word : words) {
             if (text.contains(word)) {
                 return true;
