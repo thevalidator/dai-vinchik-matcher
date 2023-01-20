@@ -6,7 +6,6 @@ package ru.thevalidator.daivinchikmatcher.handler;
 
 import java.util.List;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
-import ru.thevalidator.daivinchikmatcher.util.EmojiCleaner;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
@@ -27,16 +26,11 @@ public class Identifier {
     public static final String BUTTON_REGEXP = "[\\p{L}\\p{N}\\p{P}\\p{Z}]{2,}";
     
     public static boolean isProfile(String messageText, List<Button> buttons) {
-        //String text = EmojiParser.removeAllEmojis(messageText);
-        String text = EmojiCleaner.clean(messageText);
-                
-        //System.out.println("text:" + text);
-        //System.out.println("btns:" + buttons.size());
         
         boolean result = false;
         if ((buttons != null) && (buttons.size() == 4)) {
-            if (!text.isEmpty() 
-                    && text.matches(REGEXP)
+            if (!messageText.isEmpty() 
+                    && messageText.matches(REGEXP)
                     && "positive".equals(buttons.get(0).getColor())
                     //&& "positive".equals(buttons.get(1).getColor())
                     //&& "negative".equals(buttons.get(2).getColor())
@@ -69,13 +63,10 @@ public class Identifier {
         boolean result = false;
         if ((buttons != null) && (buttons.size() == 2)) {
             if (!messageText.isEmpty() 
-                    //&& messageText.endsWith("Ты можешь в один клик перейти к оценке анкет в Telegram и так же быстро вернуться в VK.")
                     && buttons.get(0).getAction().getLabel().matches("[\\p{L}\\p{N}\\p{P}\\p{Z}]+")
                     && "positive".equals(buttons.get(0).getColor())
-                    //&& "Анкеты в Telegram".equals(buttons.get(0).getAction().getLabel())
                     && buttons.get(1).getAction().getLabel().matches("[\\p{L}\\p{N}\\p{P}\\p{Z}]+")
                     && "default".equals(buttons.get(1).getColor())) {
-                    //&& "Анкеты в VK".equals(buttons.get(1).getAction().getLabel())) {
                 
                 result = true;
             }
