@@ -44,7 +44,7 @@ public class Task extends Informer implements Runnable {
     private static final Logger logger = LogManager.getLogger(Task.class);
     private static final String responseDelay = FileUtil.readDelay(Data.DELAY);
     private static final Random random = new Random();
-    
+
     private final Account account;
     private final Proxy proxy;
     private final UserAgent userAgent;
@@ -56,21 +56,21 @@ public class Task extends Informer implements Runnable {
         this.proxy = proxy;
         this.userAgent = userAgent;
         this.delay = delay;
-        this.filters = filters;        
+        this.filters = filters;
     }
 
     @Override
     public void run() {
-        
+
         String threadName = Thread.currentThread().getName();
         String info = "[INFO]"
                 + "\n> thread: " + threadName
-                + "\n> name = " + account.getName() 
+                + "\n> name = " + account.getName()
                 + "\n> user agent = " + userAgent.getValue()
                 + "\n> proxy status = " + (proxy != null);
-        
+
         informObservers(info);
-        
+
         class QueryBuilder {
 
             private final VkApiClient vk;
@@ -96,10 +96,6 @@ public class Task extends Informer implements Runnable {
         TransportClient transportClient = new CustomHttpTransportClient(userAgent.getValue(), proxy);
         VkApiClient vk = new VkApiClient(transportClient);
         UserActorWithoutId actor = new UserActorWithoutId(account.getToken());
-        //UserActor actor = new UserActor(account.getId(), account.getToken());
-        //System.out.println(">>> " + account.getId());
-        //System.out.println("actor: " + actor.getId());
-        
 
         QueryBuilder query = new QueryBuilder(vk, actor);
         Handler handler = new HandlerImpl(filters, vk, actor);
@@ -114,7 +110,7 @@ public class Task extends Informer implements Runnable {
             String accName = "аккаунт: " + profileInfo.getFirstName() + " " + profileInfo.getLastName();
             actor.setUserName(accName);
             //informObservers(accName);
-            
+
             //get last incoming message and actual keyboard     
             var messages = VKUtil.getConversation(vk, actor, DAI_VINCHIK_BOT_CHAT_ID);
             int lastMessageId = messages.getLastMessageId();
@@ -126,24 +122,28 @@ public class Task extends Informer implements Runnable {
 
             //TODO: probably need to check msg before for mutual like if sleepeing case found
             answer = handler.getStartMessage(lastMessageText, buttons);
-            //System.out.println("[ANSWER] - " + answer);
-            //informObservers(threadName + "\n> [ANSWER] - " + answer);
-            sendAnswer(query.build(answer));
+            if (true) {
+                logger.info(" START " + lastMessage + "\nKBRD " + kbrd.toPrettyString() + "\nANSWER " + answer);
+            }
             
             // get long poll server data for connection
             var serverData = vk.messages().getLongPollServer(actor).execute();
             String server = serverData.getServer();
             String key = serverData.getKey();
             String ts = String.valueOf(serverData.getTs());
+            
+            sendAnswer(query.build(answer));
 
             while (true) {
                 int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
-                //System.out.println("SLEEPING " + timeToWait + " secs");
                 informObservers(actor.getUserName() + "\n> SLEEPING " + timeToWait + " secs");
                 TimeUnit.SECONDS.sleep(timeToWait);
-                response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));                
+                
+                response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));
                 String responseContent = response.getContent().trim();
-                //System.out.println("[LPR] " + responseContent.trim());
+                if (true) {
+                    logger.info(responseContent);
+                }
                 if (responseContent.startsWith("{\"failed\":")) {
                     char errorCode = responseContent.charAt(10);
                     //"failed":1 — история событий устарела или была частично утеряна, приложение может получать события далее, используя новое значение ts из ответа.
@@ -162,6 +162,23 @@ public class Task extends Informer implements Runnable {
                             ts = String.valueOf(serverData.getTs());
                         }
                     }
+
+                    //get last incoming message and actual keyboard     
+                    messages = VKUtil.getConversation(vk, actor, DAI_VINCHIK_BOT_CHAT_ID);
+                    lastMessageId = messages.getLastMessageId();
+                    lastMessage = vk.messages().getById(actor, lastMessageId).execute();
+                    kbrd = messages.getCurrentKeyboard();
+
+                    lastMessageText = lastMessage.getItems().get(0).getText();
+                    buttons = ResponseParser.parseButtons(kbrd.getButtons().get(kbrd.getButtons().size() - 1).toString());
+
+                    //TODO: probably need to check msg before for mutual like if sleepeing case found
+                    answer = handler.getStartMessage(lastMessageText, buttons);
+                    if (true) {
+                        logger.info(" [MISSED] " + lastMessage + "\nKBRD " + kbrd.toPrettyString() + "\nANSWER " + answer);
+                    }
+                    sendAnswer(query.build(answer));
+
                     continue;
                 }
 
@@ -169,12 +186,24 @@ public class Task extends Informer implements Runnable {
                 ts = String.valueOf(dto.getTs());
                 answer = handler.getAnswerMessage(dto.getUpdates());
                 if (answer == null) {
-                    continue;
+                    informObservers("> [PIZDA TUT] - сообщение проебалось, лезу в историю за последним сообщением и отсылаю ответ");
+                    //get last incoming message and actual keyboard     
+                    messages = VKUtil.getConversation(vk, actor, DAI_VINCHIK_BOT_CHAT_ID);
+                    lastMessageId = messages.getLastMessageId();
+                    lastMessage = vk.messages().getById(actor, lastMessageId).execute();
+                    kbrd = messages.getCurrentKeyboard();
+
+                    lastMessageText = lastMessage.getItems().get(0).getText();
+                    buttons = ResponseParser.parseButtons(kbrd.getButtons().get(kbrd.getButtons().size() - 1).toString());
+
+                    //TODO: probably need to check msg before for mutual like if sleepeing case found
+                    answer = handler.getStartMessage(lastMessageText, buttons);
+                    if (true) {
+                        logger.info(" [ПРОЕБАНО] " + lastMessage + "\nKBRD " + kbrd.toPrettyString() + "\nANSWER " + answer);
+                    }
+                    
                 }
-                //System.out.println("[ANSWER] - " + answer);
-                //informObservers(threadName + "\n> [ANSWER] - " + answer);
                 sendAnswer(query.build(answer));
-                //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>  **********  <<<<<<<<<<<<<<<<<<<<<<<<<<<<\n");
             }
 
         } catch (Exception e) {
@@ -182,17 +211,15 @@ public class Task extends Informer implements Runnable {
                 //System.out.println("====== STOPPED ======");
                 //informObservers(threadName + "\n====== STOPPED ======");
             } else if (e instanceof TooManyLikesException) {
-                
-                informObservers(actor.getUserName() + "\n> NEED COOLDOWN");
-                
+
+                informObservers(actor.getUserName() + "\n> REACHED MAX LIKES PER DAY");
+
             } else {
-                //System.out.println(e.getMessage());
                 informObservers(actor.getUserName() + "\n> [ERROR] " + e.getMessage());
                 if (response != null) {
                     logger.error("[LPR] - {}", response.getContent());
                 }
                 logger.error("[CHECK] - {}", ExceptionUtil.getFormattedDescription(e));
-                //System.out.println("====== STOPPED, PLEASE PRESS STOP BUTTON AND TRY AGAIN ======");
             }
             informObservers(actor.getUserName() + "\n====== STOPPED ======");
         }
@@ -201,9 +228,9 @@ public class Task extends Informer implements Runnable {
 
     private void sendAnswer(MessagesSendQuery query) throws ClientException {
         ClientResponse response = query.executeAsRaw();
-        //logger.info(response.getContent());
-        //System.out.println("[RAW] - " + response.getContent() + "\n\n");
-
+        if (true) {
+            logger.info(" SEND_RESPONSE " + response.getContent());
+        }
 //                                if () {
 //                                    //TODO: CAPTCHA HANDLE
 //                                }
