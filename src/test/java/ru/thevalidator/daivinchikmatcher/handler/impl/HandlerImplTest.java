@@ -32,7 +32,7 @@ public class HandlerImplTest {
 
     static ObjectMapper mapper;
     static Informer informer;
-    static HandlerImpl instance; 
+    static HandlerImpl instance;
 
     public HandlerImplTest() {
     }
@@ -60,6 +60,20 @@ public class HandlerImplTest {
 
     @AfterEach
     public void tearDown() {
+    }
+    
+    @Test
+    @DisplayName("Start task")
+    public void testGetAnswerStartTask() {
+        try {
+            String lastMsgText = "Алина, 16, москва";
+            String kbrdData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"💌\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
+            List<Button> buttons = ResponseParser.parseButtons(kbrdData);
+            String result = instance.getStartMessage(lastMsgText, buttons);
+            assertEquals("1", result);
+        } catch (JsonProcessingException ex) {
+            //Logger.getLogger(HandlerImplTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Test
@@ -92,6 +106,24 @@ public class HandlerImplTest {
             assertEquals("1", result);
 
         } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    @DisplayName("Profile2")
+    public void testGetAnswerProfileCase2() {
+
+        String responseContent = "{\"ts\":1785440190,\"updates\":[[3,4216918,1,-91050183],[6,-91050183,4216918,0],[4,4216919,3,-91050183,1674135767,\"3\",{\"title\":\" ... \"},{}],[80,28,0],[3,4216919,1,-91050183],[7,-91050183,4216919,0],[4,4216920,1,-91050183,1674135767,\"Полина, 15, 📍Москва\",{\"emoji\":\"1\",\"content_source\":\"lgEBAsAD2SZodHRwOi8vdmsuY29tL3Bob3RvNjEyMjMxMDczXzQ1NzI1NTk3Mw==\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"527463828_457319251\"}],[80,29,0],[52,11,-91050183,0]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (Exception ex) {
             System.out.println(ExceptionUtil.getFormattedDescription(ex));
             fail(ex.getMessage());
         }
@@ -151,6 +183,24 @@ public class HandlerImplTest {
         }
 
     }
+    
+    @Test
+    @DisplayName("Liked by someone message after profile")
+    public void testGetAnswerIsLikedBySomeOneSeparateMessageCase() {
+
+        String responseContent = "{\"ts\":1785441298,\"updates\":[[3,4217159,1,-91050183],[6,-91050183,4217159,0],[4,4217160,3,-91050183,1674138958,\"1\",{\"title\":\" ... \"},{}],[80,30,0],[3,4217160,1,-91050183],[7,-91050183,4217160,0],[4,4217161,1,-91050183,1674138958,\"Надя, 16, Москва<br>Приветик:) <br>Я не из Москвы, просто ищу с кем пообщаться😃\",{\"emoji\":\"1\",\"content_source\":\"lgECApPOJc7G5s4lzsbmzU6OA8A=\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"527463828_457319354\"}],[80,31,0],[52,11,-91050183,0],[4,4217162,1,-91050183,1674138977,\"Кому-то понравилась твоя анкета! Заканчивай с вопросом выше и посмотрим кто это\",{\"title\":\" ... \"},{}]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
 
 //    @Test
 //    @DisplayName("Too many likes")
@@ -169,7 +219,6 @@ public class HandlerImplTest {
 //        }
 //
 //    }
-
     @Test
     @DisplayName("Sleeping state")
     public void testGetAnswerIsSleepingStateCase() {
@@ -242,6 +291,42 @@ public class HandlerImplTest {
 //
 //    }
 
+    @Test
+    @DisplayName("Advise case")
+    public void testGetAnswerAdviseCase() {
+
+        String responseContent = "{\"ts\":1824067397,\"updates\": [[3,33445,1,-91050183],[7,-91050183,33445,0],[4,33446,1,-91050183,1673801926,\"Твоя анкета может собирать больше лайков.<br><br>Попробуй изменить фото и описание к анкете.<br><br>1. Перейти к редактированию анкеты.<br>2. Продолжить смотреть анкеты.\",{\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"1\"},\"color\":\"default\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"2\"},\"color\":\"default\"}]]}},{}],[80,5,0],[52,11,-91050183,0],[62,460732329,9],[4,33447,2629633,2000000009,1673801929,\"дай Аллах тебе сил перед отцом\",{\"from\":\"495279354\",\"mentions\":[354581371],\"marked_users\":[[1,[354581371]]]},{\"reply\":\"{\\\"conversation_message_id\\\":30356}\",\"fwd\":\"0_0\"}],[3,33446,1,-91050183],[6,-91050183,33446,0],[80,4,0],[62,460732329,9],[4,33448,532481,2000000009,1673801932,\"тебе пизда\",{\"from\":\"495279354\"},{}],[4,33449,2629633,2000000009,1673801936,\"Тебе пизда брат\",{\"from\":\"460732329\",\"mentions\":[354581371],\"marked_users\":[[1,[354581371]]]},{\"reply\":\"{\\\"conversation_message_id\\\":30356}\",\"fwd\":\"0_0\"}]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("2", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+
+    @Test
+    @DisplayName("Someone liked your profile msg after profile")
+    public void testGetAnswerSomeoneLikedYourProfileCase() {
+
+        String responseContent = "{\"ts\":1824067397,\"updates\": [[3,5452,1,-91050183],[6,-91050183,5452,0],[4,5455,3,-91050183,1673811983,\"3\",{\"title\":\" ... \"},{}],[80,2,0],[3,5455,1,-91050183],[7,-91050183,5455,0],[4,5456,1,-91050183,1673811983,\"Стасик, 17, Москва<br>Без лишних вопросов, всо в лс\",{\"content_source\":\"lgEBAsAD2SZodHRwOi8vdmsuY29tL3Bob3RvNTQ5MjQzNTg4XzQ1NzI0NjcxNA==\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"748996382_457241026\"}],[80,3,0],[52,11,-91050183,0],[64,2000000002,[741029110],1,1673811983],[4,5457,2629633,2000000002,1673811984,\"Мам\",{\"from\":\"690698378\",\"mentions\":[709121760],\"marked_users\":[[1,[709121760]]]},{\"reply\":\"{\\\"conversation_message_id\\\":30904}\",\"fwd\":\"0_0\"}],[62,618730625,2],[4,5458,2629633,2000000002,1673811985,\"Ты себе реально жену ищешь?\",{\"from\":\"618730625\",\"mentions\":[741029110],\"marked_users\":[[1,[741029110]]]},{\"reply\":\"{\\\"conversation_message_id\\\":30902}\",\"fwd\":\"0_0\"}],[4,5459,2629633,2000000002,1673811989,\"\",{\"from\":\"741029110\"},{\"attach1_type\":\"doc\",\"attach1\":\"741029110_652774295\",\"attach1_kind\":\"audiomsg\",\"reply\":\"{\\\"conversation_message_id\\\":30903}\",\"attachments\":\"[{\\\"type\\\":\\\"audio_message\\\",\\\"audio_message\\\":{\\\"id\\\":\\\"652774295\\\",\\\"owner_id\\\":\\\"741029110\\\",\\\"duration\\\":4,\\\"waveform\\\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,8,2,2,16,13,2,16,0,8,31,10,26,11,10,27,0,14,2,8,0,0,0,0,0,0,0,0,0,0,5,0,1,3,0,0,1,13,15,2,9,6,13,3,1,2,19,3,6,2,0,0,0,4,5,6,3,3,5,0,1,10,4,10,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\\\"link_ogg\\\":\\\"https://psv4.userapi.com/s/v1/amsg/R7RV7me-juMUB9A9pszFmV3jKplFx013pnotdSkSAuqSzp-Qz3Rc13CmegSGdQaSmDlD.ogg\\\",\\\"link_mp3\\\":\\\"https://psv4.userapi.com/s/v1/amsg/-ZECsIFjN53AUCGV08kzwuy0fnZkO4sMg6_bVClvv4G4YJGZ8x00NPg_jQilZs01tKgh.mp3\\\",\\\"locale\\\":\\\"\\\",\\\"is_recognized\\\":0,\\\"access_key\\\":\\\"VAXOZBgkMJfSlVWdwWOfx2ZfVXuAfzY09LX7zV4xRwD\\\",\\\"transcript\\\":\\\"Я это на русском можно.\\\",\\\"transcript_state\\\":\\\"done\\\"}}]\",\"attachments_count\":\"1\",\"fwd\":\"0_0\"}],[62,690698378,2],[62,618730625,2],[5,5459,2629633,2000000002,1673811989,\"\",{\"from\":\"741029110\"},{\"attach1_type\":\"doc\",\"attach1\":\"741029110_652774295\",\"attach1_kind\":\"audiomsg\",\"reply\":\"{\\\"conversation_message_id\\\":30903}\",\"attachments\":\"[{\\\"type\\\":\\\"audio_message\\\",\\\"audio_message\\\":{\\\"id\\\":\\\"652774295\\\",\\\"owner_id\\\":\\\"741029110\\\",\\\"duration\\\":4,\\\"waveform\\\":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,8,2,2,16,13,2,16,0,8,31,10,26,11,10,27,0,14,2,8,0,0,0,0,0,0,0,0,0,0,5,0,1,3,0,0,1,13,15,2,9,6,13,3,1,2,19,3,6,2,0,0,0,4,5,6,3,3,5,0,1,10,4,10,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\\\"link_ogg\\\":\\\"https://psv4.userapi.com/s/v1/amsg/R7RV7me-juMUB9A9pszFmV3jKplFx013pnotdSkSAuqSzp-Qz3Rc13CmegSGdQaSmDlD.ogg\\\",\\\"link_mp3\\\":\\\"https://psv4.userapi.com/s/v1/amsg/-ZECsIFjN53AUCGV08kzwuy0fnZkO4sMg6_bVClvv4G4YJGZ8x00NPg_jQilZs01tKgh.mp3\\\",\\\"locale\\\":\\\"\\\",\\\"is_recognized\\\":0,\\\"access_key\\\":\\\"VAXOZBgkMJfSlVWdwWOfx2ZfVXuAfzY09LX7zV4xRwD\\\",\\\"transcript\\\":\\\"Я это на русском можно.\\\",\\\"transcript_state\\\":\\\"done\\\"}}]\",\"attachments_count\":\"1\",\"fwd\":\"0_0\"}],[4,5460,1,-91050183,1673811991,\"Кому-то понравилась твоя анкета! Заканчивай с вопросом выше и посмотрим кто это\",{\"title\":\" ... \"},{}],[4,5461,532481,2000000002,1673811992,\"Тут тусы по репосту 14+\",{\"from\":\"618730625\"},{}],[4,5462,2629633,2000000002,1673811994,\"Даа\",{\"from\":\"741029110\",\"mentions\":[618730625],\"marked_users\":[[1,[618730625]]]},{\"reply\":\"{\\\"conversation_message_id\\\":30906}\",\"fwd\":\"0_0\"}],[62,690698378,2],[52,19,2000000002,1],[19,4938,0],[4,5463,2629633,2000000002,1673811997,\"АХАХАХАХ\",{\"from\":\"690698378\",\"mentions\":[618730625],\"marked_users\":[[1,[618730625]]]},{\"reply\":\"{\\\"conversation_message_id\\\":30908}\",\"fwd\":\"0_0\"}],[62,741029110,2],[62,741029110,2],[52,19,2000000002,1],[19,4938,0],[52,19,2000000002,1],[19,4938,0],[52,19,2000000002,1],[19,4938,0],[62,741029110,2],[4,5464,2629633,2000000002,1673812012,\"Оставь\",{\"from\":\"601753472\",\"mentions\":[741029110],\"marked_users\":[[1,[741029110]]]},{\"reply\":\"{\\\"conversation_message_id\\\":30909}\",\"fwd\":\"0_0\"}],[4,5465,532481,2000000002,1673812014,\"Брат\",{\"from\":\"601753472\"},{}],[10,2000000002,16777216],[2,4938,131200,2000000002],[52,19,2000000002,0],[4,5466,532481,2000000002,1673812015,\"\",{\"from\":\"495279354\"},{\"attach1_call_initiator_id\":\"495279354\",\"attach1_call_receiver_id\":\"2000000703\",\"attach1_call_state\":\"reached\",\"attach1_call_duration\":\"2717\",\"attach1_call_participants\":\"[495279354,709121760,700885990,397386871,756682729,668722446,673107487,284125714,597418209,587606778,541170203,732597811,707685424,688440925,733079945,568771615,574417931,455730361,747258525,244357386,583821919,685244867,606863977,354581371,539550804,400038024,399937,242599152,741029110,745007556,500496742,460732329,339295212,618730625,679713503,672669597]\",\"attach1_call_participants_count\":\"36\",\"attach1_type\":\"call\",\"attach1\":\"495279354_0\",\"attach1_kind\":\"group_call\"}]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
     @Test
     public void testGetStartMessage() {
 
@@ -704,6 +789,63 @@ public class HandlerImplTest {
         }
 
     }
+    
+    @Test
+    @DisplayName("Test 1")
+    public void testGetAnswerCase1() {
+
+        String responseContent = "{\"ts\":1742909415,\"updates\":[[3,45222,1,-91050183],[7,-91050183,45222,0],[4,45223,1,-91050183,1673976781,\"Александр, 15, Москва<br>Иисус с диабетом, который рисует людей и играет на гитаре.<br><br>Есть желание пройтись с новым человеком и душевно провести время.<br><br>Метро Бабушкинская\",{\"content_source\":\"lgECApPOFEyxcc4UTLFxzQ6TA8A=\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"400038024_457242237\"}],[80,3,0],[52,11,-91050183,0],[3,45223,1,-91050183],[6,-91050183,45223,0],[80,2,0],[51,8],[52,6,2000000008,421447233],[4,45224,532481,2000000008,1673976794,\"\",{\"source_act\":\"chat_invite_user\",\"source_mid\":\"421447233\",\"from\":\"421447233\"},{}]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+//    @Test
+//    @DisplayName("Test 2")
+//    public void testGetAnswerCase2() {
+//
+//        String responseContent = "{\"ts\":1742910073,\"updates\":[[4,45236,532481,2000000008,1673976850,\"\",{\"from\":\"421447233\"},{\"attach1_product_id\":\"1326\",\"attach1_type\":\"sticker\",\"attach1\":\"63557\",\"attach1_kind\":\"animation\",\"attachments\":\"[{\\\"type\\\":\\\"sticker\\\",\\\"sticker\\\":{\\\"images\\\":[{\\\"height\\\":64,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-64\\\",\\\"width\\\":64},{\\\"height\\\":128,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-128\\\",\\\"width\\\":128},{\\\"height\\\":256,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-256\\\",\\\"width\\\":256},{\\\"height\\\":352,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-352\\\",\\\"width\\\":352},{\\\"height\\\":512,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-512\\\",\\\"width\\\":512}],\\\"images_with_background\\\":[{\\\"height\\\":64,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-64b\\\",\\\"width\\\":64},{\\\"height\\\":128,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-128b\\\",\\\"width\\\":128},{\\\"height\\\":256,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-256b\\\",\\\"width\\\":256},{\\\"height\\\":352,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-352b\\\",\\\"width\\\":352},{\\\"height\\\":512,\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/1-63557-512b\\\",\\\"width\\\":512}],\\\"product_id\\\":1326,\\\"sticker_id\\\":63557,\\\"animation_url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/3-63557.json\\\",\\\"animations\\\":[{\\\"type\\\":\\\"light\\\",\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/3-63557.json\\\"},{\\\"type\\\":\\\"dark\\\",\\\"url\\\":\\\"https:\\/\\/vk.com\\/sticker\\/3-63557b.json\\\"}]}}]\",\"attachments_count\":\"1\"}],[62,467700382,8],[4,45237,2629633,2000000008,1673976863,\"…\",{\"from\":\"467700382\",\"mentions\":[421447233],\"marked_users\":[[1,[421447233]]]},{\"reply\":\"{\\\"conversation_message_id\\\":44017}\",\"fwd\":\"0_0\"}],[62,467700382,8],[4,45238,532481,2000000008,1673976867,\"я кушать хочу\",{\"from\":\"467700382\"},{}]]}";
+//
+//        try {
+//            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+//            String result = instance.getAnswerMessage(dto.getUpdates());
+//            
+//            assertEquals("1", result);
+//
+//        } catch (JsonProcessingException ex) {
+//            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+//            fail(ex.getMessage());
+//        }
+//
+//    }
+    
+    @Test
+    @DisplayName("Test 3 Someone liked your profile need to like too")
+    public void testGetAnswerCase3() {
+
+        String responseContent = "{\"ts\":1742915429,\"updates\":[[4,46461,3,-91050183,1673987374,\"1\",{\"title\":\" ... \"},{}],[3,46461,1,-91050183],[7,-91050183,46461,0],[4,46462,1,-91050183,1673987374,\"Кому-то понравилась твоя анкета:<br><br>jayzedoff, 17, Москва<br>твич: jayzedoff\",{\"content_source\":\"lgEBAsAD2SZodHRwOi8vdmsuY29tL3Bob3RvNTM5ODg2NzQxXzQ1NzI0NjYwNg==\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"жалоба\"},\"color\":\"default\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"400038024_457242443\"}],[80,3,0],[52,11,-91050183,0],[3,46462,1,-91050183],[6,-91050183,46462,0],[80,2,0]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
 
 //    @Test
 //    @DisplayName(" response get answer test")
@@ -724,12 +866,10 @@ public class HandlerImplTest {
 //        }
 //
 //    }
-
 //    @Test
 //    @DisplayName("No such answer response get answer test")
 //    public void testGetAnswer5() {
 //      [LPR] {"ts":1867300714,"updates":[[3,1631895,1,-91050183],[7,-91050183,1631895,0],[4,1631896,1,-91050183,1673739308,"Нет такого варианта ответа",{"title":" ... ","keyboard":{"one_time":false,"buttons":[[{"action":{"type":"text","payload":"1","label":"??"},"color":"positive"},{"action":{"type":"text","payload":"2","label":"?"},"color":"positive"},{"action":{"type":"text","payload":"3","label":"?"},"color":"negative"},{"action":{"type":"text","payload":"4","label":"?"},"color":"default"}]]}},{}],[80,8,0],[52,11,-91050183,0],[3,1631896,1,-91050183],[6,-91050183,1631896,0],[80,7,0]]}
-
 //        String responseContent = "";
 //
 //        try {

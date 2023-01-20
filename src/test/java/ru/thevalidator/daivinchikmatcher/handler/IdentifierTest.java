@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
+import ru.thevalidator.daivinchikmatcher.util.EmojiCleaner;
 import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
 
 /**
@@ -91,7 +92,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -148,7 +149,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -169,7 +170,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -187,7 +188,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -206,7 +207,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -224,7 +225,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -242,7 +243,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -260,7 +261,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -278,7 +279,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -296,7 +297,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -314,7 +315,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -332,7 +333,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -350,7 +351,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -368,7 +369,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -386,7 +387,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -405,7 +406,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -423,7 +424,7 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -442,7 +443,99 @@ public class IdentifierTest {
 
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isProfile(text, buttons);
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile19() {
+        //String text = "Айта́, 23, Якутск<br>играю в симс и мобильный пабг. спасибо.";
+        //Кому-то понравилась твоя анкета:<br><br>إبروهيم, 19, Новомосковский административный округ
+        String text = "Айта́, 23, Якутск<br>играю в симс и мобильный пабг. спасибо.";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile20() {
+        String text = "Кому-то понравилась твоя анкета:<br><br>إبروهيم, 19, Новомосковский административный округ";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"жалоба\"},\"color\":\"default\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testIsProfile21() {
+        String text = "Маша, 15, Москва♡";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testIsProfile22() {
+        String text = "Полина, 17, Москва";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testIsProfile23() {
+        String text = "Полина, 15, 📍Москва";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -493,7 +586,7 @@ public class IdentifierTest {
             String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"Анкеты в Telegram\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"Анкеты в VK\"},\"color\":\"default\"}]";
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isTelegramInvite(text, buttons);
+            boolean result = Identifier.isAdvertisement(text, buttons);
             assertTrue(result);
 
         } catch (JsonProcessingException ex) {
@@ -504,19 +597,35 @@ public class IdentifierTest {
 
     @Test
     public void testIsLocation() {
-        try {
+//        try {
 
-            String text = "Время просмотра анкеты истекло, действие не выполнено.<br><br>Александр, пришли мне свое местоположение и увидишь кто находится рядом";
-            String buttonsData = "[{\"action\":{\"payload\":\"1\",\"label\":\"Продолжить\"}}]";
+        String text = "Время просмотра анкеты истекло, действие не выполнено.<br><br>Александр, пришли мне свое местоположение и увидишь кто находится рядом";
+        String buttonsData = "[{\"action\":{\"payload\":\"1\",\"label\":\"Продолжить\"}}]";
+        List<Button> buttons = null;//mapper.readValue(buttonsData, new TypeReference<List<Button>>() {});
+        boolean result = Identifier.isLocation(text, buttons);
+        assertTrue(result);
+
+//        } catch (JsonProcessingException ex) {
+//            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+//            fail(ex.getMessage());
+//        }
+    }
+
+    @Test
+    public void testIsAdvise() {
+        try {
+            //[4,33446,1,-91050183,1673801926,"Твоя анкета может собирать больше лайков.<br><br>Попробуй изменить фото и описание к анкете.<br><br>1. Перейти к редактированию анкеты.<br>2. Продолжить смотреть анкеты.",{"title":" ... ","keyboard":{"one_time":false,"buttons":[[{"action":{"type":"text","payload":"1","label":"1"},"color":"default"},{"action":{"type":"text","payload":"2","label":"2"},"color":"default"}]]}},{}]
+            String text = "Твоя анкета может собирать больше лайков.<br><br>Попробуй изменить фото и описание к анкете.<br><br>1. Перейти к редактированию анкеты.<br>2. Продолжить смотреть анкеты.";
+            String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"1\"},\"color\":\"default\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"2\"},\"color\":\"default\"}]";
             List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
             });
-            boolean result = Identifier.isLocation(text, buttons);
+            boolean result = Identifier.isAdvise(text, buttons);
             assertTrue(result);
-
         } catch (JsonProcessingException ex) {
             System.out.println(ExceptionUtil.getFormattedDescription(ex));
             fail(ex.getMessage());
         }
+
     }
 
 //    @Test

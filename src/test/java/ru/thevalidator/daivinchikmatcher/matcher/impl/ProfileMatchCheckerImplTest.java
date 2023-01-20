@@ -25,10 +25,14 @@ public class ProfileMatchCheckerImplTest {
     static Matcher matcher;
     String text;
     String text2;
+    String text3;
+    String text4;
 
     public ProfileMatchCheckerImplTest() {
         text = "Victoria, 21, Малоярославец<br>Секретная страница";
         text2 = "Яна, 24, Калуга";
+        text3 = "Маша, 15, Москва♡";
+        text4 = "Кому-то понравилась твоя анкета:<br><br>♡, 19, Новомосковский административный округ<br>привет ?<br>люблю кошек и в целом всех животных";
     }
 
     @BeforeAll
@@ -74,6 +78,16 @@ public class ProfileMatchCheckerImplTest {
         String result2 = instance.getName(matcher);
         assertEquals("Яна", result2);
         
+        matcher = pattern.matcher(text3);
+        matcher.find();
+        String result3 = instance.getName(matcher);
+        assertEquals("Маша", result3);
+        
+        matcher = pattern.matcher(text4);
+        matcher.find();
+        String result4 = instance.getName(matcher);
+        assertEquals("♡", result4);
+        
     }
 
     @Test
@@ -87,6 +101,16 @@ public class ProfileMatchCheckerImplTest {
         matcher.find();
         String result2 = instance.getAge(matcher);
         assertEquals("24", result2);
+        
+        matcher = pattern.matcher(text3);
+        matcher.find();
+        String result3 = instance.getAge(matcher);
+        assertEquals("15", result3);
+        
+        matcher = pattern.matcher(text4);
+        matcher.find();
+        String result4 = instance.getAge(matcher);
+        assertEquals("19", result4);
     }
 
     @Test
@@ -100,6 +124,16 @@ public class ProfileMatchCheckerImplTest {
         matcher.find();
         String result2 = instance.getCity(matcher);
         assertEquals("калуга", result2);
+        
+        matcher = pattern.matcher(text3);
+        matcher.find();
+        String result3 = instance.getCity(matcher);
+        assertEquals("москва", result3);
+        
+        matcher = pattern.matcher(text4);
+        matcher.find();
+        String result4 = instance.getCity(matcher);
+        assertEquals("новомосковский административный округ", result4);
     }
 
     @Test
@@ -113,6 +147,16 @@ public class ProfileMatchCheckerImplTest {
         matcher.find();
         String result2 = instance.getText(matcher);
         assertEquals("", result2);
+        
+        matcher = pattern.matcher(text3);
+        matcher.find();
+        String result3 = instance.getText(matcher);
+        assertEquals("", result3);
+        
+        matcher = pattern.matcher(text4);
+        matcher.find();
+        String result4 = instance.getText(matcher);
+        assertEquals("<br>привет ?<br>люблю кошек и в целом всех животных", result4);
     }
 
 }
