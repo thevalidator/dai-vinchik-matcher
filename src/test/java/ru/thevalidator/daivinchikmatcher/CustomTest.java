@@ -3,7 +3,6 @@
  */
 package ru.thevalidator.daivinchikmatcher;
 
-import com.vdurmont.emoji.EmojiParser;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
