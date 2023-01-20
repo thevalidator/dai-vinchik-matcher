@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>dai-vinchik-matcher</artifactId>
-    <version>v1.0.0.0-alpha-09</version>
+    <version>v1.0.0.0-alpha-12d</version>
     <packaging>jar</packaging>
     
     <licenses>
@@ -239,11 +239,11 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>com.vdurmont</groupId>
             <artifactId>emoji-java</artifactId>
             <version>5.1.1</version>
-        </dependency>
+        </dependency>-->
         <!--        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>

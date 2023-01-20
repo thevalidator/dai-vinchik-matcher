@@ -354,7 +354,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 criteria in Daivinchik bot for VK.
                 
                 
-                v1.0.0.0-alpha-09
+                v1.0.0.0-alpha-12
                 [thevalidator]
                 2023, January""");
         jTextArea.setColumns(20);
