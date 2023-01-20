@@ -3,13 +3,20 @@
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n" charset="UTF-8"/>
-                <!--<PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n" charset="UTF-8"/>-->
+            <!--<PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n" charset="UTF-8"/>-->
         </Console>
         <Console name="Console-short" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-5level] - %msg%n" charset="UTF-8"/>
         </Console>
         <File name="File" fileName="logs/main.log">
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n" charset="UTF-8"/>
+        </File>
+        <File name="Lpr" fileName="logs/lpr.log">
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
             <PatternLayout pattern="[%-5level] %d{dd.MM.yyyy HH:mm:ss} [%t] %logger{36} - %msg%n" charset="UTF-8"/>
         </File>
         <File name="Likes" fileName="logs/likes.log">
@@ -27,6 +34,7 @@
         </Root>
         <Logger name="ru.thevalidator.daivinchikmatcher.service.Task" level="info" additivity="false">
             <AppenderRef ref="File"/>
+            <AppenderRef ref="Lpr"/>
         </Logger>
         <Logger name="ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl" level="info" additivity="false">
             <!--<AppenderRef ref="Console-short"/>-->
