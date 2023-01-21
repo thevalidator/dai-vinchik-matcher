@@ -25,7 +25,6 @@ import ru.thevalidator.daivinchikmatcher.gui.AppWindow;
 import ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl;
 import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
 import ru.thevalidator.daivinchikmatcher.property.Account;
-import ru.thevalidator.daivinchikmatcher.property.Delay;
 import ru.thevalidator.daivinchikmatcher.property.Proxy;
 import ru.thevalidator.daivinchikmatcher.property.UserAgent;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
@@ -44,19 +43,19 @@ public class Task extends Informer implements Runnable {
     private static final Logger logger = LogManager.getLogger(Task.class);
     private static final Random random = new Random();
     private static final String RESPONSE_DELAY = (String) AppWindow.getSettings().get(Parameter.LONG_POLL_DELAY);
+    private static final int BASE_DELAY = (int) AppWindow.getSettings().get(Parameter.BASE_DELAY);
+    private static final int RANDOM_DELAY = (int) AppWindow.getSettings().get(Parameter.RANDOM_DELAY);
     private static final boolean IS_DEBUG_MODE = (boolean) AppWindow.getSettings().get(Parameter.DEBUG_MODE);
 
     private final Account account;
     private final Proxy proxy;
     private final UserAgent userAgent;
-    private final Delay delay;
     private Set<Filter> filters;
 
-    public Task(Account account, Proxy proxy, UserAgent userAgent, Delay delay, Set<Filter> filters) {
+    public Task(Account account, Proxy proxy, UserAgent userAgent, Set<Filter> filters) {
         this.account = account;
         this.proxy = proxy;
         this.userAgent = userAgent;
-        this.delay = delay;
         this.filters = filters;
     }
 
@@ -136,7 +135,7 @@ public class Task extends Informer implements Runnable {
             sendAnswer(query.build(answer));
 
             while (true) {
-                int timeToWait = delay.getBaseDelay() + random.nextInt(delay.getRandomAddedDelay());
+                int timeToWait = BASE_DELAY + random.nextInt(RANDOM_DELAY);
                 informObservers(actor.getUserName() + "\n> SLEEPING " + timeToWait + " secs");
                 TimeUnit.SECONDS.sleep(timeToWait);
                 
