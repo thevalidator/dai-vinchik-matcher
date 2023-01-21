@@ -26,7 +26,12 @@ public class SettingsDTO {
     @JsonProperty("window dimensions")
     private int[] windowDimentions;
     @JsonProperty("long poll delay")
-    private int longPollDelay;
+    private String longPollDelay;
+    
+    @JsonProperty("base delay")
+    private int baseDelay;
+    @JsonProperty("random delay")
+    private int randomDelay;
     
     @JsonProperty("age filter")
     private boolean hasAgeFilter;
@@ -55,11 +60,11 @@ public class SettingsDTO {
         this.windowDimentions = windowDimentions;
     }
 
-    public int getLongPollDelay() {
+    public String getLongPollDelay() {
         return longPollDelay;
     }
 
-    public void setLongPollDelay(int longPollDelay) {
+    public void setLongPollDelay(String longPollDelay) {
         this.longPollDelay = longPollDelay;
     }
 
@@ -128,5 +133,20 @@ public class SettingsDTO {
         this.isDebugMode = debugMode;
     }
 
+    public int getBaseDelay() {
+        return baseDelay;
+    }
+
+    public void setBaseDelay(int baseDelay) {
+        this.baseDelay = baseDelay;
+    }
+
+    public int getRandomDelay() {
+        return randomDelay;
+    }
+
+    public void setRandomDelay(int randomDelay) {
+        this.randomDelay = randomDelay;
+    }
     
 }
