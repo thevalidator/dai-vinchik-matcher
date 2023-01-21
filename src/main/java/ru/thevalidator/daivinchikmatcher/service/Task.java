@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import ru.thevalidator.daivinchikmatcher.dto.LongPollServerResponse;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
 import ru.thevalidator.daivinchikmatcher.exception.TooManyLikesException;
+import ru.thevalidator.daivinchikmatcher.gui.AppWindow;
 import ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl;
 import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
 import ru.thevalidator.daivinchikmatcher.property.Account;
@@ -30,10 +31,9 @@ import ru.thevalidator.daivinchikmatcher.property.UserAgent;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
 import ru.thevalidator.daivinchikmatcher.notification.Informer;
-import ru.thevalidator.daivinchikmatcher.property.Data;
 import static ru.thevalidator.daivinchikmatcher.property.Data.DAI_VINCHIK_BOT_CHAT_ID;
+import ru.thevalidator.daivinchikmatcher.settings.Parameter;
 import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
-import ru.thevalidator.daivinchikmatcher.util.FileUtil;
 import ru.thevalidator.daivinchikmatcher.util.VKUtil;
 
 /**
@@ -42,8 +42,9 @@ import ru.thevalidator.daivinchikmatcher.util.VKUtil;
 public class Task extends Informer implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(Task.class);
-    private static final String responseDelay = FileUtil.readDelay(Data.DELAY);
     private static final Random random = new Random();
+    private static final String RESPONSE_DELAY = (String) AppWindow.getSettings().get(Parameter.LONG_POLL_DELAY);
+    private static final boolean IS_DEBUG_MODE = (boolean) AppWindow.getSettings().get(Parameter.DEBUG_MODE);
 
     private final Account account;
     private final Proxy proxy;
@@ -122,7 +123,7 @@ public class Task extends Informer implements Runnable {
 
             //TODO: probably need to check msg before for mutual like if sleepeing case found
             answer = handler.getStartMessage(lastMessageText, buttons);
-            if (true) {
+            if (IS_DEBUG_MODE) {
                 logger.info(" START " + lastMessage + "\nKBRD " + kbrd.toPrettyString() + "\nANSWER " + answer);
             }
             
@@ -141,7 +142,7 @@ public class Task extends Informer implements Runnable {
                 
                 response = vk.getTransportClient().get(getLongPollServerRequestAdress(server, key, ts));
                 String responseContent = response.getContent().trim();
-                if (true) {
+                if (IS_DEBUG_MODE) {
                     logger.info(responseContent);
                 }
                 if (responseContent.startsWith("{\"failed\":")) {
@@ -174,7 +175,7 @@ public class Task extends Informer implements Runnable {
 
                     //TODO: probably need to check msg before for mutual like if sleepeing case found
                     answer = handler.getStartMessage(lastMessageText, buttons);
-                    if (true) {
+                    if (IS_DEBUG_MODE) {
                         logger.info(" [MISSED] " + lastMessage + "\nKBRD " + kbrd.toPrettyString() + "\nANSWER " + answer);
                     }
                     sendAnswer(query.build(answer));
@@ -198,7 +199,7 @@ public class Task extends Informer implements Runnable {
 
                     //TODO: probably need to check msg before for mutual like if sleepeing case found
                     answer = handler.getStartMessage(lastMessageText, buttons);
-                    if (true) {
+                    if (IS_DEBUG_MODE) {
                         logger.info(" [ПРОЕБАНО] " + lastMessage + "\nKBRD " + kbrd.toPrettyString() + "\nANSWER " + answer);
                     }
                     
@@ -228,7 +229,7 @@ public class Task extends Informer implements Runnable {
 
     private void sendAnswer(MessagesSendQuery query) throws ClientException {
         ClientResponse response = query.executeAsRaw();
-        if (true) {
+        if (IS_DEBUG_MODE) {
             logger.info(" SEND_RESPONSE " + response.getContent());
         }
 //                                if () {
@@ -237,7 +238,7 @@ public class Task extends Informer implements Runnable {
     }
 
     private String getLongPollServerRequestAdress(String server, String key, String ts) {
-        return String.format("https://%s?act=a_check&key=%s&ts=%s&wait=%s&mode=2&version=3", server, key, ts, responseDelay);
+        return String.format("https://%s?act=a_check&key=%s&ts=%s&wait=%s&mode=2&version=3", server, key, ts, RESPONSE_DELAY);
     }
 
 }
