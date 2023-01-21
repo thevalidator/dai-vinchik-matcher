@@ -51,6 +51,7 @@ public class HandlerImpl implements Handler {
 
     private static final Logger logger = LogManager.getLogger(HandlerImpl.class);
     private static final int[] FLAGS = Flag.getAllFlagCodes();
+    private static final boolean SHOULD_LIKE_ON_LIKE = (boolean) AppWindow.getSettings().get(Parameter.LIKE_ON_LIKE);
     private final Set<String> continueWords;
     private final MatchChecker checker;
     private VkApiClient vk;
@@ -366,7 +367,7 @@ public class HandlerImpl implements Handler {
     }
 
     private void updateLikes() {
-        if (true) {
+        if (SHOULD_LIKE_ON_LIKE) {
             likes++;
         }
     }
