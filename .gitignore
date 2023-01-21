@@ -24,15 +24,19 @@ hs_err_pid*
 replay_pid*
 /nbproject/
 
+/src/main/java/com
 /tmp/
+/config/
+/logs/
+/media/
 /target/
 nbactions.xml
 *.json
-match.dict
-src/resources/match_test.dict
 *.dict
 *.mp3
 *.bat
 *.exe
 *.ico
 *.png
+*.txt
+todo
