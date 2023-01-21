@@ -28,6 +28,7 @@ import ru.thevalidator.daivinchikmatcher.util.FileUtil;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Keyboard;
 import ru.thevalidator.daivinchikmatcher.exception.TooManyLikesException;
+import ru.thevalidator.daivinchikmatcher.gui.AppWindow;
 import ru.thevalidator.daivinchikmatcher.handler.Code;
 import ru.thevalidator.daivinchikmatcher.handler.Flag;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
@@ -39,15 +40,17 @@ import ru.thevalidator.daivinchikmatcher.notification.Informer;
 import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
 import ru.thevalidator.daivinchikmatcher.property.Data;
 import static ru.thevalidator.daivinchikmatcher.property.Data.DAI_VINCHIK_BOT_CHAT_ID;
-import static ru.thevalidator.daivinchikmatcher.util.AlarmUtil.startSoundAlarm;
+import ru.thevalidator.daivinchikmatcher.settings.Parameter;
+import static ru.thevalidator.daivinchikmatcher.util.SoundUtil.startSoundAlarm;
 import ru.thevalidator.daivinchikmatcher.util.EmojiCleaner;
 import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
+import static ru.thevalidator.daivinchikmatcher.util.SoundUtil.startSounNotification;
 import ru.thevalidator.daivinchikmatcher.util.VKUtil;
 
 public class HandlerImpl implements Handler {
 
     private static final Logger logger = LogManager.getLogger(HandlerImpl.class);
-    private static final int[] flags = Flag.getAllFlagCodes();
+    private static final int[] FLAGS = Flag.getAllFlagCodes();
     private final Set<String> continueWords;
     private final MatchChecker checker;
     private VkApiClient vk;
@@ -94,7 +97,7 @@ public class HandlerImpl implements Handler {
                     if (minorId == DAI_VINCHIK_BOT_CHAT_ID) {
                         //lastMsgIndex = i;
                         String message = o.get(5).toString();
-                        
+
                         if (message.startsWith("Есть взаимная симпатия")) {
                             Matcher matcher = Pattern.compile("([\\p{L}\\p{N}\\p{P}\\p{Z}]+ - )(?<link>([\\p{L}\\p{N}\\p{P}\\p{Z}]+)){1}(<br>|\\n){1,}.+").matcher(message);
                             //String res = "";
@@ -105,15 +108,18 @@ public class HandlerImpl implements Handler {
                             //System.out.println("[MUTUAL LIKE - no kbrd] - " + message);
                             informer.informObservers(actor.getUserName()
                                     + "\n> [LIKE] " + message);
-                            //startSoundAlarm();
+                            if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
+                                startSounNotification();
+                            }
+
                         }
-                        
+
                         if (!message.contains("Заканчивай с вопросом выше ")) {
                             lastMsgIndex = i;
                         } else {
                             hasLike = true;
                         }
-                        
+
                     }
 
                 }
@@ -142,13 +148,13 @@ public class HandlerImpl implements Handler {
                 if (message.endsWith("пришли мне свое местоположение и увидишь кто находится рядом")) {
                     return "1";
                 } //else if (message.equals("Нашли кое-кого для тебя ;) Заканчивай с вопросом выше и увидишь кто это")) {
-                    //System.out.println("FOUND");
-                    //TODO: make normal handling messages without keyboard
+                //System.out.println("FOUND");
+                //TODO: make normal handling messages without keyboard
 
-                    // ?????????
-                    //Кому-то понравилась твоя анкета! Заканчивай с вопросом выше и посмотрим кто это
-                    //Нашли кое-кого для тебя ;) Заканчивай с вопросом выше и увидишь кто это
-                    // ?????????
+                // ?????????
+                //Кому-то понравилась твоя анкета! Заканчивай с вопросом выше и посмотрим кто это
+                //Нашли кое-кого для тебя ;) Заканчивай с вопросом выше и увидишь кто это
+                // ?????????
                 //}
                 //System.out.println(message);
                 answer = getCustomAnswer(message, updates);
@@ -157,7 +163,7 @@ public class HandlerImpl implements Handler {
                 answer = generateMessage(textWithoutEmoji, buttons, updates);
             }
         }
-        
+
         if (hasLike) {
             updateLikes();
         }
@@ -184,7 +190,7 @@ public class HandlerImpl implements Handler {
                 }
             }
         }
-        
+
         if (isMutualLike(messageText, buttons)) {
             logger.info("[LIKE] - {}", messageText);
             informer.informObservers(actor.getUserName() + "\n> [LIKE] " + messageText);
@@ -266,7 +272,7 @@ public class HandlerImpl implements Handler {
 
     public Set<Integer> getFlags(int sum) {
         Set<Integer> result = new HashSet<>();
-        for (int flag : flags) {
+        for (int flag : FLAGS) {
             if ((flag & sum) == flag) {
                 result.add(flag);
             }
@@ -289,10 +295,12 @@ public class HandlerImpl implements Handler {
             var keyboard = conversation.getCurrentKeyboard();
             List<List<KeyboardButton>> buttonRows = keyboard.getButtons();
 
-            Thread t = new Thread(() -> {
-                startSoundAlarm();
-            });
-            t.start();
+            if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
+                Thread t = new Thread(() -> {
+                    startSoundAlarm();
+                });
+                t.start();
+            }
 
             while (answer == null) {
                 answer = getUserAnswer(messageText, buttonRows);
