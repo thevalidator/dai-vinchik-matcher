@@ -39,9 +39,12 @@ public class Settings {
         dto.setExperimentalHandler(true);
 
         dto.setHoursToSleep(12);
-        dto.setLongPollDelay(25);
+        dto.setLongPollDelay("25");
         dto.setLikeOnLike(true);
         dto.setWindowDimentions(new int[]{600, 500});
+        
+        dto.setBaseDelay(10);
+        dto.setRandomDelay(15);
 
         try {
             ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
@@ -73,6 +76,8 @@ public class Settings {
             map.put(Parameter.SOUND_ALARM, dto.hasSoundAlarm());
             map.put(Parameter.WINDOW_DIMENTIONS, dto.getWindowDimentions());
             map.put(Parameter.LIKE_ON_LIKE, dto.shouldLikeOnLike());
+            map.put(Parameter.BASE_DELAY, dto.getBaseDelay());
+            map.put(Parameter.RANDOM_DELAY, dto.getRandomDelay());
 
             printSettings(map);
 
@@ -98,8 +103,10 @@ public class Settings {
         dto.setSoundAlarm((boolean) settings.get(Parameter.SOUND_ALARM));
         dto.setLikeOnLike((boolean) settings.get(Parameter.LIKE_ON_LIKE));
         dto.setHoursToSleep((int) settings.get(Parameter.HOURS_TO_SLEEP));
-        dto.setLongPollDelay((int) settings.get(Parameter.LONG_POLL_DELAY));
+        dto.setLongPollDelay((String) settings.get(Parameter.LONG_POLL_DELAY));
         dto.setWindowDimentions((int[]) settings.get(Parameter.WINDOW_DIMENTIONS));
+        dto.setBaseDelay((int) settings.get(Parameter.BASE_DELAY));
+        dto.setRandomDelay((int) settings.get(Parameter.RANDOM_DELAY));
         
         try {
             ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
