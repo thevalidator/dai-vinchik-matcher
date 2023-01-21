@@ -18,6 +18,8 @@ public enum Parameter {
     LIKE_ON_LIKE,
     EXPERIMENTAL_HANDLER,
     HOURS_TO_SLEEP,
-    DEBUG_MODE
+    DEBUG_MODE,
+    BASE_DELAY,
+    RANDOM_DELAY
     
 }
