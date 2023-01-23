@@ -21,7 +21,6 @@ public class Property {
     private List<Account> accounts;
     private List<UserAgent> userAgents;
     private List<Proxy> proxies;
-    private Delay delay;
 
     public Property() {
         accounts = new ArrayList<>();
@@ -51,14 +50,6 @@ public class Property {
 
     public void setProxies(List<Proxy> proxies) {
         this.proxies = proxies;
-    }
-
-    public Delay getDelay() {
-        return delay;
-    }
-
-    public void setDelay(Delay delay) {
-        this.delay = delay;
     }
 
     public static void saveToJson(Property p) {
