@@ -9,10 +9,13 @@ import java.awt.Toolkit;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.Logger;
 import javax.swing.BorderFactory;
@@ -35,6 +38,8 @@ import ru.thevalidator.daivinchikmatcher.property.Property;
 import ru.thevalidator.daivinchikmatcher.property.Proxy;
 import ru.thevalidator.daivinchikmatcher.property.UserAgent;
 import ru.thevalidator.daivinchikmatcher.service.Task;
+import ru.thevalidator.daivinchikmatcher.settings.Parameter;
+import ru.thevalidator.daivinchikmatcher.settings.Settings;
 
 /**
  *
@@ -45,18 +50,25 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private static final Logger logger = LogManager.getLogger(AppWindow.class);
     private static int MAX_LINES = 400;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
+    private static Map<Parameter, Object> settings;
     private Property properties = null;
     private boolean isStarted = false;
     private SwingWorker worker;
     private Set<Filter> filters;
+    
 
     /**
      * Creates new form AppWindow
      */
     public AppWindow() {
-        filters = new HashSet<>();
+        filters = ConcurrentHashMap.newKeySet();
+        loadSettings();
         initProperties();
         initComponents();
+    }
+
+    public static Map<Parameter, Object> getSettings() {
+        return Collections.unmodifiableMap(settings);
     }
 
     @Override
@@ -96,6 +108,11 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         textCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jMenu3 = new javax.swing.JMenu();
         likeOnLikeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        soundCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        debugCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        experimentalCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        baseDelayMenuItem = new javax.swing.JMenuItem();
+        randomDelayMenuItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
@@ -256,7 +273,55 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
         likeOnLikeCheckBoxMenuItem.setSelected(true);
         likeOnLikeCheckBoxMenuItem.setText("Always like on like");
+        likeOnLikeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                likeOnLikeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
         jMenu3.add(likeOnLikeCheckBoxMenuItem);
+
+        soundCheckBoxMenuItem.setSelected(true);
+        soundCheckBoxMenuItem.setText("Sound");
+        soundCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                soundCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(soundCheckBoxMenuItem);
+
+        debugCheckBoxMenuItem.setSelected(true);
+        debugCheckBoxMenuItem.setText("Debug mode");
+        debugCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                debugCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(debugCheckBoxMenuItem);
+
+        experimentalCheckBoxMenuItem.setSelected(true);
+        experimentalCheckBoxMenuItem.setText("Experimental mode");
+        experimentalCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                experimentalCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(experimentalCheckBoxMenuItem);
+
+        baseDelayMenuItem.setText("Set base delay");
+        baseDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                baseDelayMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(baseDelayMenuItem);
+
+        randomDelayMenuItem.setText("Set random delay");
+        randomDelayMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                randomDelayMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(randomDelayMenuItem);
 
         jMenuBar1.add(jMenu3);
 
@@ -299,6 +364,10 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
     private void initProperties() {
         properties = Property.readFromJson(Property.PROP_FILE);
+    }
+    
+    private void loadSettings() {
+        settings = Settings.loadSettings();
     }
 
     private void proxyToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proxyToggleButtonActionPerformed
@@ -392,7 +461,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 UserAgent userAgent = properties.getUserAgents().get(userAgentComboBox.getSelectedIndex());
                 Proxy proxy = proxyToggleButton.isSelected() ? properties.getProxies().get(proxyComboBox.getSelectedIndex()) : null;
 
-                Task task = new Task(account, proxy, userAgent, properties.getDelay(), filters);
+                Task task = new Task(account, proxy, userAgent, filters);
                 task.registerObserver(this);
                 worker = new SwingWorker<Void, Void>() {
                     @Override
@@ -530,6 +599,54 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_cityCheckBoxMenuItemActionPerformed
 
+    private void soundCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soundCheckBoxMenuItemActionPerformed
+        if (soundCheckBoxMenuItem.isSelected()) {
+            settings.put(Parameter.SOUND_ALARM, true);
+            appendToPane("SOUND is ON");
+        } else {
+            settings.put(Parameter.SOUND_ALARM, false);
+            appendToPane("SOUND is OFF");
+        }
+    }//GEN-LAST:event_soundCheckBoxMenuItemActionPerformed
+
+    private void debugCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCheckBoxMenuItemActionPerformed
+        if (debugCheckBoxMenuItem.isSelected()) {
+            settings.put(Parameter.DEBUG_MODE, true);
+            appendToPane("DEBUG MODE is ON");
+        } else {
+            settings.put(Parameter.DEBUG_MODE, false);
+            appendToPane("DEBUG MODE is OFF");
+        }
+    }//GEN-LAST:event_debugCheckBoxMenuItemActionPerformed
+
+    private void experimentalCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_experimentalCheckBoxMenuItemActionPerformed
+        if (experimentalCheckBoxMenuItem.isSelected()) {
+            settings.put(Parameter.EXPERIMENTAL_HANDLER, true);
+            appendToPane("EXPERIMENTAL MODE is ON");
+        } else {
+            settings.put(Parameter.EXPERIMENTAL_HANDLER, false);
+            appendToPane("EXPERIMENTAL MODE is OFF");
+        }
+    }//GEN-LAST:event_experimentalCheckBoxMenuItemActionPerformed
+
+    private void likeOnLikeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_likeOnLikeCheckBoxMenuItemActionPerformed
+        if (likeOnLikeCheckBoxMenuItem.isSelected()) {
+            settings.put(Parameter.LIKE_ON_LIKE, true);
+            appendToPane("LIKE ON LIKE MODE is ON");
+        } else {
+            settings.put(Parameter.LIKE_ON_LIKE, false);
+            appendToPane("LIKE ON LIKE MODE is OFF");
+        }
+    }//GEN-LAST:event_likeOnLikeCheckBoxMenuItemActionPerformed
+
+    private void baseDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baseDelayMenuItemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_baseDelayMenuItemActionPerformed
+
+    private void randomDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomDelayMenuItemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_randomDelayMenuItemActionPerformed
+
     public void setStartButtonStatus(int status) {
         switch (status) {
             case 1:
@@ -556,7 +673,10 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem addProxyMenuItem;
     private javax.swing.JMenuItem addUserAgentMenuItem;
     private javax.swing.JCheckBoxMenuItem ageCheckBoxMenuItem;
+    private javax.swing.JMenuItem baseDelayMenuItem;
     private javax.swing.JCheckBoxMenuItem cityCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem debugCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem experimentalCheckBoxMenuItem;
     private javax.swing.JMenu filterMenu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -572,6 +692,8 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JComboBox<String> proxyComboBox;
     private javax.swing.JLabel proxyLabel;
     private javax.swing.JToggleButton proxyToggleButton;
+    private javax.swing.JMenuItem randomDelayMenuItem;
+    private javax.swing.JCheckBoxMenuItem soundCheckBoxMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JCheckBoxMenuItem textCheckBoxMenuItem;
     private javax.swing.JComboBox<String> userAgentComboBox;
