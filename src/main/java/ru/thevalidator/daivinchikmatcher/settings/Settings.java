@@ -79,7 +79,7 @@ public class Settings {
             map.put(Parameter.BASE_DELAY, dto.getBaseDelay());
             map.put(Parameter.RANDOM_DELAY, dto.getRandomDelay());
 
-            printSettings(map);
+            //printSettings(map);
 
             return map;
 
@@ -117,7 +117,7 @@ public class Settings {
 
     }
 
-    private static void printSettings(Map<Parameter, Object> settings) {
+    public static void printSettings(Map<Parameter, Object> settings) {
         for (Map.Entry<Parameter, Object> entry : settings.entrySet()) {
             Parameter key = entry.getKey();
             Object value = entry.getValue();
