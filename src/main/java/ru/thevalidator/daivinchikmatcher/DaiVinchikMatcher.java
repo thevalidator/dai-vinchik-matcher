@@ -13,7 +13,6 @@ import javax.swing.UIManager;
 //import static org.fusesource.jansi.Ansi.ansi;
 //import org.fusesource.jansi.AnsiConsole;
 import ru.thevalidator.daivinchikmatcher.gui.AppWindow;
-import ru.thevalidator.daivinchikmatcher.property.Delay;
 import ru.thevalidator.daivinchikmatcher.property.Property;
 import ru.thevalidator.daivinchikmatcher.property.Proxy;
 import ru.thevalidator.daivinchikmatcher.property.UserAgent;
@@ -57,14 +56,9 @@ public class DaiVinchikMatcher {
         pr2.setPort(2222);
         List<Proxy> proxies = new ArrayList<>(Arrays.asList(pr, pr2));
 
-        Delay delay = new Delay();
-        delay.setBaseDelay(10);
-        delay.setRandomAddedDelay(15);
-
         p.setAccounts(accs);
         p.setUserAgents(agents);
         p.setProxies(proxies);
-        p.setDelay(delay);
 
         Property.saveToJson(p);
     }
