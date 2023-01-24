@@ -43,6 +43,7 @@ import ru.thevalidator.daivinchikmatcher.settings.Settings;
  */
 public class AppWindow extends javax.swing.JFrame implements Observer {
 
+    public static final String APP_VER = "v1.0.0.0-beta-01";
     private static final Logger logger = LogManager.getLogger(AppWindow.class);
     private static int MAX_LINES = 400;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
@@ -432,9 +433,9 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 criteria in Daivinchik bot for VK.
                 
                 
-                v1.0.0.0-alpha-12
+                %s
                 [thevalidator]
-                2023, January""");
+                2023, January""".formatted(APP_VER));
         jTextArea.setColumns(20);
         jTextArea.setLineWrap(true);
         jTextArea.setRows(9);
@@ -564,6 +565,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         if (textCheckBoxMenuItem.isSelected()) {
             filters.add(new TextFilterImpl());
             appendToPane("AGE filter is ON");
+            settings.put(Parameter.TEXT_FILTER, true);
         } else {
             Iterator it = filters.iterator();
             while (it.hasNext()) {
@@ -573,6 +575,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 }
             }
             appendToPane("TEXT filter is OFF");
+            settings.put(Parameter.TEXT_FILTER, false);
         }
         Settings.saveSettings(settings);
     }//GEN-LAST:event_textCheckBoxMenuItemActionPerformed
@@ -581,6 +584,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         if (ageCheckBoxMenuItem.isSelected()) {
             filters.add(new AgeFilterImpl());
             appendToPane("AGE filter is ON");
+            settings.put(Parameter.AGE_FILTER, true);
         } else {
             Iterator it = filters.iterator();
             while (it.hasNext()) {
@@ -590,6 +594,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 }
             }
             appendToPane("AGE filter is OFF");
+            settings.put(Parameter.AGE_FILTER, false);
         }
         Settings.saveSettings(settings);
     }//GEN-LAST:event_ageCheckBoxMenuItemActionPerformed
@@ -598,6 +603,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         if (cityCheckBoxMenuItem.isSelected()) {
             filters.add(new CityFilterImpl());
             appendToPane("CITY filter is ON");
+            settings.put(Parameter.CITY_FILTER, true);
         } else {
             Iterator it = filters.iterator();
             while (it.hasNext()) {
@@ -607,6 +613,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 }
             }
             appendToPane("CITY filter is OFF");
+            settings.put(Parameter.CITY_FILTER, false);
         }
         Settings.saveSettings(settings);
     }//GEN-LAST:event_cityCheckBoxMenuItemActionPerformed
