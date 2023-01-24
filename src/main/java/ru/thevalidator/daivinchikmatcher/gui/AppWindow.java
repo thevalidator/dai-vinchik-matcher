@@ -574,6 +574,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             }
             appendToPane("TEXT filter is OFF");
         }
+        Settings.saveSettings(settings);
     }//GEN-LAST:event_textCheckBoxMenuItemActionPerformed
 
     private void ageCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ageCheckBoxMenuItemActionPerformed
@@ -590,6 +591,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             }
             appendToPane("AGE filter is OFF");
         }
+        Settings.saveSettings(settings);
     }//GEN-LAST:event_ageCheckBoxMenuItemActionPerformed
 
     private void cityCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cityCheckBoxMenuItemActionPerformed
@@ -606,6 +608,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             }
             appendToPane("CITY filter is OFF");
         }
+        Settings.saveSettings(settings);
     }//GEN-LAST:event_cityCheckBoxMenuItemActionPerformed
 
     private void soundCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soundCheckBoxMenuItemActionPerformed
@@ -616,6 +619,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             settings.put(Parameter.SOUND_ALARM, false);
             appendToPane("SOUND is OFF");
         }
+        Settings.saveSettings(settings);
     }//GEN-LAST:event_soundCheckBoxMenuItemActionPerformed
 
     private void debugCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCheckBoxMenuItemActionPerformed
@@ -626,6 +630,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             settings.put(Parameter.DEBUG_MODE, false);
             appendToPane("DEBUG MODE is OFF");
         }
+        Settings.saveSettings(settings);
     }//GEN-LAST:event_debugCheckBoxMenuItemActionPerformed
 
     private void experimentalCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_experimentalCheckBoxMenuItemActionPerformed
@@ -636,6 +641,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             settings.put(Parameter.EXPERIMENTAL_HANDLER, false);
             appendToPane("EXPERIMENTAL MODE is OFF");
         }
+        Settings.saveSettings(settings);
     }//GEN-LAST:event_experimentalCheckBoxMenuItemActionPerformed
 
     private void likeOnLikeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_likeOnLikeCheckBoxMenuItemActionPerformed
@@ -646,6 +652,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             settings.put(Parameter.LIKE_ON_LIKE, false);
             appendToPane("LIKE ON LIKE MODE is OFF");
         }
+        Settings.saveSettings(settings);
     }//GEN-LAST:event_likeOnLikeCheckBoxMenuItemActionPerformed
 
     private void baseDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baseDelayMenuItemActionPerformed
