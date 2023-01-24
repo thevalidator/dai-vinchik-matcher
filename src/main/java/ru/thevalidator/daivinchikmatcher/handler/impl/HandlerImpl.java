@@ -165,8 +165,6 @@ public class HandlerImpl implements Handler {
                 String textWithoutEmoji = EmojiCleaner.clean(message);
                 answer = generateMessage(textWithoutEmoji, buttons, updates);
             }
-        } else {
-            //TODO: send something to get response ???? probably not needed, it's made in task now
         }
 
         if (hasLike) {
@@ -319,8 +317,8 @@ public class HandlerImpl implements Handler {
                     .rev(GetHistoryRev.REVERSE_CHRONOLOGICAL)
                     .executeAsString();
 
-            logger.error(" - UNKNOWN STATE: \nhistory={}, \nkeyboard={}, \nanswer={}, \nupdates={}",
-                    history, keyboard.toPrettyString(), answer, longPollResponse);
+            logger.error(" [{}] - UNKNOWN STATE \nhistory={}, \nkeyboard={}, \nanswer={}, \nupdates={}",
+                    AppWindow.APP_VER, history, keyboard.toPrettyString(), answer, longPollResponse);
 
         } catch (ApiException | ClientException | JsonProcessingException ex) {
             logger.error(ExceptionUtil.getFormattedDescription(ex));

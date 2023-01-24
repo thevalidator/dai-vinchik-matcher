@@ -217,9 +217,9 @@ public class Task extends Informer implements Runnable {
             } else {
                 informObservers(actor.getUserName() + "\n> [ERROR] " + e.getMessage());
                 if (response != null) {
-                    logger.error("[LPR] - {}", response.getContent());
+                    logger.error("[{}] [LPR] - {}", AppWindow.APP_VER, response.getContent());
                 }
-                logger.error("[CHECK] - {}", ExceptionUtil.getFormattedDescription(e));
+                logger.error("[{}] [CHECK] - {}", AppWindow.APP_VER, ExceptionUtil.getFormattedDescription(e));
             }
             informObservers(actor.getUserName() + "\n====== STOPPED ======");
         }
