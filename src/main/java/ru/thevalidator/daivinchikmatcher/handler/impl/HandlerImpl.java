@@ -12,6 +12,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.GetHistoryRev;
 import com.vk.api.sdk.objects.messages.KeyboardButton;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,6 +53,7 @@ public class HandlerImpl implements Handler {
     private static final Logger logger = LogManager.getLogger(HandlerImpl.class);
     private static final int[] FLAGS = Flag.getAllFlagCodes();
     private static final boolean SHOULD_LIKE_ON_LIKE = (boolean) AppWindow.getSettings().get(Parameter.LIKE_ON_LIKE);
+    private static final boolean HAS_EXPERIMENTAL_OPTION = (boolean) AppWindow.getSettings().get(Parameter.EXPERIMENTAL_HANDLER);
     private final Set<String> continueWords;
     private final MatchChecker checker;
     private VkApiClient vk;
@@ -99,7 +101,7 @@ public class HandlerImpl implements Handler {
                         //lastMsgIndex = i;
                         String message = o.get(5).toString();
 
-                        if (message.startsWith("Есть взаимная симпатия")) {
+                        if (message.contains("в друзья - vk.com/")) {
                             Matcher matcher = Pattern.compile("([\\p{L}\\p{N}\\p{P}\\p{Z}]+ - )(?<link>([\\p{L}\\p{N}\\p{P}\\p{Z}]+)){1}(<br>|\\n){1,}.+").matcher(message);
                             //String res = "";
                             if (matcher.find()) {
@@ -138,7 +140,7 @@ public class HandlerImpl implements Handler {
             //System.out.println("KBRD");
             //System.out.println(actualKeyboard == null);
             List<Button> buttons = actualKeyboard != null
-                    ? actualKeyboard.getButtons().get(actualKeyboard.getButtons().size() - 1)
+                    ? getAllKeyBoardButtons(actualKeyboard)
                     : null;
 
             //
@@ -163,6 +165,8 @@ public class HandlerImpl implements Handler {
                 String textWithoutEmoji = EmojiCleaner.clean(message);
                 answer = generateMessage(textWithoutEmoji, buttons, updates);
             }
+        } else {
+            //TODO: send something to get response ???? probably not needed, it's made in task now
         }
 
         if (hasLike) {
@@ -179,6 +183,7 @@ public class HandlerImpl implements Handler {
         if (!buttons.isEmpty()) {
             for (Button b : buttons) {
                 String buttonText = b.getAction().getLabel();
+                //System.out.println(">> btn: " + buttonText);
                 if (buttonText.length() > 1) {
                     for (int i = 0; i < buttonText.length(); i++) {
                         if (Character.isLetter(buttonText.charAt(i))) {
@@ -370,6 +375,19 @@ public class HandlerImpl implements Handler {
         if (SHOULD_LIKE_ON_LIKE) {
             likes++;
         }
+    }
+
+    private List<Button> getAllKeyBoardButtons(Keyboard actualKeyboard) {
+        List<Button> allButtons = new ArrayList<>();
+        actualKeyboard.getButtons().get(actualKeyboard.getButtons().size() - 1);
+        var keyboards = actualKeyboard.getButtons();
+        for (List<Button> buttons : keyboards) {
+            for (Button button : buttons) {
+                allButtons.add(button);
+            }
+        }
+        
+        return allButtons;
     }
 
 }
