@@ -8,15 +8,11 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -640,11 +636,53 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     }//GEN-LAST:event_likeOnLikeCheckBoxMenuItemActionPerformed
 
     private void baseDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baseDelayMenuItemActionPerformed
-        // TODO add your handling code here:
+        int baseDelay = (int) settings.get(Parameter.BASE_DELAY);
+        JTextField baseDelayField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Input new value:"));
+        panel.add(baseDelayField);
+        panel.add(new JLabel("Old value: " + baseDelay));
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "New base delay",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                int newBaseDelay = Integer.parseInt(baseDelayField.getText().trim());
+                if (newBaseDelay > 0 && newBaseDelay <= 60) {
+                    settings.put(Parameter.BASE_DELAY, newBaseDelay);
+                } else {
+                    appendToPane("Value must be greater zero and less 60");
+                }
+            } catch (NumberFormatException e) {
+                appendToPane("Not a number");
+            }
+        }
     }//GEN-LAST:event_baseDelayMenuItemActionPerformed
 
     private void randomDelayMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomDelayMenuItemActionPerformed
-        // TODO add your handling code here:
+        int randomDelay = (int) settings.get(Parameter.RANDOM_DELAY);
+        JTextField baseDelayField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Input new value:"));
+        panel.add(baseDelayField);
+        panel.add(new JLabel("Old value: " + randomDelay));
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "New random delay",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                int newBaseDelay = Integer.parseInt(baseDelayField.getText().trim());
+                if (newBaseDelay > 0 && newBaseDelay <= 60) {
+                    settings.put(Parameter.RANDOM_DELAY, newBaseDelay);
+                } else {
+                    appendToPane("Value must be greater zero and less 60");
+                }
+            } catch (NumberFormatException e) {
+                appendToPane("Not a number");
+            }
+        }
     }//GEN-LAST:event_randomDelayMenuItemActionPerformed
 
     public void setStartButtonStatus(int status) {
