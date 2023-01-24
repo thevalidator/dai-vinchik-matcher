@@ -233,8 +233,11 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
         filterMenu.setText("Filters");
 
-        ageCheckBoxMenuItem.setSelected(true);
-        filters.add(new AgeFilterImpl());
+        boolean hasAgeFilter = (boolean) settings.get(Parameter.AGE_FILTER);
+        ageCheckBoxMenuItem.setSelected(hasAgeFilter ? true : false);
+        if (hasAgeFilter) {
+            filters.add(new AgeFilterImpl());
+        }
         ageCheckBoxMenuItem.setText("Age filter");
         ageCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -243,8 +246,11 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         });
         filterMenu.add(ageCheckBoxMenuItem);
 
-        cityCheckBoxMenuItem.setSelected(true);
-        filters.add(new CityFilterImpl());
+        boolean hasCityFilter = (boolean) settings.get(Parameter.CITY_FILTER);
+        cityCheckBoxMenuItem.setSelected(hasCityFilter ? true : false);
+        if (hasCityFilter) {
+            filters.add(new CityFilterImpl());
+        }
         cityCheckBoxMenuItem.setText("City filter");
         cityCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -253,8 +259,11 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         });
         filterMenu.add(cityCheckBoxMenuItem);
 
-        textCheckBoxMenuItem.setSelected(true);
-        filters.add(new TextFilterImpl());
+        boolean hasTextFilter = (boolean) settings.get(Parameter.TEXT_FILTER);
+        textCheckBoxMenuItem.setSelected(hasTextFilter ? true : false);
+        if (hasTextFilter) {
+            filters.add(new TextFilterImpl());
+        }
         textCheckBoxMenuItem.setText("Text filter");
         textCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -267,7 +276,8 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
         jMenu3.setText("Options");
 
-        likeOnLikeCheckBoxMenuItem.setSelected(true);
+        boolean isLikeChecked = (boolean) settings.get(Parameter.LIKE_ON_LIKE);
+        likeOnLikeCheckBoxMenuItem.setSelected(isLikeChecked ? true : false);
         likeOnLikeCheckBoxMenuItem.setText("Always like on like");
         likeOnLikeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -276,7 +286,8 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         });
         jMenu3.add(likeOnLikeCheckBoxMenuItem);
 
-        soundCheckBoxMenuItem.setSelected(true);
+        boolean isSoundChecked = (boolean) settings.get(Parameter.SOUND_ALARM);
+        soundCheckBoxMenuItem.setSelected(isSoundChecked ? true : false);
         soundCheckBoxMenuItem.setText("Sound");
         soundCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -285,7 +296,8 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         });
         jMenu3.add(soundCheckBoxMenuItem);
 
-        debugCheckBoxMenuItem.setSelected(true);
+        boolean isDebugChecked = (boolean) settings.get(Parameter.DEBUG_MODE);
+        debugCheckBoxMenuItem.setSelected(isDebugChecked ? true : false);
         debugCheckBoxMenuItem.setText("Debug mode");
         debugCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -294,7 +306,8 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         });
         jMenu3.add(debugCheckBoxMenuItem);
 
-        experimentalCheckBoxMenuItem.setSelected(true);
+        boolean isExperimentalChecked = (boolean) settings.get(Parameter.EXPERIMENTAL_HANDLER);
+        experimentalCheckBoxMenuItem.setSelected(isExperimentalChecked ? true : false);
         experimentalCheckBoxMenuItem.setText("Experimental mode");
         experimentalCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -652,10 +665,10 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 if (newBaseDelay > 0 && newBaseDelay <= 60) {
                     settings.put(Parameter.BASE_DELAY, newBaseDelay);
                 } else {
-                    appendToPane("Value must be greater zero and less 60");
+                    appendToPane("ERROR: Value must be greater zero and less 60");
                 }
             } catch (NumberFormatException e) {
-                appendToPane("Not a number");
+                appendToPane("ERROR: Not a number");
             }
         }
     }//GEN-LAST:event_baseDelayMenuItemActionPerformed
@@ -677,10 +690,10 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 if (newBaseDelay > 0 && newBaseDelay <= 60) {
                     settings.put(Parameter.RANDOM_DELAY, newBaseDelay);
                 } else {
-                    appendToPane("Value must be greater zero and less 60");
+                    appendToPane("ERROR: Value must be greater zero and less 60");
                 }
             } catch (NumberFormatException e) {
-                appendToPane("Not a number");
+                appendToPane("ERROR: Not a number");
             }
         }
     }//GEN-LAST:event_randomDelayMenuItemActionPerformed

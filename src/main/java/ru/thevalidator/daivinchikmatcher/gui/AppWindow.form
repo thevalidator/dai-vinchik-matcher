@@ -49,30 +49,45 @@
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="ageCheckBoxMenuItem">
               <Properties>
-                <Property name="selected" type="boolean" value="true" postCode="filters.add(new AgeFilterImpl());"/>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor" postCode="if (hasAgeFilter) {&#xa;    filters.add(new AgeFilterImpl());&#xa;}">
+                  <Connection code="hasAgeFilter ? true : false" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Age filter"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ageCheckBoxMenuItemActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="boolean hasAgeFilter = (boolean) settings.get(Parameter.AGE_FILTER);"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cityCheckBoxMenuItem">
               <Properties>
-                <Property name="selected" type="boolean" value="true" postCode="filters.add(new CityFilterImpl());"/>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor" postCode="if (hasCityFilter) {&#xa;    filters.add(new CityFilterImpl());&#xa;}">
+                  <Connection code="hasCityFilter ? true : false" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="City filter"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cityCheckBoxMenuItemActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="boolean hasCityFilter = (boolean) settings.get(Parameter.CITY_FILTER);"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="textCheckBoxMenuItem">
               <Properties>
-                <Property name="selected" type="boolean" value="true" postCode="filters.add(new TextFilterImpl());"/>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor" postCode="if (hasTextFilter) {&#xa;filters.add(new TextFilterImpl());&#xa;}">
+                  <Connection code="hasTextFilter ? true : false" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Text filter"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textCheckBoxMenuItemActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="boolean hasTextFilter = (boolean) settings.get(Parameter.TEXT_FILTER);"/>
+              </AuxValues>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -83,39 +98,59 @@
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="likeOnLikeCheckBoxMenuItem">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="isLikeChecked ? true : false" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Always like on like"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="likeOnLikeCheckBoxMenuItemActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="boolean isLikeChecked = (boolean) settings.get(Parameter.LIKE_ON_LIKE);"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="soundCheckBoxMenuItem">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="isSoundChecked ? true : false" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Sound"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="soundCheckBoxMenuItemActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="boolean isSoundChecked = (boolean) settings.get(Parameter.SOUND_ALARM);"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="debugCheckBoxMenuItem">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="isDebugChecked ? true : false" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Debug mode"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="debugCheckBoxMenuItemActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="boolean isDebugChecked = (boolean) settings.get(Parameter.DEBUG_MODE);"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="experimentalCheckBoxMenuItem">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
+                <Property name="selected" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="isExperimentalChecked ? true : false" type="code"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Experimental mode"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="experimentalCheckBoxMenuItemActionPerformed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="boolean isExperimentalChecked = (boolean) settings.get(Parameter.EXPERIMENTAL_HANDLER);"/>
+              </AuxValues>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="baseDelayMenuItem">
               <Properties>
