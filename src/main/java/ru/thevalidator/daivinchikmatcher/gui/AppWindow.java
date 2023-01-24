@@ -671,6 +671,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 int newBaseDelay = Integer.parseInt(baseDelayField.getText().trim());
                 if (newBaseDelay > 0 && newBaseDelay <= 60) {
                     settings.put(Parameter.BASE_DELAY, newBaseDelay);
+                    Settings.saveSettings(settings);
                 } else {
                     appendToPane("ERROR: Value must be greater zero and less 60");
                 }
@@ -696,6 +697,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
                 int newBaseDelay = Integer.parseInt(baseDelayField.getText().trim());
                 if (newBaseDelay > 0 && newBaseDelay <= 60) {
                     settings.put(Parameter.RANDOM_DELAY, newBaseDelay);
+                    Settings.saveSettings(settings);
                 } else {
                     appendToPane("ERROR: Value must be greater zero and less 60");
                 }
