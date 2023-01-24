@@ -162,9 +162,12 @@ public class HandlerImpl implements Handler {
                 //System.out.println(message);
                 answer = getCustomAnswer(message, updates);
             } else {
-                String textWithoutEmoji = EmojiCleaner.clean(message);
-                answer = generateMessage(textWithoutEmoji, buttons, updates);
+                //String textWithoutEmoji = EmojiCleaner.clean(message);
+                //answer = generateMessage(textWithoutEmoji, buttons, updates);
+                answer = generateMessage(message, buttons, updates);
             }
+        } else {
+            //TODO: send something to get response ???? probably not needed, it's made in task now
         }
 
         if (hasLike) {
@@ -176,7 +179,7 @@ public class HandlerImpl implements Handler {
 
     private String generateMessage(String messageText, List<Button> buttons, List<List<Object>> updates) {
         String message = null;
-
+        messageText = EmojiCleaner.clean(messageText);
         //checks continue words on buttons
         if (!buttons.isEmpty()) {
             for (Button b : buttons) {
@@ -194,7 +197,7 @@ public class HandlerImpl implements Handler {
                 }
             }
         }
-
+        //System.out.println(">> msg: " + messageText);
         if (isMutualLike(messageText, buttons)) {
             logger.info("[LIKE] - {}", messageText);
             informer.informObservers(actor.getUserName() + "\n> [LIKE] " + messageText);
@@ -257,6 +260,14 @@ public class HandlerImpl implements Handler {
             informer.informObservers(actor.getUserName() + "\n> [ADVISE CASE]");
             return "2";
         } else {
+            if (HAS_EXPERIMENTAL_OPTION) {
+                if (messageText.contains("1. Смотреть анкеты.")) {
+                    informer.informObservers(actor.getUserName() + "\n> [EXPERIMENTAL CASE FOUND]");
+                    logger.error(" [{}] - EXPERIMENTAL CASE FOUND \nmessage={}",
+                    AppWindow.APP_VER, messageText);
+                    return "1";
+                }
+            }
             //experimental//
 
             // 1
