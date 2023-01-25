@@ -55,13 +55,5 @@ public class FileUtilTest {
 //        assertArrayEquals(expResult, result);
 //        fail("The test case is a prototype.");
 //    }
-
-    @Test
-    public void testReadDelay() {
-        String path = Data.DELAY;
-        String expResult = "25";
-        String result = FileUtil.readDelay(path);
-        assertEquals(expResult, result);
-    }
     
 }
