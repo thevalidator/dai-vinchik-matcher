@@ -23,8 +23,6 @@ public class Data {
     
     public static final String WORDS = "config/words.dict";
     
-    public static final String DELAY = "config/delay.txt";
-    
     public static final String PROPERTIES = "config/properties.json";
 
 }
