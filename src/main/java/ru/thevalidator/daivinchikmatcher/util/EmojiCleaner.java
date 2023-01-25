@@ -21,15 +21,11 @@ public class EmojiCleaner {
                 + "[\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA]\uFE0F?";
 
     public static String clean(String input) {
-        
         return input.replaceAll(PATTERN, "");
-
     }
 
     public static boolean isEmoji(String message) {
-        
         return message.matches("(?:" + PATTERN + ")+");
-        
     }
 
 }
