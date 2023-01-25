@@ -20,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import ru.thevalidator.daivinchikmatcher.dto.LongPollServerResponse;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Action;
 import ru.thevalidator.daivinchikmatcher.dto.keyboard.Button;
+import ru.thevalidator.daivinchikmatcher.gui.AppWindow;
 import ru.thevalidator.daivinchikmatcher.notification.Informer;
 import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
 import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
@@ -41,6 +42,7 @@ public class HandlerImplTest {
     public static void setUpClass() {
         UserActorWithoutId actor = new UserActorWithoutId("d23d3c98uuj23djc932cjdu92");
         actor.setUserName("Test User");
+        AppWindow window = new AppWindow();
         instance = new HandlerImpl(new HashSet<>(), null, actor);
         mapper = new ObjectMapper();
         informer = new Informer();
@@ -129,6 +131,95 @@ public class HandlerImplTest {
         }
 
     }
+    
+    @Test
+    @DisplayName("Profile3")
+    public void testGetAnswerProfileCase3() {
+
+        String responseContent = "{\"ts\":1836825949,\"updates\":[[3,487,1,-91050183],[6,-91050183,487,0],[4,488,3,-91050183,1674385070,\"3\",{\"title\":\" ... \"},{}],[80,1,0],[3,488,1,-91050183],[7,-91050183,488,0],[4,489,1,-91050183,1674385070,\"Виктория, 24, Москва<br>Мне многое интересно...<br>Музыка, спорт, йога,танцы, рисование, фильмы, сериалы, фестивали, концерты, тусовки прикольные(мастер классы по танцам, джем(импровизированная музыка)), фехтование,стрельба из лука,мастер классы различные и тд. <br>Я не пью, не курю.<br>Хочу пообщаться ✨\",{\"emoji\":\"1\",\"content_source\":\"lgECApPOGMCkbs4YwKRuzcAiA8A=\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"778875451_457239213\"}],[80,2,0],[52,11,-91050183,0],[3,332,1,716059501],[7,716059501,332,0],[61,716059501,1],[4,490,1,716059501,1674385087,\"🙏\",{\"emoji\":\"1\",\"title\":\" ... \"},{}],[80,3,0]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    @DisplayName("Profile4")
+    public void testGetAnswerProfileCase4() {
+
+        String responseContent = "{\"ts\":1714379528,\"updates\":[[3,6607,1,-91050183],[6,-91050183,6607,0],[4,6608,3,-91050183,1674396640,\"3\",{\"title\":\" ... \"},{}],[80,24,0],[3,6608,1,-91050183],[7,-91050183,6608,0],[4,6609,1,-91050183,1674396640,\"Дима, 20, Москва<br>Мне 17\",{\"content_source\":\"lgECApPOHMYfwM4cxh\\/AzaHgA8A=\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"364392412_457239140\"}],[80,25,0],[52,11,-91050183,0]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    @DisplayName("Mutual like message")
+    public void testGetAnswerMutualLikeCase1() {
+
+        String responseContent = "{\"ts\":1836825567,\"updates\":[[3,398,1,-91050183],[6,-91050183,398,0],[80,0,0],[4,399,3,-91050183,1674384256,\"1\",{\"title\":\" ... \"},{}],[3,399,1,-91050183],[7,-91050183,399,0],[4,400,1,-91050183,1674384257,\"Отлично! Надеюсь хорошо проведете время ;) добавляй в друзья - vk.com\\/id218648185\",{\"title\":\" ... \"},{}],[80,1,0],[4,401,1,-91050183,1674384257,\"Это все, идем дальше?\",{\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"Смотреть анкеты\"},\"color\":\"positive\"}],[{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"Главное меню\"},\"color\":\"default\"}]]}},{}],[52,11,-91050183,0],[3,400,1,-91050183],[6,-91050183,400,1],[3,401,1,-91050183],[6,-91050183,401,0],[80,0,0]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    @DisplayName("Mutual like message 2")
+    public void testGetAnswerMutualLikeCase2() {
+
+        String responseContent = "{\"ts\":1625883660,\"updates\":[[3,1179,1,-91050183],[6,-91050183,1179,0],[4,1180,3,-91050183,1674415390,\"1\",{\"title\":\" ... \"},{}],[80,7,0],[3,1180,1,-91050183],[7,-91050183,1180,0],[4,1181,1,-91050183,1674415390,\"Отлично! Надеюсь хорошо проведете время ;) добавляй в друзья - vk.com\\/id603666502\",{\"title\":\" ... \"},{}],[80,8,0],[4,1182,1,-91050183,1674415390,\"Это все, идем дальше?\",{\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"Смотреть анкеты\"},\"color\":\"positive\"}],[{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"Главное меню\"},\"color\":\"default\"}]]}},{}],[52,11,-91050183,0]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    @DisplayName("Mutual like message 3")
+    public void testGetAnswerMutualLikeCase3() {
+
+        String responseContent = "{\"ts\":1625884417,\"updates\":[[4,1349,3,-91050183,1674417614,\"1\",{\"title\":\" ... \"},{}],[3,1349,1,-91050183],[7,-91050183,1349,0],[4,1350,1,-91050183,1674417614,\"Отлично! Надеюсь хорошо проведете время ;) добавляй в друзья - vk.com\\/id506090967\",{\"title\":\" ... \"},{}],[80,8,0],[4,1351,1,-91050183,1674417615,\"Это все, идем дальше?\",{\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"Смотреть анкеты\"},\"color\":\"positive\"}],[{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"Главное меню\"},\"color\":\"default\"}]]}},{}],[52,11,-91050183,0],[3,1351,1,-91050183],[3,1350,1,-91050183],[6,-91050183,1351,0],[80,7,0]]}";
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
 
     @Test
     @DisplayName("Advertisements")
@@ -171,6 +262,24 @@ public class HandlerImplTest {
     public void testGetAnswerIsLikedBySomeOneCase() {
 
         String responseContent = "{\"ts\":1824067397,\"updates\": [[4,28385,1,-91050183,1673608136,\"Ты понравилась 1 человеку, показать его?\",{\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"👍\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{}],[52,11,-91050183,0],[3,28385,1,-91050183],[3,28384,1,-91050183],[6,-91050183,28385,0],[80,2,0],[3,28386,1,-91050183],[7,-91050183,28386,0],[80,3,0],[52,11,-91050183,0],[3,28387,1,-91050183],[6,-91050183,28387,0],[80,2,0]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    @DisplayName("Liked by someone")
+    public void testGetAnswerIsLikedBySomeOneCase2() {
+
+        String responseContent = "{\"ts\":1625884395,\"updates\":[[3,1341,1,-91050183],[7,-91050183,1341,0],[4,1342,1,-91050183,1674417232,\"Ты понравилась 1 парню, показать его?\",{\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"👍\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{}],[80,8,0],[52,11,-91050183,0],[4,1343,1,-91050183,1674417296,\"Нет такого варианта ответа, напиши одну цифру\",{\"title\":\" ... \"},{}],[3,1343,1,-91050183],[3,1342,1,-91050183],[6,-91050183,1343,0],[4,1344,3,-91050183,1674417565,\"1\",{\"title\":\" ... \"},{}],[80,7,0],[3,1344,1,-91050183],[7,-91050183,1344,0],[4,1345,1,-91050183,1674417566,\"Кому-то понравилась твоя анкета(и еще 1):<br><br>🧢, 18, Москва<br>🦋 Ищу интересных людей, общение и т.д <br><br>  • Я ещё пишу музыку, в стилях хоррор, треп металл, Drill, Detroit, Hyperpop, и разрабатываю свой собственный стиль и звучание) <br><br> • На мой Жанр меня вдохновляют : <br><br>Sagath, Fatal - m, НОКТУ, <br>163onmyneck, Heronwater, midix. <br><br> • Ещё у нас есть беседа) в это беседе 👇<br><br>💎 - Любые обсуждения <br>💎 - Единомышленники <br>💎 - общие интересы       <br>💎 - общие увеличения<br>💎 - дружба <br><br>Так же я создал объединение UNICORN MUSIC для музыкантов с топовым саундом, если ты битмейкер или исполнитель, и хочешь с кем то двигаться, пиши мне в личку с пометкой (UNICORN) и кидай свои работы 😁\",{\"emoji\":\"1\",\"content_source\":\"lgEBAsAD2SZodHRwOi8vdmsuY29tL3Bob3RvNjUyNzY1NDcxXzQ1NzI1MTI3OA==\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"жалоба\"},\"color\":\"default\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"522772219_457239481\"}],[80,8,0],[52,11,-91050183,0],[3,1345,1,-91050183],[6,-91050183,1345,0],[80,7,0]]}";
 
         try {
             LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
@@ -255,23 +364,23 @@ public class HandlerImplTest {
 //
 //    }
 //
-//    @Test
-//    @DisplayName("Location")
-//    public void testGetAnswerLocationCase() {
-//
-//        String responseContent = "{\"ts\":1824067397,\"updates\": }";
-//
-//        try {
-//            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
-//            String result = instance.getAnswerMessage(dto.getUpdates());
-//            assertEquals("1", result);
-//
-//        } catch (JsonProcessingException ex) {
-//            System.out.println(ExceptionUtil.getFormattedDescription(ex));
-//            fail(ex.getMessage());
-//        }
-//
-//    }
+    @Test
+    @DisplayName("Location")
+    public void testGetAnswerLocationCase() {
+
+        String responseContent = "{\"ts\":1850291255,\"updates\":[[4,1632177,3,-91050183,1674344484,\"3\",{\"title\":\" ... \"},{}],[3,1632177,1,-91050183],[7,-91050183,1632177,0],[4,1632178,1,-91050183,1674344484,\"Александр, пришли мне свое местоположение и увидишь кто находится рядом\",{\"title\":\" ... \"},{}],[80,6,0],[52,11,-91050183,0],[3,1632178,1,-91050183],[6,-91050183,1632178,0],[80,5,0]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
 //
 //    @Test
 //    @DisplayName("")
@@ -369,6 +478,180 @@ public class HandlerImplTest {
         }
 
     }
+    
+    @Test
+    public void testGetStartMessage3() {
+
+        String text = "Настя, 19, Москва\nПриветик, ищу активных человечков в мою беседу‼️\nСтрого Москва, строго от 16+ (15ти летние извините, но ответственность на сходках никто за вас брать не хочет, поэтому сорри🥺)\n В беседе вы можете найти как друзей, так и вторую половинку. \nА также, данная беседа предназначена для знакомств, общения, тусовок и просто хорошего времяпровождения. \n\nДля тех кто хочет в беседу просьба, пишите 💌 потому что много попадаются тех, кто не хочет в беседу и просто так лайкнул, и я зря трачу и их и своё время.";
+        String buttonsData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"💌\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            //HandlerImpl instance = new HandlerImpl(new HashSet<>(), null, null);
+            instance.setInformer(informer);
+            String result = instance.getStartMessage(text, buttons);
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    public void testGetStartMessage4() {
+
+        String text = "Боря, 18, 📍500 метров";
+        String buttonsData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"💌\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            //HandlerImpl instance = new HandlerImpl(new HashSet<>(), null, null);
+            instance.setInformer(informer);
+            String result = instance.getStartMessage(text, buttons);
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    public void testGetStartMessage5() {
+
+        String text = "Александр, 21, 📍1км\nЯ - смешной человек.\nУмею играть в компьютерные видео-развлечения и смотреть сериалы.\nДоучиваюсь на последнем курсе и работаю звукорежиссёром в театре.\nСостою в свободных отношениях (да, она в курсе).\nТактильный, полиаморный выблядок.\nРост 187, если это важно.\nКогда-нибудь видели продукты в магазине? Это я их изобрёл.\nЯ никогда не совершал военные преступления в Косово, честно.\nИщу человека.";
+        String buttonsData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"💌\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            //HandlerImpl instance = new HandlerImpl(new HashSet<>(), null, null);
+            instance.setInformer(informer);
+            String result = instance.getStartMessage(text, buttons);
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    public void testGetStartMessage6() {
+
+        String text = "Сергей, 21, 📍1км\nОбщение";
+        String buttonsData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"💌\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            //HandlerImpl instance = new HandlerImpl(new HashSet<>(), null, null);
+            instance.setInformer(informer);
+            String result = instance.getStartMessage(text, buttons);
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    public void testGetStartMessage7() {
+
+        String text = "Денис, 21, 📍1км\nI am not persistent, I am goal-oriented.";
+        String buttonsData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"💌\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            //HandlerImpl instance = new HandlerImpl(new HashSet<>(), null, null);
+            instance.setInformer(informer);
+            String result = instance.getStartMessage(text, buttons);
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    public void testGetStartMessage8() {
+
+        String text = "Кому-то понравилась твоя анкета:\n\nKemran, 20, 📍2км";
+        String buttonsData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"жалоба\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"default\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            //HandlerImpl instance = new HandlerImpl(new HashSet<>(), null, null);
+            instance.setInformer(informer);
+            String result = instance.getStartMessage(text, buttons);
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    public void testGetStartMessage9() {
+
+        String text = "Уже не актуально :(\n\n1. Смотреть анкеты.\n2. Моя анкета.\n3. Я больше не хочу никого искать.\n***\n4. ✈️ Бот знакомств Дайвинчик в Telegram.";
+        String buttonsData = "[{\"action\":{\"label\":\"1\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"2\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"default\"}, {\"action\":{\"label\":\"3\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"default\"}, {\"action\":{\"label\":\"✈️ 4\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            //HandlerImpl instance = new HandlerImpl(new HashSet<>(), null, null);
+            instance.setInformer(informer);
+            String result = instance.getStartMessage(text, buttons);
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+//    @Test
+//    public void testGetStartMessage4() {
+//
+//        String text = "Боря, 18, 📍500 метров";
+//        String buttonsData = "[{\"action\":{\"label\":\"❤️\",\"payload\":\"1\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"💌\",\"payload\":\"2\",\"type\":\"text\"},\"color\":\"positive\"}, {\"action\":{\"label\":\"👎\",\"payload\":\"3\",\"type\":\"text\"},\"color\":\"negative\"}, {\"action\":{\"label\":\"💤\",\"payload\":\"4\",\"type\":\"text\"},\"color\":\"default\"}]";
+//
+//        try {
+//
+//            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+//            });
+//            //HandlerImpl instance = new HandlerImpl(new HashSet<>(), null, null);
+//            instance.setInformer(informer);
+//            String result = instance.getStartMessage(text, buttons);
+//            assertEquals("1", result);
+//
+//        } catch (JsonProcessingException ex) {
+//            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+//            fail(ex.getMessage());
+//        }
+//
+//    }
 
     @Test
     @DisplayName("profile response get answer test")
@@ -476,6 +759,25 @@ public class HandlerImplTest {
     public void testGetAnswerprofile2() {
 
         String responseContent = "{\"ts\":1824067397,\"updates\":[[4,1631328,3,-91050183,1673513238,\"3\",{\"title\":\" ... \"},{}],[3,1631328,1,-91050183],[7,-91050183,1631328,0],[4,1631329,1,-91050183,1673513238,\"Солнышко??, 22, Калуга<br>Рост 158?\",{\"emoji\":\"1\",\"content_source\":\"lgEBAsAD2SZodHRwOi8vdmsuY29tL3Bob3RvNTY3Mjk4NjA2XzQ1NzI4NDA2MQ==\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"519324877_457240910\"}],[80,8,0],[52,11,-91050183,0],[3,1631329,1,-91050183],[6,-91050183,1631329,0],[80,7,0]]}";
+
+        try {
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            //HandlerImpl instance = new HandlerImpl(new HashSet<>(), null, null);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+    
+    @Test
+    @DisplayName("profile3 response get answer test")
+    public void testGetAnswerprofile3() {
+
+        String responseContent = "{\"ts\":1824067397,\"updates\":[[4,1631328,3,-91050183,1673513238,\"3\",{\"title\":\" ... \"},{}],[3,1631328,1,-91050183],[7,-91050183,1631328,0],[4,1631329,1,-91050183,1673513238,\"Боря, 18, 📍500 метров\",{\"emoji\":\"1\",\"content_source\":\"lgEBAsAD2SZodHRwOi8vdmsuY29tL3Bob3RvNTY3Mjk4NjA2XzQ1NzI4NDA2MQ==\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"??\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"?\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"?\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"?\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"519324877_457240910\"}],[80,8,0],[52,11,-91050183,0],[3,1631329,1,-91050183],[6,-91050183,1631329,0],[80,7,0]]}";
 
         try {
             LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
