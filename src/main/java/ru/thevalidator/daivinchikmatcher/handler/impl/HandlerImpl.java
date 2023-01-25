@@ -42,11 +42,11 @@ import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
 import ru.thevalidator.daivinchikmatcher.property.Data;
 import static ru.thevalidator.daivinchikmatcher.property.Data.DAI_VINCHIK_BOT_CHAT_ID;
 import ru.thevalidator.daivinchikmatcher.settings.Parameter;
-import static ru.thevalidator.daivinchikmatcher.util.SoundUtil.startSoundAlarm;
 import ru.thevalidator.daivinchikmatcher.util.EmojiCleaner;
 import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
-import static ru.thevalidator.daivinchikmatcher.util.SoundUtil.startSounNotification;
 import ru.thevalidator.daivinchikmatcher.util.VKUtil;
+import static ru.thevalidator.daivinchikmatcher.util.SoundUtil.playAlarm;
+import static ru.thevalidator.daivinchikmatcher.util.SoundUtil.playNotification;
 
 public class HandlerImpl implements Handler {
 
@@ -112,7 +112,7 @@ public class HandlerImpl implements Handler {
                             informer.informObservers(actor.getUserName()
                                     + "\n> [LIKE] " + message);
                             if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
-                                startSounNotification();
+                                playNotification();
                             }
 
                         }
@@ -312,7 +312,7 @@ public class HandlerImpl implements Handler {
 
             if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
                 Thread t = new Thread(() -> {
-                    startSoundAlarm();
+                    playAlarm();
                 });
                 t.start();
             }
