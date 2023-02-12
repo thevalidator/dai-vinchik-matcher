@@ -9,15 +9,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import ru.thevalidator.daivinchikmatcher.handler.impl.HandlerImpl;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
 public class FileUtil {
 
+    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(FileUtil.class);
+    
     public static Set<String> readDict(String path) {
         Set<String> dict = new HashSet<>();
         try ( BufferedReader br
@@ -27,7 +27,7 @@ public class FileUtil {
                 dict.add(line.trim());
             }
         } catch (IOException ex) {
-            Logger.getLogger(HandlerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ExceptionUtil.getFormattedDescription(ex));
         }
 
         return dict;
@@ -44,10 +44,25 @@ public class FileUtil {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(HandlerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ExceptionUtil.getFormattedDescription(ex));
         }
 
         return ages;
+    }
+    
+    public static String readMessageDict(String path) {
+        StringBuilder sb = new StringBuilder();
+        try ( BufferedReader br
+                = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+        } catch (IOException ex) {
+            logger.error(ExceptionUtil.getFormattedDescription(ex));
+        }
+
+        return sb.toString();
     }
 
 }

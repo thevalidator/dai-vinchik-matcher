@@ -5,6 +5,8 @@ package ru.thevalidator.daivinchikmatcher;
 
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +45,7 @@ public class CustomTest {
     public void testPlayAlert() {
         SoundUtil.playAlarm();
     }
-    
+
     @Test
     public void testPlayNotification() {
         SoundUtil.playNotification();
@@ -100,19 +102,19 @@ public class CustomTest {
     @Test
     public void testRemoveEmoji() throws FileNotFoundException, UnsupportedEncodingException {
         String emoji = "♡" + "Полина, 15, 📍Москва";
-        
+
         String res = EmojiCleaner.clean(emoji);
         System.out.println(EmojiCleaner.isEmoji("♡"));
         System.out.println(EmojiCleaner.isEmoji("📍"));
-        
+
         System.out.printf("before: %s\n after: %s\n", emoji, res);
-        
+
         assertEquals("Полина, 15, Москва", res);
 
     }
-    
+
     @Test
-    public void testCreateSettingsJson () {
+    public void testCreateSettingsJson() {
 //        Map<Parameter, Object> settings = Settings.loadSettings();
 //        
 //        settings.put(Parameter.AGE_FILTER, false);
@@ -122,6 +124,20 @@ public class CustomTest {
 //        settings.put(Parameter.WINDOW_DIMENTIONS, new int[] {800, 700});
 //        
 //        Settings.saveSettings(settings);
+    }
+
+    @Test
+    public void testSubstring() {
+        System.out.println("vk.com/id386179098".substring(9));
+    }
+
+    @Test
+    public void testExtractingDigits() {
+        Pattern p = Pattern.compile("[\\p{Nd}]+");
+        Matcher m = p.matcher("Ты понравилась 15 парням, показать их?");
+        if (m.find()) {
+            System.out.println(m.group());
+        }
     }
 
 }

@@ -6,7 +6,7 @@ package ru.thevalidator.daivinchikmatcher.handler.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vk.api.sdk.client.actors.UserActorWithoutId;
+import com.vk.api.sdk.client.actors.CustomUserActor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,8 +40,8 @@ public class HandlerImplTest {
 
     @BeforeAll
     public static void setUpClass() {
-        UserActorWithoutId actor = new UserActorWithoutId("d23d3c98uuj23djc932cjdu92");
-        actor.setUserName("Test User");
+        CustomUserActor actor = new CustomUserActor("d23d3c98uuj23djc932cjdu92");
+        actor.setUserName("Test", "User");
         AppWindow window = new AppWindow();
         instance = new HandlerImpl(new HashSet<>(), null, actor);
         mapper = new ObjectMapper();
@@ -63,7 +63,7 @@ public class HandlerImplTest {
     @AfterEach
     public void tearDown() {
     }
-    
+
     @Test
     @DisplayName("Start task")
     public void testGetAnswerStartTask() {
@@ -113,7 +113,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     @DisplayName("Profile2")
     public void testGetAnswerProfileCase2() {
@@ -131,7 +131,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     @DisplayName("Profile3")
     public void testGetAnswerProfileCase3() {
@@ -149,7 +149,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     @DisplayName("Profile4")
     public void testGetAnswerProfileCase4() {
@@ -167,7 +167,43 @@ public class HandlerImplTest {
         }
 
     }
-    
+
+    @Test
+    @DisplayName("Profile5")
+    public void testGetAnswerProfileCase5() {
+
+        String responseContent = "{\"ts\":1677005534,\"updates\":[[3,7523,1,-91050183],[6,-91050183,7523,0],[4,7524,3,-91050183,1674655829,\"3\",{\"title\":\" ... \"},{}],[80,6,0],[3,7524,1,-91050183],[7,-91050183,7524,0],[4,7525,1,-91050183,1674655829,\"Ахмад, 20, 📍4км<br>Приветики,друг.<br>Хочу пригласить тебя в очень интересную беседу <br>там мы:<br>1. устраиваем сходки<br>2. гуляем<br>3. выпиваем( не часто и не все )<br>4. общаемся <br>5. веселая маленькая и позитивная компания .<br>главное что от тебя требуется это позитив и хорошее чувство юмора ) <br>в беседе важен актив) но если есть причина не актива ,то ничего страшного<br>так что ,если тебя заинтересовало мое предложение,то мы будем рады тебе) <br>не стесняемся,залетаем😁\",{\"emoji\":\"1\",\"content_source\":\"lgEBAsAD2SZodHRwOi8vdmsuY29tL3Bob3RvNjQyMDkzNTc5XzQ1NzI0MjYzNQ==\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"522772219_457242454\"}],[80,7,0],[52,11,-91050183,0],[3,7525,1,-91050183],[6,-91050183,7525,0],[80,6,0]]}";
+        try {
+
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+
+    @Test
+    @DisplayName("Profile6")
+    public void testGetAnswerProfileCase6() {
+
+        String responseContent = "{\"ts\":1668319914,\"updates\":[[4,952,3,-91050183,1674749611,\"3\",{\"title\":\" ... \"},{}],[3,952,1,-91050183],[7,-91050183,952,0],[4,953,1,-91050183,1674749611,\"Екатерина, 23, Москва<br>Ищу адекватных людей в беседу 😉если вам не интересна возможность общения в беседе мимо пожалуйста😌\",{\"emoji\":\"1\",\"content_source\":\"lgECApPOEd4q6s4R3irqzU1KA8A=\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"186368134_457239276\"}],[80,1,0],[52,11,-91050183,0],[3,953,1,-91050183],[6,-91050183,953,0],[80,0,0]]}";
+        try {
+
+            LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
+            String result = instance.getAnswerMessage(dto.getUpdates());
+            assertEquals("1", result);
+
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+
+    }
+
     @Test
     @DisplayName("Mutual like message")
     public void testGetAnswerMutualLikeCase1() {
@@ -185,7 +221,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     @DisplayName("Mutual like message 2")
     public void testGetAnswerMutualLikeCase2() {
@@ -203,7 +239,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     @DisplayName("Mutual like message 3")
     public void testGetAnswerMutualLikeCase3() {
@@ -274,7 +310,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     @DisplayName("Liked by someone")
     public void testGetAnswerIsLikedBySomeOneCase2() {
@@ -292,7 +328,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     @DisplayName("Liked by someone message after profile")
     public void testGetAnswerIsLikedBySomeOneSeparateMessageCase() {
@@ -364,6 +400,7 @@ public class HandlerImplTest {
 //
 //    }
 //
+
     @Test
     @DisplayName("Location")
     public void testGetAnswerLocationCase() {
@@ -435,7 +472,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     public void testGetStartMessage() {
 
@@ -478,7 +515,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     public void testGetStartMessage3() {
 
@@ -500,7 +537,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     public void testGetStartMessage4() {
 
@@ -522,7 +559,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     public void testGetStartMessage5() {
 
@@ -544,7 +581,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     public void testGetStartMessage6() {
 
@@ -566,7 +603,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     public void testGetStartMessage7() {
 
@@ -588,7 +625,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     public void testGetStartMessage8() {
 
@@ -609,7 +646,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     public void testGetStartMessage9() {
 
@@ -630,7 +667,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
 //    @Test
 //    public void testGetStartMessage4() {
 //
@@ -652,7 +689,6 @@ public class HandlerImplTest {
 //        }
 //
 //    }
-
     @Test
     @DisplayName("profile response get answer test")
     public void testGetAnswerProfile() {
@@ -772,7 +808,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     @DisplayName("profile3 response get answer test")
     public void testGetAnswerprofile3() {
@@ -1091,7 +1127,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
     @Test
     @DisplayName("Test 1")
     public void testGetAnswerCase1() {
@@ -1101,7 +1137,7 @@ public class HandlerImplTest {
         try {
             LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
             String result = instance.getAnswerMessage(dto.getUpdates());
-            
+
             assertEquals("1", result);
 
         } catch (JsonProcessingException ex) {
@@ -1110,7 +1146,7 @@ public class HandlerImplTest {
         }
 
     }
-    
+
 //    @Test
 //    @DisplayName("Test 2")
 //    public void testGetAnswerCase2() {
@@ -1129,7 +1165,6 @@ public class HandlerImplTest {
 //        }
 //
 //    }
-    
     @Test
     @DisplayName("Test 3 Someone liked your profile need to like too")
     public void testGetAnswerCase3() {
@@ -1139,7 +1174,7 @@ public class HandlerImplTest {
         try {
             LongPollServerResponse dto = ResponseParser.parseLonPollRespone(responseContent);
             String result = instance.getAnswerMessage(dto.getUpdates());
-            
+
             assertEquals("1", result);
 
         } catch (JsonProcessingException ex) {

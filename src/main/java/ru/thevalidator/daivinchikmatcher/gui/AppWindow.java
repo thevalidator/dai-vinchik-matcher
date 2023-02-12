@@ -25,6 +25,7 @@ import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import org.apache.logging.log4j.LogManager;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
+import ru.thevalidator.daivinchikmatcher.matcher.impl.ProfileMatcherImpl;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.AgeFilterImpl;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.CityFilterImpl;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.TextFilterImpl;
@@ -34,8 +35,11 @@ import ru.thevalidator.daivinchikmatcher.property.Property;
 import ru.thevalidator.daivinchikmatcher.property.Proxy;
 import ru.thevalidator.daivinchikmatcher.property.UserAgent;
 import ru.thevalidator.daivinchikmatcher.service.Task;
+import ru.thevalidator.daivinchikmatcher.service.Task2;
 import ru.thevalidator.daivinchikmatcher.settings.Parameter;
 import ru.thevalidator.daivinchikmatcher.settings.Settings;
+import ru.thevalidator.daivinchikmatcher.matcher.ProfileMatcher;
+import ru.thevalidator.daivinchikmatcher.util.DBUtil;
 
 /**
  *
@@ -43,7 +47,8 @@ import ru.thevalidator.daivinchikmatcher.settings.Settings;
  */
 public class AppWindow extends javax.swing.JFrame implements Observer {
 
-    public static final String APP_VER = "v1.0.0.0-beta-01";
+    public static final String APP_VER = "v1.0.0.0-beta-03";
+    public static Set<String> likedUserIds;
     private static final Logger logger = LogManager.getLogger(AppWindow.class);
     private static int MAX_LINES = 400;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm.ss");
@@ -53,15 +58,18 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private SwingWorker worker;
     private Set<Filter> filters;
     
+    
 
     /**
      * Creates new form AppWindow
      */
     public AppWindow() {
         filters = ConcurrentHashMap.newKeySet();
+        likedUserIds = ConcurrentHashMap.newKeySet();
         loadSettings();
         initProperties();
         initComponents();
+        checkDB();
     }
 
     public static Map<Parameter, Object> getSettings() {
@@ -467,12 +475,16 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             } else {
                 isStarted = true;
                 setStartButtonStatus(1);
+                ProfileMatcher matchChecker = new ProfileMatcherImpl(filters);
+                
+                
                 Account account = properties.getAccounts().get(accountComboBox.getSelectedIndex());
                 UserAgent userAgent = properties.getUserAgents().get(userAgentComboBox.getSelectedIndex());
                 Proxy proxy = proxyToggleButton.isSelected() ? properties.getProxies().get(proxyComboBox.getSelectedIndex()) : null;
-
-                Task task = new Task(account, proxy, userAgent, filters);
+                
+                Task2 task = new Task2(account, proxy, userAgent, matchChecker);
                 task.registerObserver(this);
+                
                 worker = new SwingWorker<Void, Void>() {
                     @Override
                     protected Void doInBackground() throws Exception {
@@ -765,4 +777,10 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JCheckBoxMenuItem textCheckBoxMenuItem;
     private javax.swing.JComboBox<String> userAgentComboBox;
     // End of variables declaration//GEN-END:variables
+
+    private void checkDB() {
+        if (!DBUtil.isTableExists("user")) {
+            DBUtil.createTables();
+        }
+    }
 }

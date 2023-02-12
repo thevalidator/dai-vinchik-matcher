@@ -9,15 +9,15 @@ import java.util.regex.Pattern;
 import ru.thevalidator.daivinchikmatcher.dto.Profile;
 import static ru.thevalidator.daivinchikmatcher.handler.Identifier.REGEXP;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
-import ru.thevalidator.daivinchikmatcher.matcher.MatchChecker;
+import ru.thevalidator.daivinchikmatcher.matcher.ProfileMatcher;
 
-public class ProfileMatchCheckerImpl implements MatchChecker {
+public class ProfileMatcherImpl implements ProfileMatcher {
 
     private final Pattern pattern;
     private Set<Filter> filters;
     private Matcher matcher;
 
-    public ProfileMatchCheckerImpl(Set<Filter> filters) {
+    public ProfileMatcherImpl(Set<Filter> filters) {
         this.filters = filters;
         pattern = Pattern.compile(REGEXP);
     }
@@ -42,7 +42,7 @@ public class ProfileMatchCheckerImpl implements MatchChecker {
             
             return true;
         }
-        throw new IllegalArgumentException("No pattern match found in: " + profileText);
+        throw new IllegalArgumentException("No match pattern found in: " + profileText);
     }
 
     public String getName(Matcher matcher) {

@@ -20,24 +20,26 @@ import static ru.thevalidator.daivinchikmatcher.handler.Identifier.REGEXP;
  */
 public class ProfileMatchCheckerImplTest {
 
-    static ProfileMatchCheckerImpl instance;
+    static ProfileMatcherImpl instance;
     static final Pattern pattern = Pattern.compile(REGEXP);
     static Matcher matcher;
     String text;
     String text2;
     String text3;
     String text4;
+    String text5;
 
     public ProfileMatchCheckerImplTest() {
         text = "Victoria, 21, Малоярославец<br>Секретная страница";
         text2 = "Яна, 24, Калуга";
         text3 = "Маша, 15, Москва♡";
         text4 = "Кому-то понравилась твоя анкета:<br><br>♡, 19, Новомосковский административный округ<br>привет ?<br>люблю кошек и в целом всех животных";
+        text5 = "Екатерина, 23, Москва<br>Ищу адекватных людей в беседу 😉если вам не интересна возможность общения в беседе мимо пожалуйста😌";
     }
 
     @BeforeAll
     public static void setUpClass() {
-        instance = new ProfileMatchCheckerImpl(new HashSet<>());
+        instance = new ProfileMatcherImpl(new HashSet<>());
     }
 
     @AfterAll
@@ -56,7 +58,7 @@ public class ProfileMatchCheckerImplTest {
 //    public void testIsMatched() {
 ////        System.out.println("isMatched");
 ////        String text = "";
-////        ProfileMatchCheckerImpl instance = new ProfileMatchCheckerImpl();
+////        ProfileMatcherImpl instance = new ProfileMatcherImpl();
 ////        boolean expResult = false;
 ////        boolean result = instance.isMatched(text);
 ////        assertEquals(expResult, result);
@@ -87,6 +89,11 @@ public class ProfileMatchCheckerImplTest {
         matcher.find();
         String result4 = instance.getName(matcher);
         assertEquals("♡", result4);
+        
+        matcher = pattern.matcher(text5);
+        matcher.find();
+        String result5 = instance.getName(matcher);
+        assertEquals("Екатерина", result5);
         
     }
 

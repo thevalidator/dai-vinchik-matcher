@@ -6,7 +6,7 @@ package ru.thevalidator.daivinchikmatcher.handler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vk.api.sdk.client.actors.UserActorWithoutId;
+import com.vk.api.sdk.client.actors.CustomUserActor;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
@@ -168,8 +168,8 @@ public class ResponseParsingTest {
     public void fullParseResponseWithIndexOutOfBoundsTest() {
         String responseProfileWithoutContetnData = "{\"ts\":1840775934,\"updates\":[[3,4173035,1,-91050183],[6,-91050183,4173035,0],[4,4173043,3,-91050183,1673179103,\"3\",{\"title\":\" ... \"},{}],[80,31,0],[3,4173043,1,-91050183],[7,-91050183,4173043,0],[4,4173044,1,-91050183,1673179103,\"Варя, 15, москва\",{\"content_source\":\"lgEBAsAD2SZodHRwOi8vdmsuY29tL3Bob3RvNDQ3MDczMDg5XzQ1NzI0NjUyOQ==\",\"title\":\" ... \",\"keyboard\":{\"one_time\":false,\"buttons\":[[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]]}},{\"attach1_type\":\"photo\",\"attach1\":\"527463828_457314713\"}],[80,32,0],[52,11,-91050183,0],[4,4173045,2097187,499958552,1673179106,\"Я вроде уже сказал\",{\"title\":\" ... \"},{\"reply\":\"{\\\"conversation_message_id\\\":150}\",\"fwd\":\"0_0\"}],[4,4173046,2097187,499958552,1673179112,\".\",{\"title\":\" ... \"},{\"reply\":\"{\\\"conversation_message_id\\\":134}\",\"fwd\":\"0_0\"}],[3,4173044,1,-91050183],[6,-91050183,4173044,0],[80,31,0],[3,4173046,1,499958552],[3,4173045,1,499958552],[7,499958552,4173046,0],[61,499958552,1],[4,4173047,33,499958552,1673179120,\"окей\",{\"title\":\" ... \"},{}],[80,32,0],[62,499958552,597],[51,382],[52,6,2000000382,775626852],[4,4173048,532481],[2,4173048,131200,2000000382],[4,4173049,532481,2000000382,1673179126,\"Подозрительная активность [id775626852|участника] (Упоминание участников).<br>Блокировка на 1 час в целях безопасности.\",{\"from\":\"-153955265\"},{}],[4,4173050,532481,2000000382,1673179126,\"\",{\"source_act\":\"chat_kick_user\",\"source_mid\":\"775626852\",\"from\":\"-153955265\"},{}],[51,382],[52,8,2000000382,775626852]]}";
 
-        UserActorWithoutId actor = new UserActorWithoutId("23423432rk23kf32pkcl23kf23");
-        actor.setUserName("Test username");
+        CustomUserActor actor = new CustomUserActor("23423432rk23kf32pkcl23kf23");
+        actor.setUserName("Test", "username");
         Handler handler = new HandlerImpl(new HashSet<Filter>(), null, actor);
         Informer informer = new Informer();
         informer.registerObserver((String message) -> {

@@ -561,6 +561,24 @@ public class IdentifierTest {
             fail(ex.getMessage());
         }
     }
+    
+    @Test
+    public void testIsProfile25() {
+        String text = "Екатерина, 23, Москва<br>Ищу адекватных людей в беседу 😉если вам не интересна возможность общения в беседе мимо пожалуйста😌";
+        String buttonsData = "[{\"action\":{\"type\":\"text\",\"payload\":\"1\",\"label\":\"❤️\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"2\",\"label\":\"💌\"},\"color\":\"positive\"},{\"action\":{\"type\":\"text\",\"payload\":\"3\",\"label\":\"👎\"},\"color\":\"negative\"},{\"action\":{\"type\":\"text\",\"payload\":\"4\",\"label\":\"💤\"},\"color\":\"default\"}]";
+
+        try {
+
+            List<Button> buttons = mapper.readValue(buttonsData, new TypeReference<List<Button>>() {
+            });
+            boolean result = Identifier.isProfile(EmojiCleaner.clean(text), buttons);
+            assertTrue(result);
+
+        } catch (JsonProcessingException ex) {
+            System.out.println(ExceptionUtil.getFormattedDescription(ex));
+            fail(ex.getMessage());
+        }
+    }
 
     @Test
     public void testIsNoTextInProfileWarn() {

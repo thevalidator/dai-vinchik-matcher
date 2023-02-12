@@ -6,7 +6,7 @@ package ru.thevalidator.daivinchikmatcher.handler.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.UserActorWithoutId;
+import com.vk.api.sdk.client.actors.CustomUserActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.GetHistoryRev;
@@ -35,8 +35,7 @@ import ru.thevalidator.daivinchikmatcher.handler.Flag;
 import ru.thevalidator.daivinchikmatcher.handler.Handler;
 import static ru.thevalidator.daivinchikmatcher.handler.Identifier.*;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
-import ru.thevalidator.daivinchikmatcher.matcher.impl.ProfileMatchCheckerImpl;
-import ru.thevalidator.daivinchikmatcher.matcher.MatchChecker;
+import ru.thevalidator.daivinchikmatcher.matcher.impl.ProfileMatcherImpl;
 import ru.thevalidator.daivinchikmatcher.notification.Informer;
 import ru.thevalidator.daivinchikmatcher.parser.ResponseParser;
 import ru.thevalidator.daivinchikmatcher.property.Data;
@@ -47,6 +46,7 @@ import ru.thevalidator.daivinchikmatcher.util.ExceptionUtil;
 import ru.thevalidator.daivinchikmatcher.util.VKUtil;
 import static ru.thevalidator.daivinchikmatcher.util.SoundUtil.playAlarm;
 import static ru.thevalidator.daivinchikmatcher.util.SoundUtil.playNotification;
+import ru.thevalidator.daivinchikmatcher.matcher.ProfileMatcher;
 
 public class HandlerImpl implements Handler {
 
@@ -54,16 +54,15 @@ public class HandlerImpl implements Handler {
     private static final int[] FLAGS = Flag.getAllFlagCodes();
     private static final boolean SHOULD_LIKE_ON_LIKE = (boolean) AppWindow.getSettings().get(Parameter.LIKE_ON_LIKE);
     private static final boolean HAS_EXPERIMENTAL_OPTION = (boolean) AppWindow.getSettings().get(Parameter.EXPERIMENTAL_HANDLER);
-    private final Set<String> continueWords;
-    private final MatchChecker checker;
+    private static final Set<String> continueWords = FileUtil.readDict(Data.CONTINUE_WORDS);
+    private final ProfileMatcher checker;
     private VkApiClient vk;
-    private UserActorWithoutId actor;
+    private CustomUserActor actor;
     private Informer informer;
     private int likes;
 
-    public HandlerImpl(Set<Filter> filters, VkApiClient vk, UserActorWithoutId actor) {
-        this.continueWords = FileUtil.readDict(Data.CONTINUE_WORDS);
-        this.checker = new ProfileMatchCheckerImpl(filters);
+    public HandlerImpl(Set<Filter> filters, VkApiClient vk, CustomUserActor actor) {
+        this.checker = new ProfileMatcherImpl(filters);
         this.vk = vk;
         this.actor = actor;
         likes = 0;

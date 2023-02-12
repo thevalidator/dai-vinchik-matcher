@@ -56,4 +56,13 @@ public class TextFilterImplTest {
         //fail("The test case is a prototype.");
     }
     
+    @Test
+    public void testIsFiltered3() {
+        Profile profile = new Profile("", "", "", "<br>Ищу адекватных людей в беседу 😉если вам не интересна возможность общения в беседе мимо пожалуйста😌");
+        boolean expResult = true;
+        boolean result = instance.isFiltered(profile);
+        assertEquals(expResult, result);
+        //fail("The test case is a prototype.");
+    }
+    
 }

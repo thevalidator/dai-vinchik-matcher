@@ -7,7 +7,7 @@ package ru.thevalidator.daivinchikmatcher.matcher;
 /**
  * @author thevalidator <the.validator@yandex.ru>
  */
-public interface MatchChecker {
+public interface ProfileMatcher {
     
     boolean matches(String text);
 

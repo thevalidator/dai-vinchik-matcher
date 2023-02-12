@@ -79,8 +79,6 @@ public class Settings {
             map.put(Parameter.BASE_DELAY, dto.getBaseDelay());
             map.put(Parameter.RANDOM_DELAY, dto.getRandomDelay());
 
-            //printSettings(map);
-
             return map;
 
         } catch (IOException e) {
