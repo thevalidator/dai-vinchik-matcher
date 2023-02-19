@@ -133,9 +133,6 @@ public class Handlermpl implements Handler {
                         //System.out.println("[MUTUAL LIKE - no kbrd] - " + messageText);
                         //informer.informObservers(actor.getUserName() + "\n> [LIKE] " + messageText);
 
-                    } else if (CaseMatcher.isLocation(messageText, buttons)) {
-                        sendAnswer(builder.buildDVAnswer("1"));
-                        informer.informObservers(actor.getUserName() + "\n> [LOCATION CASE]");
                     } else if (CaseMatcher.isProfile(messageText, buttons)) {
                         String consoleMessage = actor.getUserName() + "\n> [PROFILE] - " + messageText;
                         if (likes > 0) {
@@ -186,6 +183,9 @@ public class Handlermpl implements Handler {
                     } else if (CaseMatcher.isAdvise(messageText, buttons)) {
                         sendAnswer(builder.buildDVAnswer("2"));
                         informer.informObservers(actor.getUserName() + "\n> [ADVISE CASE]");
+                    } else if (CaseMatcher.isLocation(messageText, buttons)) {
+                        sendAnswer(builder.buildDVAnswer("1"));
+                        informer.informObservers(actor.getUserName() + "\n> [LOCATION CASE]");
                     } else {
                         if (HAS_EXPERIMENTAL_OPTION) {
                             if (messageText.contains("1. Смотреть анкеты.")) {
