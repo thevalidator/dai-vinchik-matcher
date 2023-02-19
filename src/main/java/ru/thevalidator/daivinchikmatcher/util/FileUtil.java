@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 
@@ -63,6 +64,31 @@ public class FileUtil {
         }
 
         return sb.toString();
+    }
+    
+    public static LinkedList<String> readMessagesDict(String path) {
+        LinkedList<String> messages = new LinkedList<>();
+        
+        StringBuilder sb = new StringBuilder();
+        try ( BufferedReader br
+                = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith(">>>")) {
+                    sb.append(line).append("\n");
+                } else {
+                    messages.add(sb.toString());
+                    sb.setLength(0);
+                }
+            }
+            if (!sb.isEmpty()) {
+                messages.add(sb.toString());
+            }
+        } catch (IOException ex) {
+            logger.error(ExceptionUtil.getFormattedDescription(ex));
+        }
+
+        return messages;
     }
 
 }
