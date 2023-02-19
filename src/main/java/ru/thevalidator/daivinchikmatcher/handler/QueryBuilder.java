@@ -6,6 +6,7 @@ package ru.thevalidator.daivinchikmatcher.handler;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.queries.messages.MessagesSendQuery;
+import java.util.LinkedList;
 import static ru.thevalidator.daivinchikmatcher.property.Data.DAI_VINCHIK_BOT_CHAT_ID;
 import ru.thevalidator.daivinchikmatcher.util.FileUtil;
 
@@ -14,7 +15,8 @@ import ru.thevalidator.daivinchikmatcher.util.FileUtil;
  */
 public class QueryBuilder {
 
-    private static final String MESSAGE = FileUtil.readMessageDict("config/message.txt");
+    //private static final String MESSAGE = FileUtil.readMessageDict("config/message.txt");
+    private static final LinkedList<String> MESSAGES = FileUtil.readMessagesDict("config/messages.txt");
     private final VkApiClient vk;
     private final UserActor actor;
 
@@ -44,7 +46,8 @@ public class QueryBuilder {
     
     public MessagesSendQuery buildReplyForLikedUser(int targetId) {
         Long timestamp = System.currentTimeMillis();
-        String message = MESSAGE;
+        String message = MESSAGES.pollFirst();
+        MESSAGES.addLast(message);
         MessagesSendQuery query = vk.messages()
                 .send(actor)
                 .message(message)
