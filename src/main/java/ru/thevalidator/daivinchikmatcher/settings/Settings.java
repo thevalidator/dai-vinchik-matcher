@@ -24,7 +24,7 @@ public class Settings {
 
     private static final Logger logger = LogManager.getLogger(Settings.class);
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static final String SETTINGS_PATH = "config/config.json";
+    private static final String SETTINGS_PATH = "config/settings.json";
 
     private static void createDefaultSettingsFile() {
 
@@ -45,6 +45,7 @@ public class Settings {
         
         dto.setBaseDelay(10);
         dto.setRandomDelay(15);
+        dto.setReplyCheckPeriod(300);
 
         try {
             ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
@@ -78,6 +79,7 @@ public class Settings {
             map.put(Parameter.LIKE_ON_LIKE, dto.shouldLikeOnLike());
             map.put(Parameter.BASE_DELAY, dto.getBaseDelay());
             map.put(Parameter.RANDOM_DELAY, dto.getRandomDelay());
+            map.put(Parameter.REPLY_CHECK_PERIOD, dto.getReplyCheckPeriod());
 
             return map;
 
@@ -105,6 +107,7 @@ public class Settings {
         dto.setWindowDimentions((int[]) settings.get(Parameter.WINDOW_DIMENTIONS));
         dto.setBaseDelay((int) settings.get(Parameter.BASE_DELAY));
         dto.setRandomDelay((int) settings.get(Parameter.RANDOM_DELAY));
+        dto.setReplyCheckPeriod((int) settings.get(Parameter.REPLY_CHECK_PERIOD));
         
         try {
             ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());

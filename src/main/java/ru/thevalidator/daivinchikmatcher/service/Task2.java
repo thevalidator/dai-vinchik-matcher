@@ -80,7 +80,7 @@ public class Task2 extends Informer implements Runnable {
             Handler handler = new Handlermpl(vk, actor, matchChecker);
             ((Handlermpl) handler).setInformer(this);
             
-            int counter = 0;
+            int counter = (int) AppWindow.getSettings().get(Parameter.REPLY_CHECK_PERIOD);
             while (true) {
                 if (counter < Integer.MAX_VALUE) {
                     counter++;
@@ -94,9 +94,13 @@ public class Task2 extends Informer implements Runnable {
                 informObservers(actor.getUserName() + "\n> SLEEPING " + timeToWait + " secs");
                 TimeUnit.SECONDS.sleep(timeToWait);
                 
-                if (counter % 12 == 0) {
+                counter -= timeToWait;
+                if (counter <= 0) {
+                    informObservers(actor.getUserName() + "\n> [CHECKING UNHANDLED LIKES IN DB]");
+                    counter = (int) AppWindow.getSettings().get(Parameter.REPLY_CHECK_PERIOD);
                     List<Integer> likes = DBUtil.getLikedUsersVkId(actor.getId());
                     if (!likes.isEmpty()) {
+                        informObservers(actor.getUserName() + "\n> [LIKES FOUND] " + likes.size() + " pcs.");
                         handler.handleReplies(likes);
                     }
                 }

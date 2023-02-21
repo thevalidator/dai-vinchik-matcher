@@ -35,6 +35,15 @@
         <Logger name="ru.thevalidator.daivinchikmatcher.settings.Settings" level="error" additivity="false">
             <AppenderRef ref="File"/>
         </Logger>
+        <Logger name="ru.thevalidator.daivinchikmatcher.v2.identity.impl.Handlermpl" level="error" additivity="false">
+            <AppenderRef ref="File"/>
+        </Logger>
+        <Logger name="ru.thevalidator.daivinchikmatcher.util.DBUtil" level="error" additivity="false">
+            <AppenderRef ref="File"/>
+        </Logger>
+        <Logger name="ru.thevalidator.daivinchikmatcher.gui.AppWindow" level="error" additivity="false">
+            <AppenderRef ref="File"/>
+        </Logger>
         <Logger name="ru.thevalidator.daivinchikmatcher.service.Task" level="info" additivity="false">
             <AppenderRef ref="File"/>
             <AppenderRef ref="Lpr"/>

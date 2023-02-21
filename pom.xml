@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.thevalidator</groupId>
     <artifactId>dai-vinchik-matcher</artifactId>
-    <version>v1.0.0.0-beta-04</version>
+    <version>v1.0.0.0-beta-05</version>
     <packaging>jar</packaging>
     
     <licenses>

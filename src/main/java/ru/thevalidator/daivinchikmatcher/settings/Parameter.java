@@ -20,6 +20,7 @@ public enum Parameter {
     HOURS_TO_SLEEP,
     DEBUG_MODE,
     BASE_DELAY,
-    RANDOM_DELAY
+    RANDOM_DELAY,
+    REPLY_CHECK_PERIOD
     
 }

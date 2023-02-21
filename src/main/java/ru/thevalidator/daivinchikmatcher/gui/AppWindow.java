@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import org.apache.logging.log4j.LogManager;
+import ru.thevalidator.daivinchikmatcher.handler.QueryBuilder;
 import ru.thevalidator.daivinchikmatcher.matcher.Filter;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.ProfileMatcherImpl;
 import ru.thevalidator.daivinchikmatcher.matcher.impl.filter.AgeFilterImpl;
@@ -47,7 +48,7 @@ import ru.thevalidator.daivinchikmatcher.util.DBUtil;
  */
 public class AppWindow extends javax.swing.JFrame implements Observer {
 
-    public static final String APP_VER = "v1.0.0.0-beta-04";
+    public static final String APP_VER = "v1.0.0.0-beta-05";
     public static Set<String> likedUserIds;
     private static final Logger logger = LogManager.getLogger(AppWindow.class);
     private static int MAX_LINES = 400;
@@ -107,6 +108,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         addAccountMenuItem = new javax.swing.JMenuItem();
         addUserAgentMenuItem = new javax.swing.JMenuItem();
         addProxyMenuItem = new javax.swing.JMenuItem();
+        checkReplyMessagesMenuItem = new javax.swing.JMenuItem();
         filterMenu = new javax.swing.JMenu();
         ageCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         cityCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -118,6 +120,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         experimentalCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         baseDelayMenuItem = new javax.swing.JMenuItem();
         randomDelayMenuItem = new javax.swing.JMenuItem();
+        replyCheckPeriodMenuItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
 
@@ -238,6 +241,14 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
 
         jMenu1.add(addMenu);
 
+        checkReplyMessagesMenuItem.setText("Check reply messages");
+        checkReplyMessagesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkReplyMessagesMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(checkReplyMessagesMenuItem);
+
         jMenuBar1.add(jMenu1);
 
         filterMenu.setText("Filters");
@@ -340,6 +351,14 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
             }
         });
         jMenu3.add(randomDelayMenuItem);
+
+        replyCheckPeriodMenuItem.setText("Set reply check period");
+        replyCheckPeriodMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                replyCheckPeriodMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(replyCheckPeriodMenuItem);
 
         jMenuBar1.add(jMenu3);
 
@@ -726,6 +745,41 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
         }
     }//GEN-LAST:event_randomDelayMenuItemActionPerformed
 
+    private void replyCheckPeriodMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replyCheckPeriodMenuItemActionPerformed
+        int replyCheckPeriod = (int) settings.get(Parameter.REPLY_CHECK_PERIOD);
+        JTextField baseDelayField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Input new value:"));
+        panel.add(baseDelayField);
+        panel.add(new JLabel("Old value: " + replyCheckPeriod));
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "New reply check period",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                int newReplyCheckPeriod = Integer.parseInt(baseDelayField.getText().trim());
+                if (newReplyCheckPeriod > 0) {
+                    settings.put(Parameter.REPLY_CHECK_PERIOD, newReplyCheckPeriod);
+                    Settings.saveSettings(settings);
+                } else {
+                    appendToPane("ERROR: Value must be greater zero");
+                }
+            } catch (NumberFormatException e) {
+                appendToPane("ERROR: Not a number");
+            }
+        }
+    }//GEN-LAST:event_replyCheckPeriodMenuItemActionPerformed
+
+    private void checkReplyMessagesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkReplyMessagesMenuItemActionPerformed
+        // TODO add your handling code here:
+        appendToPane("REPLY MESSAGES: " + QueryBuilder.MESSAGES.size());
+        for (String msg : QueryBuilder.MESSAGES) {
+            appendToPane(msg);
+        }
+        
+    }//GEN-LAST:event_checkReplyMessagesMenuItemActionPerformed
+
     public void setStartButtonStatus(int status) {
         switch (status) {
             case 1:
@@ -753,6 +807,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem addUserAgentMenuItem;
     private javax.swing.JCheckBoxMenuItem ageCheckBoxMenuItem;
     private javax.swing.JMenuItem baseDelayMenuItem;
+    private javax.swing.JMenuItem checkReplyMessagesMenuItem;
     private javax.swing.JCheckBoxMenuItem cityCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem debugCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem experimentalCheckBoxMenuItem;
@@ -772,6 +827,7 @@ public class AppWindow extends javax.swing.JFrame implements Observer {
     private javax.swing.JLabel proxyLabel;
     private javax.swing.JToggleButton proxyToggleButton;
     private javax.swing.JMenuItem randomDelayMenuItem;
+    private javax.swing.JMenuItem replyCheckPeriodMenuItem;
     private javax.swing.JCheckBoxMenuItem soundCheckBoxMenuItem;
     private javax.swing.JButton startButton;
     private javax.swing.JCheckBoxMenuItem textCheckBoxMenuItem;

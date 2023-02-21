@@ -16,7 +16,7 @@ import ru.thevalidator.daivinchikmatcher.util.FileUtil;
 public class QueryBuilder {
 
     //private static final String MESSAGE = FileUtil.readMessageDict("config/message.txt");
-    private static final LinkedList<String> MESSAGES = FileUtil.readMessagesDict("config/messages.txt");
+    public static final LinkedList<String> MESSAGES = FileUtil.readMessagesDict("config/messages.txt");
     private final VkApiClient vk;
     private final UserActor actor;
 

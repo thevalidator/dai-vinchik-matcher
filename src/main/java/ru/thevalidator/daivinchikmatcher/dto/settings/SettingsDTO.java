@@ -21,7 +21,10 @@ public class SettingsDTO {
 //    LIKE_ON_LIKE,
 //    EXPERIMENTAL_HANDLER,
 //    HOURS_TO_SLEEP,
-//    DEBUG_MODE
+//    DEBUG_MODE,
+//    BASE_DELAY,
+//    RANDOM_DELAY
+//    REPLY_CHECK_PERIOD
     
     @JsonProperty("window dimensions")
     private int[] windowDimentions;
@@ -51,6 +54,8 @@ public class SettingsDTO {
     private int hoursToSleep;
     @JsonProperty("debug mode")
     private boolean isDebugMode;
+    @JsonProperty("reply check period")
+    private int replyCheckPeriod;
 
     public int[] getWindowDimentions() {
         return windowDimentions;
@@ -126,6 +131,14 @@ public class SettingsDTO {
 
     public boolean isDebugMode() {
         return isDebugMode;
+    }
+
+    public int getReplyCheckPeriod() {
+        return replyCheckPeriod;
+    }
+
+    public void setReplyCheckPeriod(int replyCheckPeriod) {
+        this.replyCheckPeriod = replyCheckPeriod;
     }
 
     @JsonIgnore

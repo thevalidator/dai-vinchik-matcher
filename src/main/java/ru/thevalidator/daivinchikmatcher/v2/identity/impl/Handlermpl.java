@@ -115,12 +115,13 @@ public class Handlermpl implements Handler {
                                 .matcher(messageText);
 
                         if (matcher.find()) {
-                            messageText = matcher.group("usrId");
+                            Integer likedVkId = Integer.valueOf(matcher.group("usrId"));
                             logger.info("{}", messageText);
+                            
+                            DBUtil.insertLikeByUserVkId(actor.getId(),
+                                    likedVkId,
+                                    String.valueOf(TimestampUtil.getTimestampOfNow()));
 
-//                            DBUtil.insertLikeByUserVkId(String.valueOf(actor.getId()),
-//                                    messageText,
-//                                    String.valueOf(TimestampUtil.getTimestampOfNow()));
                             if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
                                 playNotification();
                             }
@@ -173,7 +174,11 @@ public class Handlermpl implements Handler {
                         informer.informObservers(actor.getUserName() + "\n> [LIKED BY SOMEONE CASE]");
                     } else if (CaseMatcher.isTooManyLikes(messageText, buttons)) {
                         informer.informObservers(actor.getUserName() + "\n> [TOO MANY LIKES CASE]");
-                        throw new TooManyLikesException();
+                        if (TimestampUtil.getTimestampOfNow() - message.getDate() > 43_200) {
+                            sendAnswer(builder.buildDVAnswer("1"));
+                        } else {
+                            throw new TooManyLikesException();
+                        }
                     } else if (CaseMatcher.isNewProfilesWantToMeet(messageText, buttons)) {
                         sendAnswer(builder.buildDVAnswer("1"));
                         informer.informObservers(actor.getUserName() + "\n> [NEW PROFILES CASE]");
@@ -189,12 +194,10 @@ public class Handlermpl implements Handler {
                     } else {
                         if (HAS_EXPERIMENTAL_OPTION) {
                             if (messageText.contains("1. Смотреть анкеты.")) {
-
-                                //informer.informObservers(actor.getUserName() + "\n> [EXPERIMENTAL CASE FOUND]");
+                                informer.informObservers(actor.getUserName() + "\n> [EXPERIMENTAL CASE]");
                                 logger.error(" [{}] - EXPERIMENTAL CASE FOUND \nmessage={}",
                                         AppWindow.APP_VER, messageText);
                                 sendAnswer(builder.buildDVAnswer("1"));
-                                informer.informObservers(actor.getUserName() + "\n> [EXPERIMENTAL CASE]");
                                 return;
                             }
                         }
@@ -227,15 +230,18 @@ public class Handlermpl implements Handler {
 
     @Override
     public void handleReplies(List<Integer> likes) {
+        informer.informObservers(actor.getUserName() + "\n> [CHECKING REPLIES FROM USERS]");
         try {
             var res = vk.messages().getConversationsById(actor, likes).execute();
             for (Conversation item : res.getItems()) {
                 if (item.getLastMessageId() != 0 && item.getCanWrite().getAllowed()) {
+                    informer.informObservers(actor.getUserName() + "\n> [REPLY FOUND] id:" + item.getPeer().getId());
                     DBUtil.setHasReplyTrue(actor.getId(), item.getPeer().getId());
                     var response = builder.buildReplyForLikedUser(item.getPeer().getId()).executeAsRaw();
                     if (response.getStatusCode() == 200) {
                         DBUtil.setWasInvited(actor.getId(), item.getPeer().getId());
                         DBUtil.deleteAllLikesFromLikedIdWithoutReply(item.getPeer().getId());
+                        informer.informObservers(actor.getUserName() + "\n> [MESSAGE WAS SENT] id:" + item.getPeer().getId());
                     } else {
                         logger.error("Couldn't reply id:" + item.getPeer().getId() + ". Code " + response.getStatusCode());
                     }
