@@ -35,8 +35,9 @@
         <Logger name="ru.thevalidator.daivinchikmatcher.settings.Settings" level="error" additivity="false">
             <AppenderRef ref="File"/>
         </Logger>
-        <Logger name="ru.thevalidator.daivinchikmatcher.v2.identity.impl.Handlermpl" level="error" additivity="false">
+        <Logger name="ru.thevalidator.daivinchikmatcher.v2.identity.impl.Handlermpl" level="info" additivity="false">
             <AppenderRef ref="File"/>
+            <AppenderRef ref="Lpr"/>
         </Logger>
         <Logger name="ru.thevalidator.daivinchikmatcher.util.DBUtil" level="error" additivity="false">
             <AppenderRef ref="File"/>
