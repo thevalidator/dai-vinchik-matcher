@@ -48,7 +48,7 @@ import ru.thevalidator.daivinchikmatcher.util.DBUtil;
  */
 public class AppWindow extends javax.swing.JFrame implements Observer {
 
-    public static final String APP_VER = "v1.0.0.0-beta-05";
+    public static final String APP_VER = "v1.0.0.0-beta-06";
     public static Set<String> likedUserIds;
     private static final Logger logger = LogManager.getLogger(AppWindow.class);
     private static int MAX_LINES = 400;
