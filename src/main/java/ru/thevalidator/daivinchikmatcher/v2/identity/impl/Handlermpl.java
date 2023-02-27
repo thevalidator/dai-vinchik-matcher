@@ -60,6 +60,7 @@ public class Handlermpl implements Handler {
     private ProfileMatcher profileMatcher;
     private int likes;
     private Informer informer;
+    private Integer lastHandledConversationMessageId;
 
     public Handlermpl(VkApiClient vk, CustomUserActor actor, ProfileMatcher matchChecker) {
         this.vk = vk;
@@ -67,6 +68,7 @@ public class Handlermpl implements Handler {
         this.profileMatcher = matchChecker;
         this.builder = new QueryBuilder(vk, actor);
         this.likes = 0;
+        this.lastHandledConversationMessageId = null;
     }
 
     public void setInformer(Informer informer) {
@@ -79,6 +81,9 @@ public class Handlermpl implements Handler {
 
             var conversationResponse = vk.messages().getConversationsById(actor, DAI_VINCHIK_BOT_CHAT_ID).execute();
             var dvConversationData = conversationResponse.getItems().get(0);
+            Integer lastMessageId = dvConversationData.getLastConversationMessageId();
+
+            handleMissedMessages(lastMessageId);
 
             Keyboard currentKeyboard = dvConversationData.getCurrentKeyboard();
 
@@ -86,9 +91,11 @@ public class Handlermpl implements Handler {
             if (answer != null) {
                 sendAnswer(builder.buildDVAnswer(answer));
                 informer.informObservers(actor.getUserName() + "\n> [CONTINUE WORD FOUND]");
+                if (IS_DEBUG_MODE) {
+                    logger.info(" [KBD]" + currentKeyboard.toString());
+                }
             } else {
                 Message message = null;
-                Integer lastMessageId = dvConversationData.getLastConversationMessageId();
 
                 while (lastMessageId > 0) {
                     var messageResponse = vk.messages().getByConversationMessageId(actor, DAI_VINCHIK_BOT_CHAT_ID, lastMessageId).execute();
@@ -105,37 +112,48 @@ public class Handlermpl implements Handler {
                 }
 
                 if (message != null) {
+
+                    if (IS_DEBUG_MODE) {
+                        logger.info(" [LIKES]" + likes + "\n [MSG]" + message.toString() + "\n [KBD]" + currentKeyboard.toString() + "\n");
+                    }
+
                     String messageText = message.getText();
                     messageText = EmojiCleaner.clean(messageText);
                     List<KeyboardButton> buttons = getAllKeyboardButtons(currentKeyboard);
 
-                    if (CaseMatcher.isMutualLike(messageText, buttons)) {
-
-                        Matcher matcher = Pattern.compile("([\\p{L}\\p{N}\\p{P}\\p{Z}]+ - vk.com/id)(?<usrId>([\\p{Nd}]+)){1}(<br>|\\n){1,}.+")
-                                .matcher(messageText);
-
-                        if (matcher.find()) {
-                            Integer likedVkId = Integer.valueOf(matcher.group("usrId"));
-                            logger.info("{}", messageText);
-                            
-                            DBUtil.insertLikeByUserVkId(actor.getId(),
-                                    likedVkId,
-                                    String.valueOf(TimestampUtil.getTimestampOfNow()));
-
-                            if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
-                                playNotification();
-                            }
-
-                        } else {
-                            logger.error("[MUTUAL LIKE] - not found link in msg: {}", messageText);
-                        }
-                        sendAnswer(builder.buildDVAnswer("1"));
-                        informer.informObservers(actor.getUserName() + "\n> [MUTUAL LIKE CASE]");
-                        //System.out.println("[MUTUAL LIKE - no kbrd] - " + messageText);
-                        //informer.informObservers(actor.getUserName() + "\n> [LIKE] " + messageText);
-
-                    } else if (CaseMatcher.isProfile(messageText, buttons)) {
+//                    if (CaseMatcher.isMutualLike(messageText, buttons)) {
+//
+//                        Matcher matcher = Pattern.compile("([\\p{L}\\p{N}\\p{P}\\p{Z}]+ - vk.com/id)(?<usrId>([\\p{Nd}]+)){1}(<br>|\\n){1,}.+")
+//                                .matcher(messageText);
+//
+//                        if (matcher.find()) {
+//                            Integer likedVkId = Integer.valueOf(matcher.group("usrId"));
+//                            logger.info("{}", messageText);
+//
+//                            informer.informObservers(actor.getUserName() + "\n> [MUTUAL LIKE CASE]");
+//                            informer.informObservers("[SAVING LIKE TO DB] - owner: " + actor.getId() + " like: " + likedVkId);
+//                            DBUtil.insertLikeByUserVkId(actor.getId(),
+//                                    likedVkId,
+//                                    String.valueOf(TimestampUtil.getTimestampOfNow()));
+//
+//                            if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
+//                                playNotification();
+//                            }
+//
+//                        } else {
+//                            logger.error("[MUTUAL LIKE] - not found link in msg: {}", messageText);
+//                        }
+//                        sendAnswer(builder.buildDVAnswer("1"));
+//                        //informer.informObservers(actor.getUserName() + "\n> [MUTUAL LIKE CASE]");
+//
+//                    } else 
+                    if (CaseMatcher.isProfile(messageText, buttons)) {
                         String consoleMessage = actor.getUserName() + "\n> [PROFILE] - " + messageText;
+
+                        if (messageText.startsWith("Кому-то понравилась твоя анкета")) {
+                            addLikes(1);
+                        }
+
                         if (likes > 0) {
                             decreaseLikes();
                             sendAnswer(builder.buildDVAnswer("1"));
@@ -143,6 +161,8 @@ public class Handlermpl implements Handler {
                         } else if (profileMatcher.matches(messageText)) {
                             sendAnswer(builder.buildDVAnswer("1"));
                             informer.informObservers(consoleMessage + "\n> [MATCH]");
+
+                            //DBUtil.insertLikeByUserVkId(actor.getId(), 713189665, String.valueOf(TimestampUtil.getTimestampOfNow()));
                         } else {
                             for (KeyboardButton button : buttons) {
                                 if (button.getColor().equals(KeyboardButtonColor.NEGATIVE)) {
@@ -152,7 +172,7 @@ public class Handlermpl implements Handler {
                                 }
                             }
                         }
-                        
+
                     } else if (CaseMatcher.isAdvertisement(messageText, buttons)) {
                         for (KeyboardButton button : buttons) {
                             if (button.getColor().equals(KeyboardButtonColor.DEFAULT)) {
@@ -192,28 +212,30 @@ public class Handlermpl implements Handler {
                         sendAnswer(builder.buildDVAnswer("1"));
                         informer.informObservers(actor.getUserName() + "\n> [LOCATION CASE]");
                     } else {
+                        boolean isAnswerFound = false;
                         if (HAS_EXPERIMENTAL_OPTION) {
                             if (messageText.contains("1. Смотреть анкеты.")) {
                                 informer.informObservers(actor.getUserName() + "\n> [EXPERIMENTAL CASE]");
                                 logger.error(" [{}] - EXPERIMENTAL CASE FOUND \nmessage={}",
                                         AppWindow.APP_VER, messageText);
                                 sendAnswer(builder.buildDVAnswer("1"));
-                                return;
+                                //return;
+                                isAnswerFound = true;
                             }
                         }
-
-                        //TODO: GET ANSWER FROM USER
-                        if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
-                            Thread t = new Thread(() -> {
-                                playAlarm();
-                            });
-                            t.start();
+                        if (!isAnswerFound) {
+                            //TODO: GET ANSWER FROM USER
+                            if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
+                                Thread t = new Thread(() -> {
+                                    playAlarm();
+                                });
+                                t.start();
+                            }
+                            while (answer == null) {
+                                answer = getUserAnswer(messageText, buttons);
+                            }
+                            sendAnswer(builder.buildDVAnswer(answer));
                         }
-                        while (answer == null) {
-                            answer = getUserAnswer(messageText, buttons);
-                        }
-                        sendAnswer(builder.buildDVAnswer(answer));
-
                     }
 
                     //answer = findAnswer(currentKeyboard, message.getText());
@@ -222,8 +244,10 @@ public class Handlermpl implements Handler {
                     //TODO Throw exception ? throw new UnsupportedOperationException("Not supported yet.");
                 }
             }
+            lastHandledConversationMessageId = lastMessageId;
 
         } catch (Exception e) {
+            logger.error(ExceptionUtil.getFormattedDescription(e));
         }
 
     }
@@ -246,7 +270,7 @@ public class Handlermpl implements Handler {
                         logger.error("Couldn't reply id:" + item.getPeer().getId() + ". Code " + response.getStatusCode());
                     }
                     TimeUnit.SECONDS.sleep(6);
-                }   
+                }
             }
         } catch (ApiException | ClientException | InterruptedException ex) {
             logger.error(ExceptionUtil.getFormattedDescription(ex));
@@ -342,6 +366,45 @@ public class Handlermpl implements Handler {
 
         return input;
 
+    }
+
+    private void handleMutualLike(String text) {
+        Matcher matcher = Pattern.compile("([\\p{L}\\p{N}\\p{P}\\p{Z}]+ - vk.com/id)(?<usrId>([\\p{Nd}]+)){1}(<br>|\\n){1,}.+")
+                .matcher(text);
+
+        if (matcher.find()) {
+            Integer likedVkId = Integer.valueOf(matcher.group("usrId"));
+            logger.info("{}", likedVkId);
+
+            informer.informObservers(actor.getUserName() + "\n> [SAVING MUTUAL LIKE TO DB] - like from: " + likedVkId);
+            DBUtil.insertLikeByUserVkId(actor.getId(),
+                    likedVkId,
+                    String.valueOf(TimestampUtil.getTimestampOfNow()));
+
+            if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
+                playNotification();
+            }
+        }
+    }
+
+    private void handleMissedMessages(Integer lastMessageId) throws ApiException, ClientException {
+        if (lastHandledConversationMessageId != null && (lastMessageId - lastHandledConversationMessageId) > 1) {
+            List<Integer> conversationMessageIds = new ArrayList<>();
+            for (int i = lastMessageId - 1; i > lastHandledConversationMessageId; i--) {
+                conversationMessageIds.add(i);
+            }
+            var messageResponse = vk.messages().getByConversationMessageId(actor, 0, conversationMessageIds).execute();
+            for (Message msg : messageResponse.getItems()) {
+                if (msg.getFromId() == DAI_VINCHIK_BOT_CHAT_ID) {
+                    if (IS_DEBUG_MODE) {
+                        logger.info(actor.getUserName() + "\n> [MISSED]" + msg.toString());
+                    }
+                    if (CaseMatcher.isMutualLike(msg.getText(), null)) {
+                        handleMutualLike(msg.getText());
+                    }
+                }
+            }
+        }
     }
 
 }
