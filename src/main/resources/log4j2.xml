@@ -39,6 +39,10 @@
             <AppenderRef ref="File"/>
             <AppenderRef ref="Lpr"/>
         </Logger>
+        <Logger name="ru.thevalidator.daivinchikmatcher.handler.QueryBuilder" level="info" additivity="false">
+            <AppenderRef ref="File"/>
+            <AppenderRef ref="Lpr"/>
+        </Logger>
         <Logger name="ru.thevalidator.daivinchikmatcher.util.DBUtil" level="error" additivity="false">
             <AppenderRef ref="File"/>
         </Logger>
