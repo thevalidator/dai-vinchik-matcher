@@ -155,7 +155,7 @@ public class CaseMatcher {
     public static boolean isMutualLike(String messageText, List<KeyboardButton> buttons) {
         boolean result = false;
         if (!messageText.isEmpty()
-                && messageText.contains("в друзья - vk.com/")) {
+                && messageText.contains("в друзья - vk.com")) {
 
             result = true;
         }
