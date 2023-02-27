@@ -66,7 +66,7 @@ public class Handlermpl implements Handler {
         this.vk = vk;
         this.actor = actor;
         this.profileMatcher = matchChecker;
-        this.builder = new QueryBuilder(vk, actor);
+        this.builder = new QueryBuilder(vk, actor, IS_DEBUG_MODE);
         this.likes = 0;
         this.lastHandledConversationMessageId = null;
     }
@@ -77,6 +77,7 @@ public class Handlermpl implements Handler {
 
     @Override
     public void handleLastMessage() {
+        //String result = "[UNKNOWN CASE]";
         try {
 
             var conversationResponse = vk.messages().getConversationsById(actor, DAI_VINCHIK_BOT_CHAT_ID).execute();
@@ -91,6 +92,7 @@ public class Handlermpl implements Handler {
             if (answer != null) {
                 sendAnswer(builder.buildDVAnswer(answer));
                 informer.informObservers(actor.getUserName() + "\n> [CONTINUE WORD FOUND]");
+                //result = "\n> [CONTINUE WORD FOUND]";
                 if (IS_DEBUG_MODE) {
                     logger.info(" [KBD]" + currentKeyboard.toString());
                 }
@@ -158,16 +160,17 @@ public class Handlermpl implements Handler {
                             decreaseLikes();
                             sendAnswer(builder.buildDVAnswer("1"));
                             informer.informObservers(consoleMessage + "\n> [LIKE ON LIKE]");
+                            //result = "\n> [LIKE ON LIKE]";
                         } else if (profileMatcher.matches(messageText)) {
                             sendAnswer(builder.buildDVAnswer("1"));
                             informer.informObservers(consoleMessage + "\n> [MATCH]");
-
-                            //DBUtil.insertLikeByUserVkId(actor.getId(), 713189665, String.valueOf(TimestampUtil.getTimestampOfNow()));
+                            //result = "\n> [MATCH]";
                         } else {
                             for (KeyboardButton button : buttons) {
                                 if (button.getColor().equals(KeyboardButtonColor.NEGATIVE)) {
                                     sendAnswer(builder.buildDVAnswer(button.getAction().getPayload()));
                                     informer.informObservers(consoleMessage + "\n> [NO MATCH]");
+                                    //result = "\n> [NO MATCH]";
                                     break;
                                 }
                             }
@@ -178,12 +181,14 @@ public class Handlermpl implements Handler {
                             if (button.getColor().equals(KeyboardButtonColor.DEFAULT)) {
                                 sendAnswer(builder.buildDVAnswer(button.getAction().getPayload()));
                                 informer.informObservers(actor.getUserName() + "\n> [ADVERTISEMENT CASE]");
+                                //result = "\n> [ADVERTISEMENT CASE]";
                                 break;
                             }
                         }
                     } else if (CaseMatcher.isNoTextInProfileWarn(messageText, buttons)) {
                         sendAnswer(builder.buildDVAnswer("1"));
                         informer.informObservers(actor.getUserName() + "\n> [NO TEXT IN PROFILE WARN CASE]");
+                        //result = "\n> [NO TEXT IN PROFILE WARN CASE]";
                     } else if (CaseMatcher.isLikedBySomeone(messageText, buttons)) {
                         Pattern p = Pattern.compile("[\\p{Nd}]+");
                         Matcher m = p.matcher(messageText);
@@ -192,8 +197,10 @@ public class Handlermpl implements Handler {
                         }
                         sendAnswer(builder.buildDVAnswer("1"));
                         informer.informObservers(actor.getUserName() + "\n> [LIKED BY SOMEONE CASE]");
+                        //result = "\n> [LIKED BY SOMEONE CASE]";
                     } else if (CaseMatcher.isTooManyLikes(messageText, buttons)) {
                         informer.informObservers(actor.getUserName() + "\n> [TOO MANY LIKES CASE]");
+                        //result = "\n> [TOO MANY LIKES CASE]";
                         if (TimestampUtil.getTimestampOfNow() - message.getDate() > 43_200) {
                             sendAnswer(builder.buildDVAnswer("1"));
                         } else {
@@ -202,29 +209,32 @@ public class Handlermpl implements Handler {
                     } else if (CaseMatcher.isNewProfilesWantToMeet(messageText, buttons)) {
                         sendAnswer(builder.buildDVAnswer("1"));
                         informer.informObservers(actor.getUserName() + "\n> [NEW PROFILES CASE]");
+                        //result = "\n> [NEW PROFILES CASE]";
                     } else if (CaseMatcher.isSleeping(messageText, buttons)) {
                         sendAnswer(builder.buildDVAnswer("1"));
                         informer.informObservers(actor.getUserName() + "\n> [SLEEPING CASE]");
+                        //result = "\n> [SLEEPING CASE]";
                     } else if (CaseMatcher.isAdvise(messageText, buttons)) {
                         sendAnswer(builder.buildDVAnswer("2"));
                         informer.informObservers(actor.getUserName() + "\n> [ADVISE CASE]");
+                        //result = "\n> [ADVISE CASE]";
                     } else if (CaseMatcher.isLocation(messageText, buttons)) {
                         sendAnswer(builder.buildDVAnswer("1"));
                         informer.informObservers(actor.getUserName() + "\n> [LOCATION CASE]");
+                        //result = "\n> [LOCATION CASE]";
                     } else {
                         boolean isAnswerFound = false;
                         if (HAS_EXPERIMENTAL_OPTION) {
                             if (messageText.contains("1. Смотреть анкеты.")) {
                                 informer.informObservers(actor.getUserName() + "\n> [EXPERIMENTAL CASE]");
+                                //result = "\n> [EXPERIMENTAL CASE]";
                                 logger.error(" [{}] - EXPERIMENTAL CASE FOUND \nmessage={}",
                                         AppWindow.APP_VER, messageText);
                                 sendAnswer(builder.buildDVAnswer("1"));
-                                //return;
                                 isAnswerFound = true;
                             }
                         }
                         if (!isAnswerFound) {
-                            //TODO: GET ANSWER FROM USER
                             if ((boolean) AppWindow.getSettings().get(Parameter.SOUND_ALARM)) {
                                 Thread t = new Thread(() -> {
                                     playAlarm();
@@ -238,8 +248,6 @@ public class Handlermpl implements Handler {
                         }
                     }
 
-                    //answer = findAnswer(currentKeyboard, message.getText());
-                    //sendAnswer(builder.buildDVAnswer(answer));
                 } else {
                     //TODO Throw exception ? throw new UnsupportedOperationException("Not supported yet.");
                 }
@@ -388,12 +396,12 @@ public class Handlermpl implements Handler {
     }
 
     private void handleMissedMessages(Integer lastMessageId) throws ApiException, ClientException {
-        if (lastHandledConversationMessageId != null && (lastMessageId - lastHandledConversationMessageId) > 1) {
+        if (lastHandledConversationMessageId != null && (lastMessageId - lastHandledConversationMessageId) > 2) {
             List<Integer> conversationMessageIds = new ArrayList<>();
             for (int i = lastMessageId - 1; i > lastHandledConversationMessageId; i--) {
                 conversationMessageIds.add(i);
             }
-            var messageResponse = vk.messages().getByConversationMessageId(actor, 0, conversationMessageIds).execute();
+            var messageResponse = vk.messages().getByConversationMessageId(actor, DAI_VINCHIK_BOT_CHAT_ID, conversationMessageIds).execute();
             for (Message msg : messageResponse.getItems()) {
                 if (msg.getFromId() == DAI_VINCHIK_BOT_CHAT_ID) {
                     if (IS_DEBUG_MODE) {
